@@ -19,17 +19,15 @@ source install/setup.bash
 USB-CANアダプターを接続し、以下のコマンドを実行してください。
 
 ```bash
-sudo ip link set can0 up type can bitrate 500000
-```
-※ビットレートはハードウェア構成に合わせて調整してください（デフォルト想定：500kbps）。
-
-canモジュールのポートを調べるコマンドを毎回実行する。抜き差しするとポート番号が変わる可能性あり。
-# canを見るには
 sudo modprobe slcan
 sudo modprobe can
 sudo modprobe can_raw
 sudo slcand -o -c -s8 /dev/ttyACM0 can0
 sudo ip link set can0 up
+```
+
+canモジュールのポートを調べるコマンドを毎回実行する。抜き差しするとポート番号が変わる可能性あり。
+# canを見るには
 candump can0
 一行ずつコマンドを実行すること。また、ls /dev/ttyACM*で刺さってるか確認
 
