@@ -1,0 +1,23 @@
+[0.701s] Invoking command in '/home/haru/honrobo_2026/build/honrobo_2026_pkg': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/honrobo_2026/build/honrobo_2026_pkg/build --no-deps symlink_data
+[0.950s] running develop
+[1.109s] running egg_info
+[1.109s] writing honrobo_2026_pkg.egg-info/PKG-INFO
+[1.109s] writing dependency_links to honrobo_2026_pkg.egg-info/dependency_links.txt
+[1.109s] writing entry points to honrobo_2026_pkg.egg-info/entry_points.txt
+[1.109s] writing requirements to honrobo_2026_pkg.egg-info/requires.txt
+[1.110s] writing top-level names to honrobo_2026_pkg.egg-info/top_level.txt
+[1.111s] reading manifest file 'honrobo_2026_pkg.egg-info/SOURCES.txt'
+[1.112s] writing manifest file 'honrobo_2026_pkg.egg-info/SOURCES.txt'
+[1.113s] running build_ext
+[1.113s] Creating /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo-2026-pkg.egg-link (link to .)
+[1.114s] Installing all_senser script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.114s] Installing all_senser_ukf script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.114s] Installing camera_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.115s] Installing can_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.115s] Installing ps4_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.115s] Installing roboware_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.115s] Installing web_nav_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.115s] 
+[1.115s] Installed /home/haru/honrobo_2026/build/honrobo_2026_pkg
+[1.115s] running symlink_data
+[1.140s] Invoked command in '/home/haru/honrobo_2026/build/honrobo_2026_pkg' returned '0': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/honrobo_2026/build/honrobo_2026_pkg/build --no-deps symlink_data

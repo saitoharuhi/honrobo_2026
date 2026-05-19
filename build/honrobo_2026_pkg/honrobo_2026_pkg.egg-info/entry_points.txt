@@ -1,0 +1,9 @@
+[console_scripts]
+all_senser = honrobo_2026_pkg.all_senser:main
+all_senser_ukf = honrobo_2026_pkg.all_senser_ukf:main
+camera_node = honrobo_2026_pkg.camera_node:main
+can_node = honrobo_2026_pkg.can_node:main
+ps4_node = honrobo_2026_pkg.ps4_node:main
+roboware_node = honrobo_2026_pkg.roboware_node:main
+web_nav_node = honrobo_2026_pkg.web_nav_node:main
+

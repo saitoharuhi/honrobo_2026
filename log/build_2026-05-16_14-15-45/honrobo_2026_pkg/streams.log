@@ -1,0 +1,49 @@
+[0.498s] Invoking command in '/home/haru/honrobo_2026/build/honrobo_2026_pkg': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/haru/honrobo_2026/build/honrobo_2026_pkg/build
+[0.702s] running develop
+[0.837s] Removing /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo-2026-pkg.egg-link (link to .)
+[0.858s] Invoked command in '/home/haru/honrobo_2026/build/honrobo_2026_pkg' returned '0': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/haru/honrobo_2026/build/honrobo_2026_pkg/build
+[0.860s] Invoking command in '/home/haru/honrobo_2026/src/honrobo_2026_pkg': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/honrobo_2026_pkg build --build-base /home/haru/honrobo_2026/build/honrobo_2026_pkg/build install --record /home/haru/honrobo_2026/build/honrobo_2026_pkg/install.log --single-version-externally-managed install_data --force
+[1.054s] running egg_info
+[1.055s] writing ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/PKG-INFO
+[1.055s] writing dependency_links to ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/dependency_links.txt
+[1.055s] writing entry points to ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/entry_points.txt
+[1.055s] writing requirements to ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/requires.txt
+[1.055s] writing top-level names to ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/top_level.txt
+[1.056s] reading manifest file '../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/SOURCES.txt'
+[1.057s] writing manifest file '../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info/SOURCES.txt'
+[1.057s] running build
+[1.057s] running build_py
+[1.058s] copying honrobo_2026_pkg/camera_node.py -> /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg
+[1.058s] copying honrobo_2026_pkg/web_nav_node.py -> /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg
+[1.058s] copying honrobo_2026_pkg/roboware_node.py -> /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg
+[1.058s] running install
+[1.058s] running install_lib
+[1.059s] creating /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.059s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/ps4_node.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.059s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/__init__.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.060s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/camera_node.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.060s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/can_node.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.060s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/web_nav_node.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.060s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/roboware_node.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.060s] copying /home/haru/honrobo_2026/build/honrobo_2026_pkg/build/lib/honrobo_2026_pkg/all_senser.py -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg
+[1.061s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/ps4_node.py to ps4_node.cpython-310.pyc
+[1.062s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/__init__.py to __init__.cpython-310.pyc
+[1.062s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/camera_node.py to camera_node.cpython-310.pyc
+[1.062s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/can_node.py to can_node.cpython-310.pyc
+[1.064s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/web_nav_node.py to web_nav_node.cpython-310.pyc
+[1.065s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/roboware_node.py to roboware_node.cpython-310.pyc
+[1.066s] byte-compiling /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg/all_senser.py to all_senser.cpython-310.pyc
+[1.067s] running install_data
+[1.067s] copying resource/honrobo_2026_pkg -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/share/ament_index/resource_index/packages
+[1.067s] copying package.xml -> /home/haru/honrobo_2026/install/honrobo_2026_pkg/share/honrobo_2026_pkg
+[1.067s] running install_egg_info
+[1.069s] Copying ../../build/honrobo_2026_pkg/honrobo_2026_pkg.egg-info to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages/honrobo_2026_pkg-0.0.0-py3.10.egg-info
+[1.070s] running install_scripts
+[1.085s] Installing all_senser script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.085s] Installing camera_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.086s] Installing can_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.086s] Installing ps4_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.086s] Installing roboware_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.086s] Installing web_nav_node script to /home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/honrobo_2026_pkg
+[1.086s] writing list of installed files to '/home/haru/honrobo_2026/build/honrobo_2026_pkg/install.log'
+[1.103s] Invoked command in '/home/haru/honrobo_2026/src/honrobo_2026_pkg' returned '0': PYTHONPATH=/home/haru/honrobo_2026/build/honrobo_2026_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/honrobo_2026/install/honrobo_2026_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/honrobo_2026_pkg build --build-base /home/haru/honrobo_2026/build/honrobo_2026_pkg/build install --record /home/haru/honrobo_2026/build/honrobo_2026_pkg/install.log --single-version-externally-managed install_data --force
