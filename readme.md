@@ -17,13 +17,17 @@ source install/setup.bash
 
 `can_node` を使用する前に、SocketCANインターフェース（can0）を起動する必要があります。
 USB-CANアダプターを接続し、以下のコマンドを実行してください。
-canモジュールのポートを調べるコマンド(`ls /dev/ttyACM*`)を毎回実行すること。抜き差しするとポート番号が変わる可能性あり。
+canモジュールのポートを調べるコマンド（コマンド１）を毎回実行すること。抜き差しするとポート番号が変わる可能性あり。
 
 ```bash
+(コマンド1)
+ls /dev/ttyACM*
+(ここで出たcanモジュールの値が下のコマンドの[ACM？]に当てはまる)
+(コマンド2)
 sudo modprobe slcan
 sudo modprobe can
 sudo modprobe can_raw
-sudo slcand -o -c -s8 /dev/ttyACM0 can0
+sudo slcand -o -c -s8 /dev/tty[ACM？] can0
 sudo ip link set can0 up
 ```
 
