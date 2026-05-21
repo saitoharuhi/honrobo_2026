@@ -1,7 +1,7 @@
 # honrobo_2026_pkg
 
 本パッケージは、2026年のロボット競技会（本ロボ）向けに開発されたROS 2パッケージです。
-センサー統合、CAN通信、PS4コントローラーによる操作、およびWebインターフェースを介した自動運転機能を備えています。
+センサー統合、CAN通信、PS4コントローラーによる操作、およびWeb socetを介した自動運転機能を備えています。
 
 ## 1. セットアップとビルド
 
@@ -9,7 +9,7 @@
 
 ```bash
 cd ~/honrobo_2026
-colcon build --symlink-install
+colcon build 
 source install/setup.bash
 ```
 
@@ -17,6 +17,7 @@ source install/setup.bash
 
 `can_node` を使用する前に、SocketCANインターフェース（can0）を起動する必要があります。
 USB-CANアダプターを接続し、以下のコマンドを実行してください。
+canモジュールのポートを調べるコマンド(`ls /dev/ttyACM*`)を毎回実行すること。抜き差しするとポート番号が変わる可能性あり。
 
 ```bash
 sudo modprobe slcan
@@ -26,10 +27,9 @@ sudo slcand -o -c -s8 /dev/ttyACM0 can0
 sudo ip link set can0 up
 ```
 
-canモジュールのポートを調べるコマンドを毎回実行する。抜き差しするとポート番号が変わる可能性あり。
 # canを見るには
 candump can0
-一行ずつコマンドを実行すること。また、ls /dev/ttyACM*で刺さってるか確認
+一行ずつコマンドを実行すること。
 
 ## 3. プログラム起動手順
 
@@ -92,7 +92,7 @@ ROS 2トピックとCANバスの橋渡しを行います。
 2.  スマホや操作用PCをロボットと同じネットワークに接続します。
 3.  ブラウザで以下のURLにアクセスします：
     `http://<ロボットPCのIPアドレス>:8080`
-4.  画面上の「TARGET POSITION」に目標座標（X, Y, Z）を入力し、「GO TO TARGET」を押すと自動走行が開始されます。
+4.  画面上の「TARGET POSITION」に目標座標（X, Y, Z）を入力し、「GO TO TARGETを押すと自動走行が開始されます。
 5.  緊急時は「EMERGENCY STOP」ボタン、またはPS4コントローラーの操作（マニュアル復帰）で停止してください。
 
 ### ⑥ カメラ配信ノード (`camera_node`)
@@ -140,6 +140,8 @@ http://[UbuntuのIPアドレス]:8889/mystream
 この「8889番ポート」は WebRTC という技術を使っており、YouTubeなどの配信と同じ仕組みで、かつ超低遅延で映像が見れます。
 
 ## 4. Nav2/RViz での動作確認手順
+
+###(ここからは不確定要素が多く含まれる内容です。実行する際はほかの方法を行うことをお勧めします。)
 
 プログラム本体（`all_senser.py`など）を書き換えずに、Nav2の動作条件（座標変換）を満たしてRVizで視覚化する手順です。
 
