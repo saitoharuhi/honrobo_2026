@@ -1,0 +1,44 @@
+[0.489s] Invoking command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build
+[0.687s] running develop
+[0.819s] Removing /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)
+[0.842s] Invoked command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg' returned '0': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --uninstall --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build
+[0.843s] Invoking command in '/home/haru/Documents/honrobo_2026/src/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/honrobo_pkg build --build-base /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build install --record /home/haru/Documents/honrobo_2026/build/honrobo_pkg/install.log --single-version-externally-managed install_data --force
+[1.030s] running egg_info
+[1.030s] writing ../../build/honrobo_pkg/honrobo_pkg.egg-info/PKG-INFO
+[1.030s] writing dependency_links to ../../build/honrobo_pkg/honrobo_pkg.egg-info/dependency_links.txt
+[1.030s] writing entry points to ../../build/honrobo_pkg/honrobo_pkg.egg-info/entry_points.txt
+[1.030s] writing requirements to ../../build/honrobo_pkg/honrobo_pkg.egg-info/requires.txt
+[1.030s] writing top-level names to ../../build/honrobo_pkg/honrobo_pkg.egg-info/top_level.txt
+[1.032s] reading manifest file '../../build/honrobo_pkg/honrobo_pkg.egg-info/SOURCES.txt'
+[1.033s] writing manifest file '../../build/honrobo_pkg/honrobo_pkg.egg-info/SOURCES.txt'
+[1.033s] running build
+[1.033s] running build_py
+[1.033s] copying honrobo_pkg/ps4_node.py -> /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg
+[1.033s] running install
+[1.033s] running install_lib
+[1.034s] creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.034s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/ps4_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.034s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/__init__.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.034s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/web_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.034s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/can_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.035s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/zikoiti_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.035s] copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/roboware_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+[1.035s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/ps4_node.py to ps4_node.cpython-310.pyc
+[1.036s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/__init__.py to __init__.cpython-310.pyc
+[1.036s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/web_node.py to web_node.cpython-310.pyc
+[1.037s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/can_node.py to can_node.cpython-310.pyc
+[1.039s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/zikoiti_node.py to zikoiti_node.cpython-310.pyc
+[1.040s] byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/roboware_node.py to roboware_node.cpython-310.pyc
+[1.041s] running install_data
+[1.041s] copying resource/honrobo_pkg -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index/packages
+[1.041s] copying package.xml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg
+[1.041s] running install_egg_info
+[1.043s] Copying ../../build/honrobo_pkg/honrobo_pkg.egg-info to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg-1.0.0-py3.10.egg-info
+[1.044s] running install_scripts
+[1.059s] Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.059s] Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.060s] Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.060s] Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.060s] Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.060s] writing list of installed files to '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/install.log'
+[1.079s] Invoked command in '/home/haru/Documents/honrobo_2026/src/honrobo_pkg' returned '0': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/honrobo_pkg build --build-base /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build install --record /home/haru/Documents/honrobo_2026/build/honrobo_pkg/install.log --single-version-externally-managed install_data --force

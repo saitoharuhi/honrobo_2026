@@ -1,0 +1,9 @@
+pygame
+pyserial
+python-can
+rclpy
+setuptools
+websockets
+
+[test]
+pytest

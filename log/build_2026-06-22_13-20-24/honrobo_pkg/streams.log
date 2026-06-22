@@ -1,0 +1,21 @@
+[0.634s] Invoking command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data
+[0.892s] running develop
+[1.009s] running egg_info
+[1.009s] writing honrobo_pkg.egg-info/PKG-INFO
+[1.009s] writing dependency_links to honrobo_pkg.egg-info/dependency_links.txt
+[1.009s] writing entry points to honrobo_pkg.egg-info/entry_points.txt
+[1.010s] writing requirements to honrobo_pkg.egg-info/requires.txt
+[1.010s] writing top-level names to honrobo_pkg.egg-info/top_level.txt
+[1.011s] reading manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+[1.013s] writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+[1.014s] running build_ext
+[1.014s] Creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)
+[1.015s] Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.015s] Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.016s] Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.016s] Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.016s] Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.016s] 
+[1.016s] Installed /home/haru/Documents/honrobo_2026/build/honrobo_pkg
+[1.016s] running symlink_data
+[1.046s] Invoked command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg' returned '0': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages: /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data

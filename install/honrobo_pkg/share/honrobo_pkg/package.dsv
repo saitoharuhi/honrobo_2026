@@ -1,0 +1,9 @@
+source;share/honrobo_pkg/hook/pythonpath.ps1
+source;share/honrobo_pkg/hook/pythonpath.dsv
+source;share/honrobo_pkg/hook/pythonpath.sh
+source;share/honrobo_pkg/hook/ament_prefix_path.ps1
+source;share/honrobo_pkg/hook/ament_prefix_path.dsv
+source;share/honrobo_pkg/hook/ament_prefix_path.sh
+source;../../build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.ps1
+source;../../build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.dsv
+source;../../build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.sh
