@@ -11,7 +11,8 @@
 # ============================================================
 
 NODE_NAME=$1
-WORKSPACE_DIR="/home/haru/Documents/honrobo_2026"
+SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORKSPACE_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
 SETUP_CMD="source /opt/ros/\$(ls /opt/ros/ | head -1)/setup.bash && source $WORKSPACE_DIR/install/setup.bash"
 
 # 環境の読み込み

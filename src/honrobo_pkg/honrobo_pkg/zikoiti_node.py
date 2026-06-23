@@ -67,10 +67,23 @@ def auto_detect_ports():
     global _gyro_port, _arduino_port, _status_message
     ports = serial.tools.list_ports.comports()
 
+    # 使用中のCANポートを取得
+    used_can_port = None
+    try:
+        if os.path.exists('/tmp/honrobo_can_port'):
+            with open('/tmp/honrobo_can_port', 'r') as f:
+                used_can_port = f.read().strip()
+    except Exception:
+        pass
+
     _gyro_port = None
     _arduino_port = None
 
     for p in ports:
+        # USB-CANアダプターが使用しているポートは除外
+        if used_can_port and p.device == used_can_port:
+            continue
+
         # WT901などのジャイロは通常 ttyUSB として認識される
         if 'USB' in p.device:
             if _gyro_port is None:
@@ -87,7 +100,7 @@ def auto_detect_ports():
 
 
 def setup_permissions():
-    """シリアルデバイスのアクセス権限を自動付与する"""
+    """シリアルデバイスのアクセス権限を確認し、無ければ警告を出す"""
     devices = []
     if _gyro_port:
         devices.append(_gyro_port)
@@ -97,10 +110,11 @@ def setup_permissions():
     for dev in devices:
         if os.path.exists(dev):
             if not os.access(dev, os.R_OK | os.W_OK):
-                try:
-                    subprocess.run(['sudo', 'chmod', '666', dev], check=True)
-                except Exception:
-                    pass
+                with _output_lock:
+                    _latest_lines['arduino_err'] = (
+                        f"[PERMISSION ERROR] {dev} の読み書き権限がありません。"
+                        "sudo usermod -aG dialout $USER を実行し再ログインしてください。"
+                    )
 
 
 def transform_data(data):

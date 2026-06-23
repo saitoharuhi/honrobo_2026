@@ -59,8 +59,21 @@ ip link set can0 down 2>/dev/null || true
 killall slcand 2>/dev/null || true
 sleep 0.5
 
+# 使用中のCANポートを記録（zikoiti_nodeでの誤認防止用）
+echo "$CAN_PORT" > /tmp/honrobo_can_port || true
+
 slcand -o -c -s8 "$CAN_PORT" can0
 ip link set can0 up
+
+# シリアルポートのパーミッション変更
+echo ""
+echo "[4/4] シリアルポートの書き込み権限を付与中..."
+for dev in /dev/ttyUSB* /dev/ttyACM*; do
+    if [ -e "$dev" ] && [ "$dev" != "$CAN_PORT" ]; then
+        chmod 666 "$dev"
+        echo "  ✅ $dev -> 権限 666 付与完了"
+    fi
+done
 
 echo ""
 echo "============================================"

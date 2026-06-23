@@ -19,6 +19,7 @@ import threading
 import json
 import math
 import subprocess
+import socket
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
@@ -27,13 +28,23 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 
 def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        result = subprocess.check_output(
-            ['hostname', '-I']
-        ).decode('utf-8').strip()
-        return result.split(' ')[0]
+        # 実際にルーティング可能なローカルIPを取得（通信は発生しません）
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
     except Exception:
-        return "0.0.0.0"
+        # オフラインや特殊環境時のフォールバック
+        try:
+            result = subprocess.check_output(
+                ['hostname', '-I']
+            ).decode('utf-8').strip()
+            ip = result.split(' ')[0]
+        except Exception:
+            ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
 
 
 # ============================================================

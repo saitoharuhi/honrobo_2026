@@ -12,8 +12,8 @@
 set -e
 
 SESSION_NAME="honrobo"
-WORKSPACE_DIR="$HOME/Documents/honrobo_2026"
 SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORKSPACE_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
 
 # カラー
 GREEN='\033[0;32m'
@@ -52,6 +52,10 @@ if [ "$SKIP_CAN" = false ]; then
 else
     echo -e "${YELLOW}[1/3] CANスキップ${NC}"
 fi
+
+# シリアルポートの権限自動付与
+echo -e "${YELLOW}[1.5/3] シリアルポートの権限付与中...${NC}"
+sudo chmod 666 /dev/ttyUSB* /dev/ttyACM* 2>/dev/null || true
 
 # ビルド
 if [ "$SKIP_BUILD" = false ]; then

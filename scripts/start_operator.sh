@@ -8,7 +8,8 @@
 set -e
 
 SESSION_NAME="honrobo_operator"
-WORKSPACE_DIR="$HOME/Documents/honrobo_2026"
+SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
+WORKSPACE_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
