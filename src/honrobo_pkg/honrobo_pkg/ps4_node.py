@@ -24,6 +24,9 @@ class Ps4Node(Node):
     def __init__(self):
         super().__init__('ps4_node')
         self.pub = self.create_publisher(Joy, 'ps4_joy', 10)
+        # ヘッドレス環境(SSH等)でもイベントループが動くようにダミードライバを設定
+        import os
+        os.environ["SDL_VIDEODRIVER"] = "dummy"
         pygame.init()
         pygame.joystick.init()
         self.joystick = None

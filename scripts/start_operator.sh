@@ -37,6 +37,26 @@ if ! command -v tmux &> /dev/null; then
     exit 1
 fi
 
+# 依存Pythonライブラリのチェック
+echo -e "${YELLOW}Python依存ライブラリをチェック中...${NC}"
+MISSING_LIBS=()
+python3 -c "import pygame" 2>/dev/null || MISSING_LIBS+=("pygame")
+python3 -c "import can" 2>/dev/null || MISSING_LIBS+=("python-can")
+python3 -c "import websockets" 2>/dev/null || MISSING_LIBS+=("websockets")
+
+if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
+    echo -e "${RED}❌ 以下の必須Pythonライブラリがインストールされていません:${NC}"
+    for lib in "${MISSING_LIBS[@]}"; do
+        echo "  - $lib"
+    done
+    echo ""
+    echo "  以下のコマンドを実行してインストールしてください:"
+    echo "  pip3 install pygame python-can websockets"
+    echo "  (または: sudo apt install python3-pygame python3-websockets && pip3 install python-can)"
+    exit 1
+fi
+echo -e "${GREEN}  ✅ 依存ライブラリOK${NC}"
+
 # ビルド
 if [ "$SKIP_BUILD" = false ]; then
     echo -e "${YELLOW}[1/2] ビルド中...${NC}"

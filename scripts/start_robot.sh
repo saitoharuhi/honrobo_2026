@@ -51,6 +51,26 @@ fi
 echo -e "${YELLOW}[1.5/3] シリアルポートの権限付与中...${NC}"
 sudo chmod 666 /dev/ttyUSB* /dev/ttyACM* 2>/dev/null || true
 
+# 依存Pythonライブラリのチェック
+echo -e "${YELLOW}[1.8/3] Python依存ライブラリをチェック中...${NC}"
+MISSING_LIBS=()
+python3 -c "import pygame" 2>/dev/null || MISSING_LIBS+=("pygame")
+python3 -c "import can" 2>/dev/null || MISSING_LIBS+=("python-can")
+python3 -c "import websockets" 2>/dev/null || MISSING_LIBS+=("websockets")
+
+if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
+    echo -e "${RED}❌ 以下の必須Pythonライブラリがインストールされていません:${NC}"
+    for lib in "${MISSING_LIBS[@]}"; do
+        echo "  - $lib"
+    done
+    echo ""
+    echo "  以下のコマンドを実行してインストールしてください:"
+    echo "  pip3 install pygame python-can websockets"
+    echo "  (または: sudo apt install python3-pygame python3-websockets && pip3 install python-can)"
+    exit 1
+fi
+echo -e "${GREEN}  ✅ 依存ライブラリOK${NC}"
+
 # ビルド
 if [ "$SKIP_BUILD" = false ]; then
     echo -e "${YELLOW}[2/3] ビルド中...${NC}"
