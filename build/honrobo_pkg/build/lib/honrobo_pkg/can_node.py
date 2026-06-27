@@ -11,7 +11,6 @@ SocketCAN (can0) を使用します。事前に setup_can.sh でインターフ�
 """
 
 import rclpy
-from rclpy.signals import SignalHandlerOptions
 from rclpy.node import Node
 from std_msgs.msg import Int32MultiArray
 import can
@@ -20,8 +19,6 @@ import struct
 import sys
 import time
 from datetime import datetime
-import signal
-import subprocess
 
 
 # ============================================================
@@ -60,7 +57,7 @@ CAN_SIGNALS = {
             'Home_PS': {'start_byte': 2, 'length': 1, 'type': 'uint8'},
         }
     },
-    0x510: {
+    0x160: {
         'name': 'Movement_XYW',
         'signals': {
             'VX': {'start_byte': 0, 'length': 2, 'type': 'int16', 'unit': 'mm/s'},
@@ -326,57 +323,12 @@ class CanNode(Node):
 
 
 def main(args=None):
-    rclpy.init(args=args, signal_handler_options=SignalHandlerOptions.NO)
+    rclpy.init(args=args)
     node = CanNode()
-
-    def _shutdown_prompt(signum=None, frame=None):
-        # 一時的にSIGINTを無視して多重割り込み防止
-        signal.signal(signal.SIGINT, signal.SIG_IGN)
-        
-        # 描画と被らないように改行を入れて表示
-        sys.stdout.write(f"\n\033[1;33m[Ctrl+C を検知しました: can_node]\033[0m\n")
-        sys.stdout.flush()
-        
-        while True:
-            try:
-                # 標準入力バッファクリア
-                try:
-                    import termios
-                    termios.tcflush(sys.stdin, termios.TCIFLUSH)
-                except Exception:
-                    pass
-                ans = input("すべてのプログラムを終了しますか？ (a: すべて終了 / y: このプログラムのみ終了 / c: キャンセルして再開): ").strip().lower()
-            except (KeyboardInterrupt, EOFError):
-                ans = 'y'
-            
-            if ans == 'a':
-                print("すべてのプログラムを終了しています...")
-                subprocess.run(["bash", "/home/haru/Documents/honrobo_2026/scripts/stop_all.sh"])
-                node.destroy_node()
-                rclpy.shutdown()
-                sys.exit(0)
-            elif ans == 'y':
-                print("can_node を終了します...")
-                node.destroy_node()
-                rclpy.shutdown()
-                sys.exit(0)
-            elif ans == 'c':
-                print("実行を再開します...")
-                signal.signal(signal.SIGINT, _shutdown_prompt)
-                return
-            else:
-                print("無効な入力です。'a', 'y', 'c' のいずれかを入力してください。")
-
-    signal.signal(signal.SIGINT, _shutdown_prompt)
-
     try:
-        while rclpy.ok():
-            try:
-                rclpy.spin(node)
-                break
-            except KeyboardInterrupt:
-                # _shutdown_promptが先に実行され、c (キャンセル) の場合のみここに来る
-                pass
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
     finally:
         node.destroy_node()
         rclpy.shutdown()

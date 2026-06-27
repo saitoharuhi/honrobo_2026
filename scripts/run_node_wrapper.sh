@@ -11,6 +11,7 @@
 # ============================================================
 
 NODE_NAME=$1
+NODE_ARGS=("${@:2}")
 SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORKSPACE_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
 SETUP_CMD="source /opt/ros/\$(ls /opt/ros/ | head -1)/setup.bash && source $WORKSPACE_DIR/install/setup.bash"
@@ -19,10 +20,10 @@ SETUP_CMD="source /opt/ros/\$(ls /opt/ros/ | head -1)/setup.bash && source $WORK
 eval "$SETUP_CMD"
 
 while true; do
-    echo -e "\n=== Starting $NODE_NAME ==="
+    echo -e "\n=== Starting $NODE_NAME with args: ${NODE_ARGS[*]} ==="
     
     # ROS 2 ノードを実行
-    ros2 run honrobo_pkg "$NODE_NAME"
+    ros2 run honrobo_pkg "$NODE_NAME" "${NODE_ARGS[@]}"
     EXIT_CODE=$?
     
     # ターミナルの入力バッファをクリア（実行中に押された不要なキー入力を捨てる）

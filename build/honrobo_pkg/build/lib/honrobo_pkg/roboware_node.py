@@ -21,7 +21,6 @@ from geometry_msgs.msg import Twist
 import struct
 import sys
 import threading
-from honrobo_pkg.shutdown_helper import ask_shutdown_action, trigger_stop_all
 
 # ボタン表示名 (ps4_nodeのBUTTON_MAPと対応)
 BUTTON_LABELS = [
@@ -75,7 +74,7 @@ class RobowareNode(Node):
             vy = int(msg.linear.y * VEL_SCALE)
             vz = int(msg.angular.z * VEL_SCALE)
             data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+            self._send_can(0x160, data)
 
     def _joy_cb(self, msg):
         with self.lock:
@@ -92,7 +91,7 @@ class RobowareNode(Node):
             vy = int((msg.axes[1] * MAX_SPEED) * VEL_SCALE)
             vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
             data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+            self._send_can(0x160, data)
 
         # ボタン情報のCAN送信
         if len(msg.buttons) > 16:
@@ -166,10 +165,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        choice = ask_shutdown_action('roboware_node')
-        if choice == 'a':
-            trigger_stop_all()
-        # 'y' と 'c' の場合はそのまま終了またはループ継続
+        pass
     finally:
         node.destroy_node()
         rclpy.shutdown()

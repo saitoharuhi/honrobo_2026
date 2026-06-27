@@ -67,10 +67,23 @@ def auto_detect_ports():
     global _gyro_port, _arduino_port, _status_message
     ports = serial.tools.list_ports.comports()
 
+    # 使用中のCANポートを取得
+    used_can_port = None
+    try:
+        if os.path.exists('/tmp/honrobo_can_port'):
+            with open('/tmp/honrobo_can_port', 'r') as f:
+                used_can_port = f.read().strip()
+    except Exception:
+        pass
+
     _gyro_port = None
     _arduino_port = None
 
     for p in ports:
+        # USB-CANアダプターが使用しているポートは除外
+        if used_can_port and p.device == used_can_port:
+            continue
+
         # WT901などのジャイロは通常 ttyUSB として認識される
         if 'USB' in p.device:
             if _gyro_port is None:
@@ -87,7 +100,7 @@ def auto_detect_ports():
 
 
 def setup_permissions():
-    """シリアルデバイスのアクセス権限を自動付与する"""
+    """シリアルデバイスのアクセス権限を確認し、無ければ警告を出す"""
     devices = []
     if _gyro_port:
         devices.append(_gyro_port)
@@ -97,10 +110,11 @@ def setup_permissions():
     for dev in devices:
         if os.path.exists(dev):
             if not os.access(dev, os.R_OK | os.W_OK):
-                try:
-                    subprocess.run(['sudo', 'chmod', '666', dev], check=True)
-                except Exception:
-                    pass
+                with _output_lock:
+                    _latest_lines['arduino_err'] = (
+                        f"[PERMISSION ERROR] {dev} の読み書き権限がありません。"
+                        "sudo usermod -aG dialout $USER を実行し再ログインしてください。"
+                    )
 
 
 def transform_data(data):
@@ -356,49 +370,6 @@ def main():
     arduino_t.start()
     time.sleep(0.2)
 
-    def _sigterm_handler(signum, frame):
-        global _should_exit
-        _should_exit = True
-        sys.exit(0)
-
-    def _shutdown_prompt(signum=None, frame=None):
-        global _should_exit
-        signal.signal(signal.SIGINT, signal.SIG_IGN) # 多重割り込み防止
-        
-        # 描画と被らないように画面下部に空行を入れてから表示
-        sys.stdout.write('\033[4;0H\033[2K')
-        sys.stdout.write(f"\n\033[1;33m[Ctrl+C を検知しました: zikoiti_node]\033[0m\n")
-        sys.stdout.flush()
-        
-        while True:
-            try:
-                ans = input("すべてのプログラムを終了しますか？ (a: すべて終了 / y: このプログラムのみ終了 / c: キャンセルして再開): ").strip().lower()
-            except (KeyboardInterrupt, EOFError):
-                ans = 'y'
-            
-            if ans == 'a':
-                _should_exit = True
-                print("すべてのプログラムを終了しています...")
-                import subprocess
-                subprocess.run(["bash", "/home/haru/Documents/honrobo_2026/scripts/stop_all.sh"])
-                sys.exit(0)
-            elif ans == 'y':
-                _should_exit = True
-                print("zikoiti_node を終了します...")
-                sys.exit(0)
-            elif ans == 'c':
-                print("実行を再開します...")
-                signal.signal(signal.SIGINT, _shutdown_prompt)
-                # 画面を一度クリアしてメインループに戻る
-                sys.stdout.write('\033[2J')
-                sys.stdout.flush()
-                return
-            else:
-                print("無効な入力です。'a', 'y', 'c' のいずれかを入力してください。")
-
-    signal.signal(signal.SIGINT, _shutdown_prompt)
-    signal.signal(signal.SIGTERM, _sigterm_handler)
-
     try:
         sys.stdout.write('\033[2J')
         while not _should_exit:
@@ -423,7 +394,9 @@ def main():
 
             time.sleep(0.05)
     except KeyboardInterrupt:
-        _shutdown_prompt()
+        pass
+    finally:
+        _should_exit = True
 
 
 if __name__ == '__main__':

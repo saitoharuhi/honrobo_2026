@@ -19,22 +19,32 @@ import threading
 import json
 import math
 import subprocess
+import socket
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool
 from http.server import HTTPServer, SimpleHTTPRequestHandler
-from honrobo_pkg.shutdown_helper import ask_shutdown_action, trigger_stop_all
 
 
 def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        result = subprocess.check_output(
-            ['hostname', '-I']
-        ).decode('utf-8').strip()
-        return result.split(' ')[0]
+        # 実際にルーティング可能なローカルIPを取得（通信は発生しません）
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
     except Exception:
-        return "0.0.0.0"
+        # オフラインや特殊環境時のフォールバック
+        try:
+            result = subprocess.check_output(
+                ['hostname', '-I']
+            ).decode('utf-8').strip()
+            ip = result.split(' ')[0]
+        except Exception:
+            ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
 
 
 # ============================================================
@@ -287,6 +297,10 @@ def _start_ws():
     loop.run_until_complete(_ws_main())
 
 
+class RobustHTTPServer(HTTPServer):
+    allow_reuse_address = True
+
+
 class _UIHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -296,7 +310,7 @@ class _UIHandler(SimpleHTTPRequestHandler):
 
 
 def _start_http():
-    HTTPServer(("0.0.0.0", 8080), _UIHandler).serve_forever()
+    RobustHTTPServer(("0.0.0.0", 8080), _UIHandler).serve_forever()
 
 
 def main(args=None):
@@ -310,10 +324,7 @@ def main(args=None):
     try:
         rclpy.spin(_node)
     except KeyboardInterrupt:
-        choice = ask_shutdown_action('web_node')
-        if choice == 'a':
-            trigger_stop_all()
-        # 'y' と 'c' の場合はそのまま終了またはループ継続
+        pass
     finally:
         if _node:
             _node._stop()

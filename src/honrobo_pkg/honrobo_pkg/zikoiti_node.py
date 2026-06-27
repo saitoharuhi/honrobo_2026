@@ -14,6 +14,7 @@ IMU(WT901ジャイロ) と Arduino(OTOSセンサー) のデータを統合し、
 シリアルポートの自動検出・権限付与を自動で行います。
 """
 
+import re
 import sys
 import os
 import threading
@@ -39,13 +40,10 @@ _output_lock = threading.Lock()
 _latest_lines = defaultdict(str)
 _should_exit = False
 
-# ジャイロから取得した最新の角度(Z)
-_current_gyro_yaw = 0.0
-_gyro_yaw_offset = None
-_gyro_updated = False
+# 外部マイコン直接自己位置使用フラグ
+_use_micro = False
 
 # 自動検出されたポート
-_gyro_port = None
 _arduino_port = None
 _status_message = "ポート検索中..."
 
@@ -62,48 +60,76 @@ def normalize_angle(angle):
     return angle
 
 
+manual_arduino_port = None
+
+
 def auto_detect_ports():
-    """自動でジャイロ(ttyUSB)とArduino(ttyACM)のポートを探す"""
-    global _gyro_port, _arduino_port, _status_message
-    ports = serial.tools.list_ports.comports()
+    """自動でArduino/外部マイコンのポートを探す（手動指定優先）"""
+    global _arduino_port, _status_message, manual_arduino_port
+    
+    # 1. 手動指定されている場合はそちらを最優先
+    _arduino_port = manual_arduino_port
 
-    # 使用中のCANポートを取得
-    used_can_port = None
-    try:
-        if os.path.exists('/tmp/honrobo_can_port'):
-            with open('/tmp/honrobo_can_port', 'r') as f:
-                used_can_port = f.read().strip()
-    except Exception:
+    if _arduino_port:
+        # 必要なポートが手動指定されていれば自動検出は不要
         pass
+    else:
+        ports = serial.tools.list_ports.comports()
 
-    _gyro_port = None
-    _arduino_port = None
+        # 使用中のCANポートを取得
+        used_can_port = None
+        try:
+            if os.path.exists('/tmp/honrobo_can_port'):
+                with open('/tmp/honrobo_can_port', 'r') as f:
+                    used_can_port = f.read().strip()
+        except Exception:
+            pass
 
-    for p in ports:
-        # USB-CANアダプターが使用しているポートは除外
-        if used_can_port and p.device == used_can_port:
-            continue
+        # 1次探索: STM32(STLink VCP) または Arduino らしいポートを優先検出
+        target_port = None
+        for p in ports:
+            desc = p.description.lower()
+            hwid = p.hwid.lower()
 
-        # WT901などのジャイロは通常 ttyUSB として認識される
-        if 'USB' in p.device:
-            if _gyro_port is None:
-                _gyro_port = p.device
-        # Arduino (OTOS) は通常 ttyACM として認識される
-        elif 'ACM' in p.device:
-            if _arduino_port is None:
-                _arduino_port = p.device
+            # CANable (SocketCAN用) は絶対に対象外
+            if 'canable' in desc or '16d0:117e' in hwid:
+                continue
+            if used_can_port and p.device == used_can_port:
+                continue
+
+            # STM32 や STLink や Arduino らしきキーワードがあれば即決
+            if any(k in desc or k in hwid for k in ['stlink', 'st-link', 'stm32', 'arduino', 'ch340', 'cp210']):
+                target_port = p.device
+                break
+
+        # 2次探索: 見つからなかった場合のフォールバック（CANableと使用中ポートを除いた最初のACM/USB）
+        if not target_port:
+            for p in ports:
+                desc = p.description.lower()
+                hwid = p.hwid.lower()
+
+                if 'canable' in desc or '16d0:117e' in hwid:
+                    continue
+                if used_can_port and p.device == used_can_port:
+                    continue
+
+                if 'acm' in p.device.lower() or 'usb' in p.device.lower():
+                    target_port = p.device
+                    break
+
+        _arduino_port = target_port
 
     status = []
-    status.append(f"Gyro: {_gyro_port or '未検出(USB)'}")
-    status.append(f"Arduino: {_arduino_port or '未検出(ACM)'}")
+    if _use_micro:
+        status.append(f"Microcontroller (STM32): {_arduino_port or '未検出'}")
+    else:
+        status.append(f"Arduino (OTOS+Gyro): {_arduino_port or '未検出'}")
     _status_message = " | ".join(status)
 
 
 def setup_permissions():
-    """シリアルデバイスのアクセス権限を確認し、無ければ警告を出す"""
+    """シリアルデバイス of アクセス権限を確認し、無ければ警告を出す"""
     devices = []
-    if _gyro_port:
-        devices.append(_gyro_port)
     if _arduino_port:
         devices.append(_arduino_port)
 
@@ -117,69 +143,7 @@ def setup_permissions():
                     )
 
 
-def transform_data(data):
-    """WT901 IMU データ変換 (リトルエンディアン)"""
-    return struct.unpack('<hhh', data)
 
-
-# ============================================================
-# ジャイロスレッド (WT901)
-# ============================================================
-def gyairo_thread():
-    """WT901ジャイロからZ軸角度を取得し続けるスレッド"""
-    global _should_exit, _current_gyro_yaw, _gyro_yaw_offset, _gyro_updated
-
-    baud = 115200
-
-    while not _should_exit:
-        if not _gyro_port:
-            time.sleep(1.0)
-            continue
-
-        try:
-            ser = serial.Serial(_gyro_port, baud, timeout=0.01)
-            buffer = bytearray()
-
-            while not _should_exit:
-                try:
-                    waiting = ser.in_waiting
-                    if waiting > 0:
-                        buffer.extend(ser.read(waiting))
-
-                        # 1パケットは11バイト
-                        while len(buffer) >= 11:
-                            if buffer[0] == 0x55:
-                                flag = buffer[1]
-
-                                if flag == 0x53:  # 角度データ
-                                    raw_data = buffer[2:8]
-                                    ax, ay, az = transform_data(bytes(raw_data))
-                                    yaw = az / 32768 * 180
-
-                                    if _gyro_yaw_offset is None:
-                                        _gyro_yaw_offset = yaw
-
-                                    _current_gyro_yaw = normalize_angle(
-                                        yaw - _gyro_yaw_offset
-                                    )
-                                    _gyro_updated = True
-
-                                buffer = buffer[11:]
-                            else:
-                                buffer.pop(0)
-                    else:
-                        time.sleep(0.001)
-                except Exception:
-                    pass
-        except Exception as e:
-            with _output_lock:
-                _latest_lines['gyro_err'] = f"[GYRO ERROR] {e}"
-            time.sleep(1.0)
-        finally:
-            try:
-                ser.close()
-            except Exception:
-                pass
 
 
 # ============================================================
@@ -190,6 +154,9 @@ class OtosOdomNode(Node):
 
     def __init__(self):
         super().__init__('zikoiti_node')
+        self.declare_parameter('use_microcontroller', False)
+        self.use_micro = self.get_parameter('use_microcontroller').value or _use_micro
+
         self.port = _arduino_port
         self.ser = None
 
@@ -212,7 +179,7 @@ class OtosOdomNode(Node):
         self.true_y = 0.0
 
     def update(self):
-        """Arduinoからデータを読み取り、オドメトリを計算・配信する"""
+        """シリアルからデータを読み取り、オドメトリを計算・配信する"""
         if not self.port:
             return
 
@@ -223,62 +190,128 @@ class OtosOdomNode(Node):
                     _latest_lines['arduino_err'] = ""
             except Exception as e:
                 with _output_lock:
-                    _latest_lines['arduino_err'] = f"[ARDUINO RECONNECT] {e}"
+                    tag = "MICRO" if self.use_micro else "ARDUINO"
+                    _latest_lines['arduino_err'] = f"[{tag} RECONNECT] {e}"
                 time.sleep(0.5)
                 return
 
         if self.ser.in_waiting > 0:
             try:
-                line = self.ser.readline().decode('utf-8').strip()
+                line = self.ser.readline().decode('utf-8', errors='ignore').strip()
                 if not line or line.startswith('#'):
                     return
 
-                x_inch, y_inch, head_deg = map(float, line.split(','))
-                x_m_raw = x_inch * 0.0254
-                y_m_raw = y_inch * 0.0254
-                theta_arduino = math.radians(head_deg)
+                # 画面表示用にRAWの受信行を保存
+                with _output_lock:
+                    _latest_lines['raw_rx'] = line
 
-                # 初回: 現在値を基準点として保存
-                if self.prev_x_raw is None:
+                # 1. まず、あらゆるラベル（X:, Y:, mm, degなど）にマッチして個別に数値を抽出できるか試みる
+                x_match = re.search(r'x\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+                y_match = re.search(r'y\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+                yaw_match = re.search(r'(yaw|head|z|yaw_deg|yaw_rad|w|omega|gyro)\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+
+                if x_match and y_match and yaw_match:
+                    val1 = float(x_match.group(1))
+                    val2 = float(y_match.group(1))
+                    val3 = float(yaw_match.group(2))
+                else:
+                    # 2. 個別ラベルが無い場合、あるいはマッチしない場合
+                    # カンマ区切りの文字列から数字だけを抽出してパースする
+                    parts = line.split(',')
+                    if len(parts) >= 3:
+                        val1_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[0])
+                        val2_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[1])
+                        val3_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[2])
+                        if val1_nums and val2_nums and val3_nums:
+                            val1 = float(val1_nums[0])
+                            val2 = float(val2_nums[0])
+                            val3 = float(val3_nums[0])
+                        else:
+                            return
+                    else:
+                        # 3. カンマが無く、スペース区切りやその他のノイズ混じり文字列の場合の最終手段
+                        all_nums = re.findall(r'[-+]?\d*\.\d+|\d+', line)
+                        if len(all_nums) >= 3:
+                            val1 = float(all_nums[0])
+                            val2 = float(all_nums[1])
+                            val3 = float(all_nums[2])
+                        else:
+                            return
+
+                if self.use_micro:
+                    # 💡 外部マイコン直接自己位置受信モード
+                    # 1. 座標単位 of X, Y の自動判定 (絶対値が10を超える場合はミリメートル単位とみなす)
+                    if abs(val1) > 10.0 or abs(val2) > 10.0:
+                        self.true_x = val1 / 1000.0
+                        self.true_y = val2 / 1000.0
+                    else:
+                        self.true_x = val1
+                        self.true_y = val2
+
+                    # 2. 角度単位の自動判定 (絶対値が2*piを超える場合は度数法とみなす)
+                    if abs(val3) > 2.0 * math.pi:
+                        z_rad = math.radians(val3)
+                        z_deg = val3
+                    else:
+                        z_rad = val3
+                        z_deg = math.degrees(val3)
+
+                    # 外部用のターミナル表示文言
+                    combined = (
+                        f"EXTERNAL MODE (Microcontroller Serial)\n"
+                        f"  [RAW RX] {line}\n"
+                        f"  [PARSED] X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Yaw: {z_deg:>7.2f} °"
+                    )
+                else:
+                    # 💡 従来モード (OTOS + ジャイロ統合)
+                    # ジャイロはマイコンに直接接続されており、val3 (head_deg) として一緒に送信されます
+                    x_inch, y_inch, head_deg = val1, val2, val3
+                    x_m_raw = x_inch * 0.0254
+                    y_m_raw = y_inch * 0.0254
+                    theta_arduino = math.radians(head_deg)
+
+                    # 初回: 現在値を基準点として保存
+                    if self.prev_x_raw is None:
+                        self.prev_x_raw = x_m_raw
+                        self.prev_y_raw = y_m_raw
+                        self.prev_theta_arduino = theta_arduino
+
+                    # Z(ω) はマイコンから送られてきたジャイロの値 (head_deg) をそのまま使用
+                    z_deg = head_deg
+                    z_rad = theta_arduino
+
+                    # 1. Arduino座標系での移動量（差分）
+                    delta_x_ard = x_m_raw - self.prev_x_raw
+                    delta_y_ard = y_m_raw - self.prev_y_raw
+
+                    # 2. ロボットローカル座標系への逆変換
+                    cos_a = math.cos(self.prev_theta_arduino)
+                    sin_a = math.sin(self.prev_theta_arduino)
+                    local_dx = delta_x_ard * cos_a + delta_y_ard * sin_a
+                    local_dy = -delta_x_ard * sin_a + delta_y_ard * cos_a
+
+                    # 3. ジャイロ角度でワールド座標系へ変換
+                    cos_g = math.cos(z_rad)
+                    sin_g = math.sin(z_rad)
+                    true_dx = local_dx * cos_g - local_dy * sin_g
+                    true_dy = local_dx * sin_g + local_dy * cos_g
+
+                    # 4. 真の座標を更新
+                    self.true_x += true_dx
+                    self.true_y += true_dy
+
+                    # 次回計算用に保存
                     self.prev_x_raw = x_m_raw
                     self.prev_y_raw = y_m_raw
                     self.prev_theta_arduino = theta_arduino
 
-                # Z(ω) はジャイロの値をそのまま使用
-                z_deg = _current_gyro_yaw
-                z_rad = math.radians(z_deg)
+                    # 内部用のターミナル表示文言
+                    combined = (
+                        f"INTERNAL FUSION MODE (OTOS + Gyro via Arduino)\n"
+                        f"  [RAW RX] {line}\n"
+                        f"  [FUSED]  X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Gyro: {z_deg:>7.2f} °"
+                    )
 
-                # 1. Arduino座標系での移動量（差分）
-                delta_x_ard = x_m_raw - self.prev_x_raw
-                delta_y_ard = y_m_raw - self.prev_y_raw
-
-                # 2. ロボットローカル座標系への逆変換
-                cos_a = math.cos(self.prev_theta_arduino)
-                sin_a = math.sin(self.prev_theta_arduino)
-                local_dx = delta_x_ard * cos_a + delta_y_ard * sin_a
-                local_dy = -delta_x_ard * sin_a + delta_y_ard * cos_a
-
-                # 3. ジャイロ角度でワールド座標系へ変換
-                cos_g = math.cos(z_rad)
-                sin_g = math.sin(z_rad)
-                true_dx = local_dx * cos_g - local_dy * sin_g
-                true_dy = local_dx * sin_g + local_dy * cos_g
-
-                # 4. 真の座標を更新
-                self.true_x += true_dx
-                self.true_y += true_dy
-
-                # 次回計算用に保存
-                self.prev_x_raw = x_m_raw
-                self.prev_y_raw = y_m_raw
-                self.prev_theta_arduino = theta_arduino
-
-                # ターミナル表示
-                combined = (
-                    f"X: {self.true_x:>6.3f} m, "
-                    f"Y: {self.true_y:>6.3f} m, "
-                    f"Z: {z_deg:>7.2f} °"
-                )
                 with _output_lock:
                     _latest_lines['combined'] = combined
 
@@ -351,7 +384,17 @@ def arduino_thread():
 # メインエントリーポイント
 # ============================================================
 def main():
-    global _should_exit
+    global _should_exit, _use_micro, manual_gyro_port, manual_arduino_port
+
+    # 引数から外部マイコン直接自己位置使用モードであるかを判別
+    _use_micro = '--use-micro' in sys.argv or any('use_microcontroller:=true' in arg for arg in sys.argv)
+
+    # 手動指定ポートの簡易解析
+    for i, arg in enumerate(sys.argv):
+        if arg == '--gyro-port' and i + 1 < len(sys.argv):
+            manual_gyro_port = sys.argv[i + 1]
+        elif arg == '--arduino-port' and i + 1 < len(sys.argv):
+            manual_arduino_port = sys.argv[i + 1]
 
     sys.stdout.write('\033[2J\033[H')
     sys.stdout.flush()
@@ -360,12 +403,7 @@ def main():
     auto_detect_ports()
     setup_permissions()
 
-    # ジャイロスレッド起動
-    gyairo_t = threading.Thread(target=gyairo_thread, daemon=True)
-    gyairo_t.start()
-    time.sleep(0.2)
-
-    # Arduinoスレッド起動
+    # Arduino / マイコン スレッド起動
     arduino_t = threading.Thread(target=arduino_thread, daemon=True)
     arduino_t.start()
     time.sleep(0.2)
@@ -377,19 +415,27 @@ def main():
                 combined = _latest_lines.get(
                     'combined', 'Waiting for sensor data...'
                 )
-                gyro_err = _latest_lines.get('gyro_err', '')
                 arduino_err = _latest_lines.get('arduino_err', '')
 
-                sys.stdout.write('\033[1;0H\033[2K')
+                # 画面を上書き（カーソルを左上へ）
+                sys.stdout.write('\033[H')
+                sys.stdout.write("====================================================\n")
+                if _use_micro:
+                    sys.stdout.write("  ZIKOITI NODE | Mode: EXTERNAL (Microcontroller Serial)\n")
+                else:
+                    sys.stdout.write("  ZIKOITI NODE | Mode: INTERNAL (OTOS + Gyro via Arduino)\n")
+                sys.stdout.write("====================================================\n")
                 sys.stdout.write(f"[PORT STATUS] {_status_message}\n")
+                sys.stdout.write("----------------------------------------------------\n")
+                sys.stdout.write(f"[ESTIMATION]\n{combined}\n")
+                sys.stdout.write("----------------------------------------------------\n")
 
-                sys.stdout.write('\033[2;0H\033[2K')
-                sys.stdout.write(f"[FUSED POSITION] {combined}\n")
-
-                if gyro_err or arduino_err:
-                    sys.stdout.write('\033[3;0H\033[2K')
-                    sys.stdout.write(f"{gyro_err} {arduino_err}\n")
-
+                if arduino_err:
+                    sys.stdout.write("[ERROR LOGS]\n")
+                    sys.stdout.write(f"  Serial: {arduino_err}\n")
+                else:
+                    sys.stdout.write("\033[K\n\033[K\n")
+                sys.stdout.write("====================================================\n")
                 sys.stdout.flush()
 
             time.sleep(0.05)

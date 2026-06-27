@@ -14,34 +14,50 @@ echo "============================================"
 
 # ACMデバイスの自動検出
 echo ""
-echo "[1/3] ACMデバイスを検索中..."
-ACM_DEVICES=($(ls /dev/ttyACM* 2>/dev/null || true))
+echo "[1/3] CANableデバイスを自動検出中..."
 
-if [ ${#ACM_DEVICES[@]} -eq 0 ]; then
-    echo "  ❌ /dev/ttyACM* が見つかりません。"
-    echo "     USB-CANアダプターが接続されているか確認してください。"
-    exit 1
-fi
+# Pythonを使ってCANableのシリアルポートを自動検出する
+CAN_PORT=$(python3 -c "
+import serial.tools.list_ports
+ports = serial.tools.list_ports.comports()
+for p in ports:
+    desc = p.description.lower()
+    hwid = p.hwid.lower()
+    if 'canable' in desc or '16d0:117e' in hwid:
+        print(p.device)
+        break
+" 2>/dev/null)
 
-echo "  検出されたACMデバイス:"
-for i in "${!ACM_DEVICES[@]}"; do
-    echo "    [$i] ${ACM_DEVICES[$i]}"
-done
-
-# CANアダプターのポートを選択（Arduinoと共存している場合があるため）
-if [ ${#ACM_DEVICES[@]} -eq 1 ]; then
-    CAN_PORT="${ACM_DEVICES[0]}"
-    echo "  → 自動選択: $CAN_PORT"
-else
-    echo ""
-    echo "  CANアダプターのデバイス番号を選択してください:"
-    read -p "  番号 [0-$((${#ACM_DEVICES[@]}-1))]: " SELECTION
-    if [[ "$SELECTION" =~ ^[0-9]+$ ]] && [ "$SELECTION" -lt ${#ACM_DEVICES[@]} ]; then
-        CAN_PORT="${ACM_DEVICES[$SELECTION]}"
-    else
-        echo "  ❌ 無効な選択です。"
+if [ -z "$CAN_PORT" ]; then
+    echo "  ⚠️  CANableが自動検出されませんでした。/dev/ttyACM* からフォールバック検索します..."
+    ACM_DEVICES=($(ls /dev/ttyACM* 2>/dev/null || true))
+    if [ ${#ACM_DEVICES[@]} -eq 0 ]; then
+        echo "  ❌ /dev/ttyACM* が見つかりません。"
+        echo "     USB-CANアダプターが接続されているか確認してください。"
         exit 1
+    elif [ ${#ACM_DEVICES[@]} -eq 1 ]; then
+        CAN_PORT="${ACM_DEVICES[0]}"
+        echo "  → 唯一のACMデバイスをCANポートとして選択: $CAN_PORT"
+    else
+        # 複数ある場合はSTLinkではない方を優先して探す
+        for dev in "${ACM_DEVICES[@]}"; do
+            DEV_NAME=$(basename "$dev")
+            if [ -d "/sys/class/tty/$DEV_NAME/device" ]; then
+                # STLinkなどのシリアルポートであるか簡易チェック
+                if ! grep -q -i "stlink" "/sys/class/tty/$DEV_NAME/device/interface" 2>/dev/null; then
+                    CAN_PORT="$dev"
+                    echo "  → 非STLinkデバイスをCANポートとして自動選択: $CAN_PORT"
+                    break
+                fi
+            fi
+        done
+        if [ -z "$CAN_PORT" ]; then
+            CAN_PORT="${ACM_DEVICES[0]}"
+            echo "  → フォールバックとして最初のデバイスを選択: $CAN_PORT"
+        fi
     fi
+else
+    echo "  ✅ CANableデバイスを自動検出しました: $CAN_PORT"
 fi
 
 echo ""

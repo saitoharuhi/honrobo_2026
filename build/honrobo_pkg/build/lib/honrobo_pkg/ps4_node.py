@@ -9,7 +9,6 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 import pygame
 import sys
-from honrobo_pkg.shutdown_helper import ask_shutdown_action, trigger_stop_all
 
 BUTTON_MAP = {
     0: 'Square', 1: 'Cross', 2: 'Circle', 3: 'Triangle',
@@ -25,6 +24,9 @@ class Ps4Node(Node):
     def __init__(self):
         super().__init__('ps4_node')
         self.pub = self.create_publisher(Joy, 'ps4_joy', 10)
+        # ヘッドレス環境(SSH等)でもイベントループが動くようにダミードライバを設定
+        import os
+        os.environ["SDL_VIDEODRIVER"] = "dummy"
         pygame.init()
         pygame.joystick.init()
         self.joystick = None
@@ -42,12 +44,31 @@ class Ps4Node(Node):
     def _connect(self):
         pygame.joystick.quit()
         pygame.joystick.init()
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
-            self.get_logger().info(f"Connected: {self.joystick.get_name()}")
-        else:
-            self.joystick = None
+        count = pygame.joystick.get_count()
+        self.joystick = None
+
+        for i in range(count):
+            try:
+                joy = pygame.joystick.Joystick(i)
+                joy.init()
+                name = joy.get_name().lower()
+                # PS4コントローラーを表す名称にマッチ
+                if "wireless controller" in name or "sony" in name or "playstation" in name:
+                    self.joystick = joy
+                    self.get_logger().info(f"Connected to PS4 Controller: {joy.get_name()} (Device {i})")
+                    break
+                else:
+                    joy.quit()
+            except Exception:
+                pass
+
+        if not self.joystick and count > 0:
+            try:
+                self.joystick = pygame.joystick.Joystick(0)
+                self.joystick.init()
+                self.get_logger().warn(f"PS4 Controller name not matched. Fallback to device 0: {self.joystick.get_name()}")
+            except Exception as e:
+                self.joystick = None
 
     def _read_input(self):
         pygame.event.pump()
@@ -143,10 +164,7 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        choice = ask_shutdown_action('ps4_node')
-        if choice == 'a':
-            trigger_stop_all()
-        # 'y' と 'c' の場合はそのまま終了またはループ継続
+        pass
     finally:
         pygame.quit()
         node.destroy_node()

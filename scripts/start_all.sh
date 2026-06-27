@@ -87,15 +87,37 @@ else
     echo -e "${YELLOW}[2/3] ビルドスキップ${NC}"
 fi
 
+# 自己位置ソースの確認
+echo -e "\n${CYAN}============================================"
+echo -e " 自己位置ソース (Odometry Source) の選択"
+echo -e "============================================${NC}"
+echo "1) 外部マイコンを使用する (Microcontroller via Serial)"
+echo "2) PC側ノードを使用する (zikoiti_node / OTOS + Gyro via Arduino)"
+read -p "選択 [1-2] (デフォルト: 1): " ODOM_INPUT
+
+USE_MICRO=true
+if [ "$ODOM_INPUT" = "2" ]; then
+    echo -e "${GREEN}  -> PC側自己位置ノード (zikoiti_node / OTOS + Gyro via Arduino) を使用します。${NC}"
+    USE_MICRO=false
+else
+    echo -e "${GREEN}  -> 外部マイコン自己位置 (Serial直接受信) を使用します。${NC}"
+    USE_MICRO=true
+fi
+echo ""
+
 # tmux セッション準備
 echo -e "${YELLOW}[3/3] ノード起動中...${NC}"
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
 
 SETUP_CMD="source /opt/ros/\$(ls /opt/ros/ | head -1)/setup.bash && source $WORKSPACE_DIR/install/setup.bash"
 
-# ① zikoiti_node (自己位置推定)
+# ① zikoiti_node (自己位置推定 / 外部マイコンシリアル受信)
 tmux new-session -d -s "$SESSION_NAME" -n "sensor"
-tmux send-keys -t "$SESSION_NAME:sensor" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh zikoiti_node" C-m
+if [ "$USE_MICRO" = true ]; then
+    tmux send-keys -t "$SESSION_NAME:sensor" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh zikoiti_node --use-micro" C-m
+else
+    tmux send-keys -t "$SESSION_NAME:sensor" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh zikoiti_node" C-m
+fi
 sleep 1
 
 # ② can_node (CAN通信)

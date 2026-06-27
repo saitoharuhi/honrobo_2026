@@ -18,9 +18,11 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Int32MultiArray, Bool
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
 import struct
 import sys
 import threading
+import math
 
 # ボタン表示名 (ps4_nodeのBUTTON_MAPと対応)
 BUTTON_LABELS = [
@@ -31,8 +33,8 @@ BUTTON_LABELS = [
 ]
 AXIS_LABELS = ['LX', 'LY', 'RX', 'RY', 'L2', 'R2']
 
-MAX_SPEED = 500.0       # 最大並進速度 (mm/s)
-MAX_ANGULAR = 45.0      # 最大回転速度 (deg/s)
+MAX_SPEED = 2000.0       # 最大並進速度 (mm/s)
+MAX_ANGULAR = 90.0      # 最大回転速度 (deg/s)
 VEL_SCALE = 10.0        # CAN送信時のスケール倍率
 
 
@@ -44,9 +46,15 @@ class RobowareNode(Node):
         self.create_subscription(Joy, 'ps4_joy', self._joy_cb, 10)
         self.create_subscription(Bool, 'auto_mode', self._mode_cb, 10)
         self.create_subscription(Twist, 'nav_cmd', self._nav_cb, 10)
+        self.create_subscription(Odometry, 'odom', self._odom_cb, 10)
+
+        # 姿勢(Yaw角)
+        self.current_yaw = 0.0
+        self.odom_count = 0
 
         # パブリッシャー
         self.can_pub = self.create_publisher(Int32MultiArray, 'can_tx', 10)
+        self.mode_pub = self.create_publisher(Bool, 'auto_mode', 10)
 
         self.auto_mode = False
         self.state = {
@@ -55,6 +63,15 @@ class RobowareNode(Node):
         }
         self.lock = threading.Lock()
         self.create_timer(0.05, self._print_display)
+
+    def _odom_cb(self, msg):
+        """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得"""
+        self.odom_count += 1
+        q = msg.pose.pose.orientation
+        # クォータニオンからYaw(ヨー角)への変換
+        siny_cosp = 2.0 * (q.w * q.z + q.x * q.y)
+        cosy_cosp = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+        self.current_yaw = math.atan2(siny_cosp, cosy_cosp)
 
     def _mode_cb(self, msg):
         self.auto_mode = msg.data
@@ -66,7 +83,7 @@ class RobowareNode(Node):
     def _nav_cb(self, msg):
         with self.lock:
             self.state['nav_cmd'] = (
-                f"X:{msg.linear.x:>4.0f} Y:{msg.linear.y:>4.0f} "
+                f"X(Lat):{msg.linear.x:>4.0f} Y(Fwd):{msg.linear.y:>4.0f} "
                 f"Z:{msg.angular.z:>4.0f}"
             )
         if self.auto_mode:
@@ -77,6 +94,34 @@ class RobowareNode(Node):
             self._send_can(0x510, data)
 
     def _joy_cb(self, msg):
+        # 自動運転中の緊急割り込み（緊急停止）
+        if self.auto_mode:
+            joy_active = False
+            for axis in msg.axes:
+                if abs(axis) > 0.15:
+                    joy_active = True
+                    break
+            for btn in msg.buttons:
+                if btn == 1:
+                    joy_active = True
+                    break
+            
+            if joy_active:
+                self.get_logger().warn("PS4コントローラー操作を検知: 自動運転を緊急停止します。")
+                # 1. 自動運転モードを解除
+                self.auto_mode = False
+                mode_msg = Bool()
+                mode_msg.data = False
+                self.mode_pub.publish(mode_msg)
+                
+                # 2. ロボットを即座に非常停止 (速度 0)
+                data = struct.pack('>hhh', 0, 0, 0)
+                self._send_can(0x510, data)
+                
+                with self.lock:
+                    self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
+                return
+
         with self.lock:
             self.state['axes'] = list(msg.axes)
             self.state['buttons'] = [
@@ -85,11 +130,28 @@ class RobowareNode(Node):
                 if i < len(BUTTON_LABELS) and v == 1
             ]
 
-        # 手動モード時のスティック→CAN送信
+        # 手動モード時のスティック→CAN送信 (自己位置角度Yawを用いたフィールド基準操縦)
         if not self.auto_mode:
-            vx = int((msg.axes[0] * MAX_SPEED) * VEL_SCALE)
-            vy = int((msg.axes[1] * MAX_SPEED) * VEL_SCALE)
+            # フィールド基準目標速度 (前方向がY軸、左右方向がX軸):
+            #   スティック左右(axes[0]) -> フィールドX方向 (左右スライド)
+            #   スティック上下(axes[1]) -> フィールドY方向 (前進/後退)
+            # ※ axes[0]は右倒しで正なので、左スライドを正とするROS/右手系に合わせるため符号を反転します
+            v_x_field = -msg.axes[0] * MAX_SPEED
+            v_y_field = msg.axes[1] * MAX_SPEED
             vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+
+            # 現在の自己位置角度(Yaw)で回転変換
+            yaw = self.current_yaw
+            cos_y = math.cos(yaw)
+            sin_y = math.sin(yaw)
+
+            # フィールド基準の目標速度 -> ロボットローカル基準の速度へ変換
+            v_x_local = v_x_field * cos_y + v_y_field * sin_y
+            v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+
+            vx = int(v_x_local * VEL_SCALE)
+            vy = int(v_y_local * VEL_SCALE)
+
             data = struct.pack('>hhh', vx, vy, vz)
             self._send_can(0x510, data)
 
@@ -135,6 +197,9 @@ class RobowareNode(Node):
             sys.stdout.write("=" * 52 + "\n")
             sys.stdout.write(
                 f" ROBOWARE NODE | Mode: {self.state['mode']}\n"
+            )
+            sys.stdout.write(
+                f"               | Yaw:  {math.degrees(self.current_yaw):>6.1f} deg (Odom Rx: {self.odom_count})\n"
             )
             sys.stdout.write("=" * 52 + "\n")
 
