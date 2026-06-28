@@ -239,22 +239,11 @@ class OtosOdomNode(Node):
                             return
 
                 if self.use_micro:
-                    # 💡 外部マイコン直接自己位置受信モード
-                    # 1. 座標単位 of X, Y の自動判定 (絶対値が10を超える場合はミリメートル単位とみなす)
-                    if abs(val1) > 10.0 or abs(val2) > 10.0:
-                        self.true_x = val1 / 1000.0
-                        self.true_y = val2 / 1000.0
-                    else:
-                        self.true_x = val1
-                        self.true_y = val2
-
-                    # 2. 角度単位の自動判定 (絶対値が2*piを超える場合は度数法とみなす)
-                    if abs(val3) > 2.0 * math.pi:
-                        z_rad = math.radians(val3)
-                        z_deg = val3
-                    else:
-                        z_rad = val3
-                        z_deg = math.degrees(val3)
+                    # 💡 外部マイコン直接自己位置受信モード (ミリメートル単位・度数法単位に固定)
+                    self.true_x = val1 / 1000.0
+                    self.true_y = val2 / 1000.0
+                    z_deg = val3
+                    z_rad = math.radians(val3)
 
                     # 外部用のターミナル表示文言
                     combined = (
