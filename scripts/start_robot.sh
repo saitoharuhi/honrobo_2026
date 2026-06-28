@@ -7,6 +7,12 @@
 
 set -e
 
+# ============================================================
+# マルチPC通信用設定 (デフォルトでROS_DOMAIN_ID=30、LOCALHOST_ONLY=0を適用)
+# ============================================================
+export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-30}
+export ROS_LOCALHOST_ONLY=0
+
 SESSION_NAME="honrobo_robot"
 SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
 WORKSPACE_DIR="$(cd "$SCRIPTS_DIR/.." && pwd)"
