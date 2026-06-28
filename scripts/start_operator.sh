@@ -63,14 +63,43 @@ if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
 fi
 echo -e "${GREEN}  ✅ 依存ライブラリOK${NC}"
 
-# ビルド
+# ROS 2環境の自動ソース & ビルド
 if [ "$SKIP_BUILD" = false ]; then
-    echo -e "${YELLOW}[1/2] ビルド中...${NC}"
+    echo -e "${YELLOW}[1/2] ビルド準備中 (ROS 2環境の確認)${NC}"
+    if [ -z "$ROS_DISTRO" ]; then
+        ROS_PATH=""
+        for distro in humble foxy galactic iron jazzy; do
+            if [ -d "/opt/ros/$distro" ]; then
+                ROS_PATH="/opt/ros/$distro/setup.bash"
+                break
+            fi
+        done
+        if [ -n "$ROS_PATH" ]; then
+            echo -e "${GREEN}  -> ${ROS_PATH} をロードします${NC}"
+            source "$ROS_PATH"
+        else
+            ANY_ROS=$(ls /opt/ros/ 2>/dev/null | head -1)
+            if [ -n "$ANY_ROS" ]; then
+                echo -e "${GREEN}  -> /opt/ros/$ANY_ROS/setup.bash をロードします${NC}"
+                source "/opt/ros/$ANY_ROS/setup.bash"
+            else
+                echo -e "${RED}❌ ROS 2環境が見つかりません。ROS 2をインストールするか、sourceしてください。${NC}"
+                exit 1
+            fi
+        fi
+    fi
+
+    echo -e "${YELLOW}  ビルド中...${NC}"
     cd "$WORKSPACE_DIR"
-    colcon build --symlink-install 2>&1 | tail -5
+    # setuptoolsの警告によるビルドエラー/警告を回避するため警告出力を無視
+    PYTHONWARNINGS=ignore colcon build --symlink-install 2>&1 | tail -5
+    source "$WORKSPACE_DIR/install/setup.bash"
     echo -e "${GREEN}  ✅ ビルド完了${NC}"
 else
     echo -e "${YELLOW}[1/2] ビルドスキップ${NC}"
+    if [ -f "$WORKSPACE_DIR/install/setup.bash" ]; then
+        source "$WORKSPACE_DIR/install/setup.bash"
+    fi
 fi
 
 # tmux セッション準備
