@@ -105,8 +105,27 @@ if [ "$SKIP_BUILD" = false ]; then
 
     echo -e "${YELLOW}  ビルド中...${NC}"
     cd "$WORKSPACE_DIR"
-    # setuptoolsの警告によるビルドエラー/警告を回避するため警告出力を無視
-    PYTHONWARNINGS=ignore colcon build --symlink-install 2>&1 | tail -5
+    
+    # 他PCからのコピー等によるシンボリックリンク破損や絶対パスの不整合を考慮したビルド
+    BUILD_SUCCESS=true
+    # 一旦警告無視でビルドを試みる
+    PYTHONWARNINGS=ignore colcon build --symlink-install > /tmp/colcon_build.log 2>&1 || BUILD_SUCCESS=false
+    
+    if [ "$BUILD_SUCCESS" = false ]; then
+        echo -e "${YELLOW}⚠️ ビルドが失敗しました。古いビルドキャッシュをクリーンアップして再試行します...${NC}"
+        # 古いディレクトリを完全削除
+        rm -rf build/ install/ log/ 2>/dev/null || true
+        # 再度ビルドを実行
+        echo -e "${YELLOW}  再ビルド中...${NC}"
+        PYTHONWARNINGS=ignore colcon build --symlink-install 2>&1 | tail -5 || {
+            echo -e "${RED}❌ 再ビルドも失敗しました。ログを確認してください:${NC}"
+            cat /tmp/colcon_build.log | tail -20
+            exit 1
+        }
+    else
+        # 成功時は最後の数行だけ表示
+        cat /tmp/colcon_build.log | tail -5
+    fi
     source "$WORKSPACE_DIR/install/setup.bash"
     echo -e "${GREEN}  ✅ ビルド完了${NC}"
 else
