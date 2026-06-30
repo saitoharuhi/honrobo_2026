@@ -3,6 +3,26 @@
 ROS 2 ベースのロボット制御システムです。  
 オドメトリセンサーとジャイロによる自己位置推定、または外部マイコンから送られてくる自己位置値を使用し、PS4コントローラーによるフィールド基準手動操作、WebSocketを介した自動運転制御、CAN通信によるマイコン制御を統合します。
 
+## ファイル構成
+```
+Documents/honrobo_2026/
+├── scripts/
+│     ├── setup_can.sh        # CAN初期設定
+│     ├── start_all.sh        # 全ノード一括起動 (対話プロンプト付き)
+│     ├── start_robot.sh      # ロボット側一括起動 (対話プロンプト付き)
+│     ├── start_operator.sh   # 操縦者側一括起動
+│     └── stop_all.sh         # 全ノード一括停止
+└── src/honrobo_pkg/
+      ├── honrobo_pkg/
+      │   ├── zikoiti_node.py  # 自己位置推定＆受信 (OTOS+Gyro / 外部マイコンシリアル受信)
+      │   ├── can_node.py      # CAN送受信 (操作指令などの送信)
+      │   ├── ps4_node.py      # PS4入力 (ヘッドレス環境対応)
+      │   ├── roboware_node.py # 制御統合 (フィールド基準座標変換)
+      │   └── web_node.py      # WebSocket/HTTP WebUI
+      ├── setup.py
+      └── package.xml
+```
+
 ## アーキテクチャ
 
 起動時の選択により、自己位置（`/odom`）の配信元を「外部マイコン（シリアル経由）」と「PC側ノード（IMU+OTOS）」で切り替え可能です。手動操縦時には、ロボットの角度 `Yaw` に応じて自動的に入力が回転変換（フィールド基準操縦）されます。
@@ -97,23 +117,4 @@ bash scripts/stop_all.sh
 | `0x500` | 送信(TX) | ○△×□↑↓←→ | 形状+矢印ボタン (各1B) |
 | `0x501` | 送信(TX) | R1,R2,R3,L1,L2,L3 | L/Rボタン (各1B) |
 | `0x502` | 送信(TX) | Share, Options, PS | システムボタン (各1B) |
-## ファイル構成
-```
-Documents/honrobo_2026/
-├── scripts/
-│   ├── setup_can.sh        # CAN初期設定
-│   ├── start_all.sh        # 全ノード一括起動 (対話プロンプト付き)
-│   ├── start_robot.sh      # ロボット側一括起動 (対話プロンプト付き)
-│   ├── start_operator.sh   # 操縦者側一括起動
-│   └── stop_all.sh         # 全ノード一括停止
-└── src/honrobo_pkg/
-    ├── honrobo_pkg/
-    │   ├── zikoiti_node.py  # 自己位置推定＆受信 (OTOS+Gyro / 外部マイコンシリアル受信)
-    │   ├── can_node.py      # CAN送受信 (操作指令などの送信)
-    │   ├── ps4_node.py      # PS4入力 (ヘッドレス環境対応)
-    │   ├── roboware_node.py # 制御統合 (フィールド基準座標変換)
-    │   └── web_node.py      # WebSocket/HTTP WebUI
-    ├── setup.py
-    └── package.xml
-```
 
