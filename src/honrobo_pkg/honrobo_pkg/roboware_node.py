@@ -98,35 +98,7 @@ class RobowareNode(Node):
             self._send_can(0x510, data)
 
     def _joy_cb(self, msg):
-        # 自動運転中の緊急割り込み（緊急停止）
-        if self.auto_mode:
-            joy_active = False
-            # 手動操作で使用している軸 (0: 左スティック左右, 1: 左スティック前後, 2: 右スティック左右) に制限してドリフトやトリガーでの誤判定を防止
-            for idx in [0, 1, 2]:
-                if idx < len(msg.axes) and abs(msg.axes[idx]) > 0.5:
-                    joy_active = True
-                    break
-            for btn in msg.buttons:
-                if btn == 1:
-                    joy_active = True
-                    break
-            
-            if joy_active:
-                self.get_logger().warn("PS4コントローラー操作を検知: 自動運転を緊急停止します。")
-                # 1. 自動運転モードを解除
-                self.auto_mode = False
-                mode_msg = Bool()
-                mode_msg.data = False
-                self.mode_pub.publish(mode_msg)
-                
-                # 2. ロボットを即座に非常停止 (速度 0)
-                data = struct.pack('>hhh', 0, 0, 0)
-                self._send_can(0x510, data)
-                
-                with self.lock:
-                    self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
-                return
-
+        # 1. 画面表示用の状態更新（表示のみ）
         with self.lock:
             self.state['axes'] = list(msg.axes)
             self.state['buttons'] = [
@@ -135,32 +107,58 @@ class RobowareNode(Node):
                 if i < len(BUTTON_LABELS) and v == 1
             ]
 
-        # 手動モード時のスティック→CAN送信 (自己位置角度Yawを用いたフィールド基準操縦)
-        if not self.auto_mode:
-            # フィールド基準目標速度 (前方向がY軸、左右方向がX軸):
-            #   スティック左右(axes[0]) -> フィールドX方向 (左右スライド)
-            #   スティック上下(axes[1]) -> フィールドY方向 (前進/後退)
-            # ※ axes[0]は右倒しで正なので、左スライドを正とするROS/右手系に合わせるため符号を反転します
-            v_x_field = -msg.axes[0] * MAX_SPEED
-            v_y_field = msg.axes[1] * MAX_SPEED
-            vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+        # 2. 自動運転中の緊急割り込み（コントローラー操作を検知したら自動運転を即座に非常停止）
+        if self.auto_mode:
+            joy_active = False
+            # 手動操作で使用している軸 (0: LX, 1: LY, 2: RX) の入力チェック
+            for idx in [0, 1, 2]:
+                if idx < len(msg.axes) and abs(msg.axes[idx]) > 0.5:
+                    joy_active = True
+                    break
+            # いずれかのボタンが押された場合もチェック
+            for btn in msg.buttons:
+                if btn == 1:
+                    joy_active = True
+                    break
 
-            # 現在の自己位置角度(Yaw)で回転変換
-            yaw = self.current_yaw
-            cos_y = math.cos(yaw)
-            sin_y = math.sin(yaw)
+            if joy_active:
+                self.get_logger().warn("PS4コントローラー操作を検知: 自動運転を緊急停止し、手動モードへ切り替えます。")
+                # 1. 自動運転モードを解除
+                self.auto_mode = False
+                mode_msg = Bool()
+                mode_msg.data = False
+                self.mode_pub.publish(mode_msg)
 
-            # フィールド基準の目標速度 -> ロボットローカル基準の速度へ変換
-            v_x_local = v_x_field * cos_y + v_y_field * sin_y
-            v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                # 2. ロボットを即座に非常停止 (速度 0)
+                data = struct.pack('>hhh', 0, 0, 0)
+                self._send_can(0x510, data)
 
-            vx = int(v_x_local * VEL_SCALE)
-            vy = int(v_y_local * VEL_SCALE)
+                with self.lock:
+                    self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
 
-            data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+            # 【重要】自動運転中はコントローラーからのCAN送信(0x500/0x501/0x502/0x510)を一切行わない
+            return
 
-        # ボタン情報のCAN送信
+        # 3. 手動モード時のスティック→CAN送信 (0x510)
+        v_x_field = -msg.axes[0] * MAX_SPEED
+        v_y_field = msg.axes[1] * MAX_SPEED
+        vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+
+        # 現在の自己位置角度(Yaw)で回転変換
+        yaw = self.current_yaw
+        cos_y = math.cos(yaw)
+        sin_y = math.sin(yaw)
+
+        v_x_local = v_x_field * cos_y + v_y_field * sin_y
+        v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+
+        vx = int(v_x_local * VEL_SCALE)
+        vy = int(v_y_local * VEL_SCALE)
+
+        data = struct.pack('>hhh', vx, vy, vz)
+        self._send_can(0x510, data)
+
+        # 4. 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
         if len(msg.buttons) > 16:
             # 0x500: ○△×□ + 矢印
             b500 = [

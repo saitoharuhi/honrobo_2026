@@ -58,7 +58,7 @@ echo -e "${YELLOW}[1.5/3] シリアルポートの権限付与中...${NC}"
 sudo chmod 666 /dev/ttyUSB* /dev/ttyACM* 2>/dev/null || true
 
 # 依存Pythonライブラリのチェック
-echo -e "${YELLOW}[1.8/3] Python依存ライブラリをチェック中...${NC}"
+echo -e "${YELLOW}[1.8/3] 依存ライブラリ (Python & ROS 2 Nav2) をチェック中...${NC}"
 MISSING_LIBS=()
 python3 -c "import pygame" 2>/dev/null || MISSING_LIBS+=("pygame")
 python3 -c "import can" 2>/dev/null || MISSING_LIBS+=("python-can")
@@ -75,7 +75,20 @@ if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
     echo "  (または: sudo apt install python3-pygame python3-websockets && pip3 install python-can)"
     exit 1
 fi
-echo -e "${GREEN}  ✅ 依存ライブラリOK${NC}"
+
+# Nav2 依存パッケージの確認
+DISTRO="${ROS_DISTRO:-humble}"
+MISSING_NAV2=false
+python3 -c "import nav2_common" 2>/dev/null || MISSING_NAV2=true
+python3 -c "import nav2_msgs" 2>/dev/null || MISSING_NAV2=true
+
+if [ "$MISSING_NAV2" = true ]; then
+    echo -e "${RED}❌ ROS 2 Nav2パッケージが未インストールです:${NC}"
+    echo "  以下のコマンドを実行してインストールしてください:"
+    echo "  sudo apt update && sudo apt install -y ros-$DISTRO-navigation2 ros-$DISTRO-nav2-bringup ros-$DISTRO-nav2-common ros-$DISTRO-nav2-msgs"
+    exit 1
+fi
+echo -e "${GREEN}  ✅ 依存ライブラリ & Nav2 OK${NC}"
 
 # ROS 2環境の自動ソース & ビルド
 if [ "$SKIP_BUILD" = false ]; then
