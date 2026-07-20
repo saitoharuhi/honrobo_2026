@@ -8,6 +8,7 @@ setup.py
 ../../build/honrobo_pkg/honrobo_pkg.egg-info/requires.txt
 ../../build/honrobo_pkg/honrobo_pkg.egg-info/top_level.txt
 ../../build/honrobo_pkg/honrobo_pkg.egg-info/zip-safe
+config/nav2_params.yaml
 honrobo_pkg/__init__.py
 honrobo_pkg/can_node.py
 honrobo_pkg/ps4_node.py
@@ -21,4 +22,11 @@ honrobo_pkg.egg-info/entry_points.txt
 honrobo_pkg.egg-info/requires.txt
 honrobo_pkg.egg-info/top_level.txt
 honrobo_pkg.egg-info/zip-safe
+launch/nav2.launch.py
+map/map.png
+map/map.yaml
+map/map_blue.png
+map/map_blue.yaml
+map/map_red.png
+map/map_red.yaml
 resource/honrobo_pkg

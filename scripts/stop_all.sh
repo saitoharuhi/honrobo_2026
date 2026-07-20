@@ -46,4 +46,8 @@ for port in 8080 8765; do
     fi
 done
 
+# 4. Nav2 関連の全プロセスを終了
+pkill -f "nav2" 2>/dev/null || true
+pkill -9 -f "nav2" 2>/dev/null || true
+
 echo -e "${GREEN}  ✅ クリーンアップ完了${NC}"

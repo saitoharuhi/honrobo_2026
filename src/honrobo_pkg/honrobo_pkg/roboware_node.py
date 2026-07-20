@@ -81,15 +81,19 @@ class RobowareNode(Node):
             )
 
     def _nav_cb(self, msg):
+        vx_display = msg.linear.x * 1000.0
+        vy_display = msg.linear.y * 1000.0
+        vz_display = math.degrees(msg.angular.z)
         with self.lock:
             self.state['nav_cmd'] = (
-                f"X(Lat):{msg.linear.x:>4.0f} Y(Fwd):{msg.linear.y:>4.0f} "
-                f"Z:{msg.angular.z:>4.0f}"
+                f"X(Lat):{vx_display:>4.0f} Y(Fwd):{vy_display:>4.0f} "
+                f"Z:{vz_display:>4.0f}"
             )
         if self.auto_mode:
-            vx = int(msg.linear.x * VEL_SCALE)
-            vy = int(msg.linear.y * VEL_SCALE)
-            vz = int(msg.angular.z * VEL_SCALE)
+            # nav2: [m/s], [rad/s] -> CAN: [mm/s * 10], [deg/s * 10]
+            vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
+            vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
+            vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
             data = struct.pack('>hhh', vx, vy, vz)
             self._send_can(0x510, data)
 
@@ -97,8 +101,9 @@ class RobowareNode(Node):
         # 自動運転中の緊急割り込み（緊急停止）
         if self.auto_mode:
             joy_active = False
-            for axis in msg.axes:
-                if abs(axis) > 0.15:
+            # 手動操作で使用している軸 (0: 左スティック左右, 1: 左スティック前後, 2: 右スティック左右) に制限してドリフトやトリガーでの誤判定を防止
+            for idx in [0, 1, 2]:
+                if idx < len(msg.axes) and abs(msg.axes[idx]) > 0.5:
                     joy_active = True
                     break
             for btn in msg.buttons:

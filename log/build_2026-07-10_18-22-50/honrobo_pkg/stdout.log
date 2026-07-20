@@ -1,0 +1,23 @@
+running develop
+running egg_info
+writing honrobo_pkg.egg-info/PKG-INFO
+writing dependency_links to honrobo_pkg.egg-info/dependency_links.txt
+writing entry points to honrobo_pkg.egg-info/entry_points.txt
+writing requirements to honrobo_pkg.egg-info/requires.txt
+writing top-level names to honrobo_pkg.egg-info/top_level.txt
+reading manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)
+Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+
+Installed /home/haru/Documents/honrobo_2026/build/honrobo_pkg
+running symlink_data
+symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map

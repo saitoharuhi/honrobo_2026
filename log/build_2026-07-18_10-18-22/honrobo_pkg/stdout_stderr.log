@@ -1,0 +1,47 @@
+running develop
+Removing /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)
+running egg_info
+writing ../../build/honrobo_pkg/honrobo_pkg.egg-info/PKG-INFO
+writing dependency_links to ../../build/honrobo_pkg/honrobo_pkg.egg-info/dependency_links.txt
+writing entry points to ../../build/honrobo_pkg/honrobo_pkg.egg-info/entry_points.txt
+writing requirements to ../../build/honrobo_pkg/honrobo_pkg.egg-info/requires.txt
+writing top-level names to ../../build/honrobo_pkg/honrobo_pkg.egg-info/top_level.txt
+reading manifest file '../../build/honrobo_pkg/honrobo_pkg.egg-info/SOURCES.txt'
+writing manifest file '../../build/honrobo_pkg/honrobo_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+copying honrobo_pkg/roboware_node.py -> /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg
+running install
+running install_lib
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/ps4_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/__init__.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/web_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/can_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/zikoiti_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+copying /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build/lib/honrobo_pkg/roboware_node.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/ps4_node.py to ps4_node.cpython-310.pyc
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/web_node.py to web_node.cpython-310.pyc
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/can_node.py to can_node.cpython-310.pyc
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/zikoiti_node.py to zikoiti_node.cpython-310.pyc
+byte-compiling /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg/roboware_node.py to roboware_node.cpython-310.pyc
+running install_data
+copying resource/honrobo_pkg -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index/packages
+copying package.xml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg
+copying launch/nav2.launch.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/launch
+copying config/nav2_params.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/config
+copying map/map.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+copying map/map.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+copying map/map_red.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+copying map/map_red.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+copying map/map_blue.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+copying map/map_blue.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+running install_egg_info
+Copying ../../build/honrobo_pkg/honrobo_pkg.egg-info to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo_pkg-1.0.0-py3.10.egg-info
+running install_scripts
+Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+writing list of installed files to '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/install.log'

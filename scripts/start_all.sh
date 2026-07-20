@@ -153,6 +153,24 @@ else
 fi
 echo ""
 
+# 競技エリア・マップ (Map Zone) の選択
+echo -e "\n${CYAN}============================================"
+echo -e " 競技エリア・マップ (Map Zone) の選択"
+echo -e "============================================${NC}"
+echo "1) 赤ゾーン (Red Zone - Left Side)"
+echo "2) 青ゾーン (Blue Zone - Right Side)"
+read -p "選択 [1-2] (デフォルト: 1): " ZONE_INPUT
+
+MAP_FILE="map_red.yaml"
+if [ "$ZONE_INPUT" = "2" ]; then
+    echo -e "${GREEN}  -> 青ゾーン用のマップ (map_blue.yaml) を使用します。${NC}"
+    MAP_FILE="map_blue.yaml"
+else
+    echo -e "${GREEN}  -> 赤ゾーン用のマップ (map_red.yaml) を使用します。${NC}"
+    MAP_FILE="map_red.yaml"
+fi
+echo ""
+
 # tmux セッション準備
 echo -e "${YELLOW}[3/3] ノード起動中...${NC}"
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
@@ -186,6 +204,11 @@ sleep 0.5
 # ⑤ web_node (WebSocket + HTTP)
 tmux new-window -t "$SESSION_NAME" -n "web"
 tmux send-keys -t "$SESSION_NAME:web" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh web_node" C-m
+sleep 0.5
+
+# ⑥ nav2 (Nav2自律移動スタック)
+tmux new-window -t "$SESSION_NAME" -n "nav2"
+tmux send-keys -t "$SESSION_NAME:nav2" "$SETUP_CMD && ros2 launch honrobo_pkg nav2.launch.py map:=\$(ros2 pkg prefix honrobo_pkg)/share/honrobo_pkg/map/$MAP_FILE" C-m
 
 tmux select-window -t "$SESSION_NAME:sensor"
 
@@ -204,6 +227,7 @@ echo "  [1] can      - can_node (CAN通信)"
 echo "  [2] ps4      - ps4_node (PS4コントローラー)"
 echo "  [3] roboware - roboware_node (制御統合)"
 echo "  [4] web      - web_node (WebSocket/HTTP)"
+echo "  [5] nav2     - nav2.launch.py (Nav2自律移動スタック)"
 echo ""
 
 tmux attach -t "$SESSION_NAME"

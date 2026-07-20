@@ -57,7 +57,7 @@ CAN_SIGNALS = {
             'Home_PS': {'start_byte': 2, 'length': 1, 'type': 'uint8'},
         }
     },
-    0x160: {
+    0x510: {
         'name': 'Movement_XYW',
         'signals': {
             'VX': {'start_byte': 0, 'length': 2, 'type': 'int16', 'unit': 'mm/s'},

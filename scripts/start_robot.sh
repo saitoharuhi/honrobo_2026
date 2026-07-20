@@ -153,9 +153,29 @@ else
 fi
 echo ""
 
+# 競技エリア・マップ (Map Zone) の選択
+echo -e "\n${CYAN}============================================"
+echo -e " 競技エリア・マップ (Map Zone) の選択"
+echo -e "============================================${NC}"
+echo "1) 赤ゾーン (Red Zone - Left Side)"
+echo "2) 青ゾーン (Blue Zone - Right Side)"
+read -p "選択 [1-2] (デフォルト: 1): " ZONE_INPUT
+
+MAP_FILE="map_red.yaml"
+if [ "$ZONE_INPUT" = "2" ]; then
+    echo -e "${GREEN}  -> 青ゾーン用のマップ (map_blue.yaml) を使用します。${NC}"
+    MAP_FILE="map_blue.yaml"
+else
+    echo -e "${GREEN}  -> 赤ゾーン用のマップ (map_red.yaml) を使用します。${NC}"
+    MAP_FILE="map_red.yaml"
+fi
+echo ""
+
 # tmux セッション準備
 echo -e "${YELLOW}[3/3] ロボット側ノード起動中...${NC}"
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
+
+SETUP_CMD="source /opt/ros/\$(ls /opt/ros/ | head -1)/setup.bash && source $WORKSPACE_DIR/install/setup.bash"
 
 # ① zikoiti_node (自己位置推定 / 外部マイコンシリアル受信)
 tmux new-session -d -s "$SESSION_NAME" -n "sensor"
@@ -179,6 +199,11 @@ sleep 0.5
 # ④ web_node
 tmux new-window -t "$SESSION_NAME" -n "web"
 tmux send-keys -t "$SESSION_NAME:web" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh web_node" C-m
+sleep 0.5
+
+# ⑤ nav2 (Nav2自律移動スタック)
+tmux new-window -t "$SESSION_NAME" -n "nav2"
+tmux send-keys -t "$SESSION_NAME:nav2" "$SETUP_CMD && ros2 launch honrobo_pkg nav2.launch.py map:=\$(ros2 pkg prefix honrobo_pkg)/share/honrobo_pkg/map/$MAP_FILE" C-m
 
 tmux select-window -t "$SESSION_NAME:sensor"
 
@@ -186,10 +211,17 @@ echo ""
 echo -e "${GREEN}============================================${NC}"
 echo -e "${GREEN} ✅ ロボット側ノード起動完了!${NC}"
 echo -e "${GREEN}============================================${NC}"
-echo "  ※操縦者PC側で 'start_operator.sh' を起動してください。"
+echo "  ※操縦者PC側で 'start_operator.sh' または 'operator.sh' を起動してください。"
 echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
+echo "  ウィンドウ切替:  Ctrl+B → 数字(0-4)"
 echo "  停止:           bash scripts/stop_all.sh"
+echo ""
+echo "  [0] sensor   - zikoiti_node (自己位置推定)"
+echo "  [1] can      - can_node (CAN通信)"
+echo "  [2] roboware - roboware_node (制御統合)"
+echo "  [3] web      - web_node (WebSocket/HTTP)"
+echo "  [4] nav2     - nav2.launch.py (Nav2自律移動スタック)"
 echo ""
 
 tmux attach -t "$SESSION_NAME"

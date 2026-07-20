@@ -30,7 +30,8 @@ from collections import defaultdict
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Quaternion
+from geometry_msgs.msg import Quaternion, TransformStamped
+from tf2_ros import TransformBroadcaster
 
 
 # ============================================================
@@ -177,6 +178,7 @@ class OtosOdomNode(Node):
         # ジャイロ角度を考慮した真の座標
         self.true_x = 0.0
         self.true_y = 0.0
+        self.tf_broadcaster = TransformBroadcaster(self)
 
     def update(self):
         """シリアルからデータを読み取り、オドメトリを計算・配信する"""
@@ -313,6 +315,17 @@ class OtosOdomNode(Node):
                 msg.pose.pose.position.y = self.true_y
                 msg.pose.pose.orientation = self._euler_to_quat(0, 0, z_rad)
                 self.odom_pub.publish(msg)
+
+                # TF ブロードキャスト (odom -> base_link)
+                t = TransformStamped()
+                t.header.stamp = msg.header.stamp
+                t.header.frame_id = 'odom'
+                t.child_frame_id = 'base_link'
+                t.transform.translation.x = self.true_x
+                t.transform.translation.y = self.true_y
+                t.transform.translation.z = 0.0
+                t.transform.rotation = msg.pose.pose.orientation
+                self.tf_broadcaster.sendTransform(t)
 
             except ValueError as e:
                 with _output_lock:

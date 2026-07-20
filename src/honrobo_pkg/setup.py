@@ -10,6 +10,13 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        ('share/' + package_name + '/launch', ['launch/nav2.launch.py']),
+        ('share/' + package_name + '/config', ['config/nav2_params.yaml']),
+        ('share/' + package_name + '/map', [
+            'map/map.yaml', 'map/map.png',
+            'map/map_red.yaml', 'map/map_red.png',
+            'map/map_blue.yaml', 'map/map_blue.png'
+        ]),
     ],
     install_requires=[
         'setuptools',
