@@ -47,7 +47,7 @@ fi
 
 # CAN セットアップ
 if [ "$SKIP_CAN" = false ]; then
-    echo -e "${YELLOW}[1/3] CAN通信セットアップ${NC}"
+    echo -e "${YELLOW}[1/3] CAN通信セットアップ (パスワードを求められた場合は入力してEnterを押してください)${NC}"
     sudo bash "$SCRIPTS_DIR/setup_can.sh"
 else
     echo -e "${YELLOW}[1/3] CANスキップ${NC}"
