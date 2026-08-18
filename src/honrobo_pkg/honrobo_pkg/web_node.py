@@ -1269,9 +1269,26 @@ class _UIHandler(SimpleHTTPRequestHandler):
     def do_GET(self):
         if self.path.startswith("/map.png"):
             import os
+            from ament_index_python.packages import get_package_share_directory
             map_name = getattr(_node, "map_image_name", "map_red.png") if _node else "map_red.png"
-            file_path = os.path.join("/home/haru/Documents/honrobo_2026/src/honrobo_pkg/map", map_name)
-            if os.path.exists(file_path):
+            
+            file_path = None
+            try:
+                pkg_share = get_package_share_directory('honrobo_pkg')
+                file_path = os.path.join(pkg_share, 'map', map_name)
+            except Exception:
+                pass
+                
+            if not file_path or not os.path.exists(file_path):
+                # ワークスペースのローカル相対パスを試みる
+                local_path = os.path.join(os.getcwd(), 'src/honrobo_pkg/map', map_name)
+                if os.path.exists(local_path):
+                    file_path = local_path
+                else:
+                    # 最終的な絶対パスフォールバック
+                    file_path = os.path.join("/home/haru/Documents/honrobo_2026/src/honrobo_pkg/map", map_name)
+
+            if file_path and os.path.exists(file_path):
                 self.send_response(200)
                 self.send_header("Content-type", "image/png")
                 self.end_headers()
