@@ -23,6 +23,7 @@ import struct
 import sys
 import threading
 import math
+import time
 
 # ボタン表示名 (ps4_nodeのBUTTON_MAPと対応)
 BUTTON_LABELS = [
@@ -57,12 +58,16 @@ class RobowareNode(Node):
         self.mode_pub = self.create_publisher(Bool, 'auto_mode', 10)
 
         self.auto_mode = False
+        self.latest_joy_msg = None
+        self.latest_nav_msg = None
         self.state = {
             'mode': 'MANUAL', 'axes': [0.0] * 6,
             'buttons': [], 'nav_cmd': 'None', 'last_can': 'None',
         }
         self.lock = threading.Lock()
         self.create_timer(0.05, self._print_display)
+        # CAN送信周波数を 1000Hz (0.001秒周期 / 1ms) に統一するタイマー
+        self.create_timer(0.001, self._can_tx_timer)
 
     def _odom_cb(self, msg):
         """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得"""
@@ -89,44 +94,10 @@ class RobowareNode(Node):
                 f"X(Lat):{vx_display:>4.0f} Y(Fwd):{vy_display:>4.0f} "
                 f"Z:{vz_display:>4.0f}"
             )
-        if self.auto_mode:
-            # nav2: [m/s], [rad/s] -> CAN: [mm/s * 10], [deg/s * 10]
-            vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
-            vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
-            vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
-            data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+        self.latest_nav_msg = msg
 
     def _joy_cb(self, msg):
-        # 自動運転中の緊急割り込み（緊急停止）
-        if self.auto_mode:
-            joy_active = False
-            # 手動操作で使用している軸 (0: 左スティック左右, 1: 左スティック前後, 2: 右スティック左右) に制限してドリフトやトリガーでの誤判定を防止
-            for idx in [0, 1, 2]:
-                if idx < len(msg.axes) and abs(msg.axes[idx]) > 0.5:
-                    joy_active = True
-                    break
-            for btn in msg.buttons:
-                if btn == 1:
-                    joy_active = True
-                    break
-            
-            if joy_active:
-                self.get_logger().warn("PS4コントローラー操作を検知: 自動運転を緊急停止します。")
-                # 1. 自動運転モードを解除
-                self.auto_mode = False
-                mode_msg = Bool()
-                mode_msg.data = False
-                self.mode_pub.publish(mode_msg)
-                
-                # 2. ロボットを即座に非常停止 (速度 0)
-                data = struct.pack('>hhh', 0, 0, 0)
-                self._send_can(0x510, data)
-                
-                with self.lock:
-                    self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
-                return
-
+        # 1. 画面表示用の状態更新（表示のみ）
         with self.lock:
             self.state['axes'] = list(msg.axes)
             self.state['buttons'] = [
@@ -134,60 +105,96 @@ class RobowareNode(Node):
                 for i, v in enumerate(msg.buttons)
                 if i < len(BUTTON_LABELS) and v == 1
             ]
+        self.latest_joy_msg = msg
 
-        # 手動モード時のスティック→CAN送信 (自己位置角度Yawを用いたフィールド基準操縦)
-        if not self.auto_mode:
-            # フィールド基準目標速度 (前方向がY軸、左右方向がX軸):
-            #   スティック左右(axes[0]) -> フィールドX方向 (左右スライド)
-            #   スティック上下(axes[1]) -> フィールドY方向 (前進/後退)
-            # ※ axes[0]は右倒しで正なので、左スライドを正とするROS/右手系に合わせるため符号を反転します
-            v_x_field = -msg.axes[0] * MAX_SPEED
-            v_y_field = msg.axes[1] * MAX_SPEED
-            vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+        # 2. 自動運転中の緊急割り込み（コントローラー操作を検知したら自動運転を即座に非常停止）
+        if self.auto_mode:
+            joy_active = False
+            # 手動操作で使用している軸 (0: LX, 1: LY, 2: RX) の入力チェック
+            for idx in [0, 1, 2]:
+                if idx < len(msg.axes) and abs(msg.axes[idx]) > 0.5:
+                    joy_active = True
+                    break
+            # いずれかのボタンが押された場合もチェック
+            for btn in msg.buttons:
+                if btn == 1:
+                    joy_active = True
+                    break
 
-            # 現在の自己位置角度(Yaw)で回転変換
-            yaw = self.current_yaw
-            cos_y = math.cos(yaw)
-            sin_y = math.sin(yaw)
+            if joy_active:
+                self.get_logger().warn("PS4コントローラー操作を検知: 自動運転を緊急停止し、手動モードへ切り替えます。")
+                # 1. 自動運転モードを解除
+                self.auto_mode = False
+                mode_msg = Bool()
+                mode_msg.data = False
+                self.mode_pub.publish(mode_msg)
 
-            # フィールド基準の目標速度 -> ロボットローカル基準の速度へ変換
-            v_x_local = v_x_field * cos_y + v_y_field * sin_y
-            v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                # 2. ロボットを即座に非常停止 (速度 0)
+                data = struct.pack('>hhh', 0, 0, 0)
+                self._send_can(0x510, data)
 
-            vx = int(v_x_local * VEL_SCALE)
-            vy = int(v_y_local * VEL_SCALE)
+                with self.lock:
+                    self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
 
-            data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+    def _can_tx_timer(self):
+        """1000Hz (0.001秒周期 / 1ms) でCANデータを定周期パブリッシュ"""
+        if self.auto_mode:
+            if self.latest_nav_msg is not None:
+                msg = self.latest_nav_msg
+                vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
+                vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
+                vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
+                data = struct.pack('>hhh', vx, vy, vz)
+                self._send_can(0x510, data)
+        else:
+            if self.latest_joy_msg is not None:
+                msg = self.latest_joy_msg
+                # 手動モード時のスティック→CAN送信 (0x510)
+                v_x_field = -msg.axes[0] * MAX_SPEED
+                v_y_field = msg.axes[1] * MAX_SPEED
+                vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
 
-        # ボタン情報のCAN送信
-        if len(msg.buttons) > 16:
-            # 0x500: ○△×□ + 矢印
-            b500 = [
-                msg.buttons[2], msg.buttons[3],
-                msg.buttons[1], msg.buttons[0],
-                msg.buttons[13], msg.buttons[14],
-                msg.buttons[15], msg.buttons[16],
-            ]
-            self._send_can(0x500, b500)
+                yaw = self.current_yaw
+                cos_y = math.cos(yaw)
+                sin_y = math.sin(yaw)
 
-            # 0x501: R1,R2,R3,L1,L2,L3
-            b501 = [
-                msg.buttons[5], msg.buttons[7], msg.buttons[12],
-                msg.buttons[4], msg.buttons[6], msg.buttons[11],
-                0, 0,
-            ]
-            self._send_can(0x501, b501)
+                v_x_local = v_x_field * cos_y + v_y_field * sin_y
+                v_y_local = -v_x_field * sin_y + v_y_field * cos_y
 
-            # 0x502: Share, Options, PS
-            b502 = [
-                msg.buttons[8], msg.buttons[9], msg.buttons[10],
-                0, 0, 0, 0, 0,
-            ]
-            self._send_can(0x502, b502)
+                vx = int(v_x_local * VEL_SCALE)
+                vy = int(v_y_local * VEL_SCALE)
+
+                data = struct.pack('>hhh', vx, vy, vz)
+                self._send_can(0x510, data)
+
+                # 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
+                if len(msg.buttons) > 16:
+                    # 0x500: ○△×□ + 矢印
+                    b500 = [
+                        msg.buttons[2], msg.buttons[3],
+                        msg.buttons[1], msg.buttons[0],
+                        msg.buttons[13], msg.buttons[14],
+                        msg.buttons[15], msg.buttons[16],
+                    ]
+                    self._send_can(0x500, b500)
+
+                    # 0x501: R1,R2,R3,L1,L2,L3
+                    b501 = [
+                        msg.buttons[5], msg.buttons[7], msg.buttons[12],
+                        msg.buttons[4], msg.buttons[6], msg.buttons[11],
+                        0, 0,
+                    ]
+                    self._send_can(0x501, b501)
+
+                    # 0x502: Share, Options, PS
+                    b502 = [
+                        msg.buttons[8], msg.buttons[9], msg.buttons[10],
+                        0, 0, 0, 0, 0,
+                    ]
+                    self._send_can(0x502, b502)
 
     def _send_can(self, can_id, data):
-        """CAN送信データをcan_nodeへパブリッシュ"""
+        """CAN送信データをcan_nodeへパブリッシュ (1ID毎に1ms休止)"""
         msg = Int32MultiArray()
         msg.data = [can_id] + list(data)
         self.can_pub.publish(msg)
@@ -195,6 +202,7 @@ class RobowareNode(Node):
             self.state['last_can'] = (
                 f"ID:0x{can_id:03X} Data:{list(data)}"
             )
+        time.sleep(0.001)
 
     def _print_display(self):
         with self.lock:

@@ -15,7 +15,8 @@ setup(
         ('share/' + package_name + '/map', [
             'map/map.yaml', 'map/map.png',
             'map/map_red.yaml', 'map/map_red.png',
-            'map/map_blue.yaml', 'map/map_blue.png'
+            'map/map_blue.yaml', 'map/map_blue.png',
+            'map/map_test.yaml', 'map/map_test.png'
         ]),
     ],
     install_requires=[

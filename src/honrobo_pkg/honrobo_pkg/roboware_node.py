@@ -23,6 +23,7 @@ import struct
 import sys
 import threading
 import math
+import time
 
 # ボタン表示名 (ps4_nodeのBUTTON_MAPと対応)
 BUTTON_LABELS = [
@@ -57,12 +58,16 @@ class RobowareNode(Node):
         self.mode_pub = self.create_publisher(Bool, 'auto_mode', 10)
 
         self.auto_mode = False
+        self.latest_joy_msg = None
+        self.latest_nav_msg = None
         self.state = {
             'mode': 'MANUAL', 'axes': [0.0] * 6,
             'buttons': [], 'nav_cmd': 'None', 'last_can': 'None',
         }
         self.lock = threading.Lock()
         self.create_timer(0.05, self._print_display)
+        # CAN送信周波数を 1000Hz (0.001秒周期 / 1ms) に統一するタイマー
+        self.create_timer(0.001, self._can_tx_timer)
 
     def _odom_cb(self, msg):
         """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得"""
@@ -89,13 +94,7 @@ class RobowareNode(Node):
                 f"X(Lat):{vx_display:>4.0f} Y(Fwd):{vy_display:>4.0f} "
                 f"Z:{vz_display:>4.0f}"
             )
-        if self.auto_mode:
-            # nav2: [m/s], [rad/s] -> CAN: [mm/s * 10], [deg/s * 10]
-            vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
-            vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
-            vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
-            data = struct.pack('>hhh', vx, vy, vz)
-            self._send_can(0x510, data)
+        self.latest_nav_msg = msg
 
     def _joy_cb(self, msg):
         # 1. 画面表示用の状態更新（表示のみ）
@@ -106,6 +105,7 @@ class RobowareNode(Node):
                 for i, v in enumerate(msg.buttons)
                 if i < len(BUTTON_LABELS) and v == 1
             ]
+        self.latest_joy_msg = msg
 
         # 2. 自動運転中の緊急割り込み（コントローラー操作を検知したら自動運転を即座に非常停止）
         if self.auto_mode:
@@ -136,56 +136,65 @@ class RobowareNode(Node):
                 with self.lock:
                     self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
 
-            # 【重要】自動運転中はコントローラーからのCAN送信(0x500/0x501/0x502/0x510)を一切行わない
-            return
+    def _can_tx_timer(self):
+        """1000Hz (0.001秒周期 / 1ms) でCANデータを定周期パブリッシュ"""
+        if self.auto_mode:
+            if self.latest_nav_msg is not None:
+                msg = self.latest_nav_msg
+                vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
+                vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
+                vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
+                data = struct.pack('>hhh', vx, vy, vz)
+                self._send_can(0x510, data)
+        else:
+            if self.latest_joy_msg is not None:
+                msg = self.latest_joy_msg
+                # 手動モード時のスティック→CAN送信 (0x510)
+                v_x_field = -msg.axes[0] * MAX_SPEED
+                v_y_field = msg.axes[1] * MAX_SPEED
+                vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
 
-        # 3. 手動モード時のスティック→CAN送信 (0x510)
-        v_x_field = -msg.axes[0] * MAX_SPEED
-        v_y_field = msg.axes[1] * MAX_SPEED
-        vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+                yaw = self.current_yaw
+                cos_y = math.cos(yaw)
+                sin_y = math.sin(yaw)
 
-        # 現在の自己位置角度(Yaw)で回転変換
-        yaw = self.current_yaw
-        cos_y = math.cos(yaw)
-        sin_y = math.sin(yaw)
+                v_x_local = v_x_field * cos_y + v_y_field * sin_y
+                v_y_local = -v_x_field * sin_y + v_y_field * cos_y
 
-        v_x_local = v_x_field * cos_y + v_y_field * sin_y
-        v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                vx = int(v_x_local * VEL_SCALE)
+                vy = int(v_y_local * VEL_SCALE)
 
-        vx = int(v_x_local * VEL_SCALE)
-        vy = int(v_y_local * VEL_SCALE)
+                data = struct.pack('>hhh', vx, vy, vz)
+                self._send_can(0x510, data)
 
-        data = struct.pack('>hhh', vx, vy, vz)
-        self._send_can(0x510, data)
+                # 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
+                if len(msg.buttons) > 16:
+                    # 0x500: ○△×□ + 矢印
+                    b500 = [
+                        msg.buttons[2], msg.buttons[3],
+                        msg.buttons[1], msg.buttons[0],
+                        msg.buttons[13], msg.buttons[14],
+                        msg.buttons[15], msg.buttons[16],
+                    ]
+                    self._send_can(0x500, b500)
 
-        # 4. 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
-        if len(msg.buttons) > 16:
-            # 0x500: ○△×□ + 矢印
-            b500 = [
-                msg.buttons[2], msg.buttons[3],
-                msg.buttons[1], msg.buttons[0],
-                msg.buttons[13], msg.buttons[14],
-                msg.buttons[15], msg.buttons[16],
-            ]
-            self._send_can(0x500, b500)
+                    # 0x501: R1,R2,R3,L1,L2,L3
+                    b501 = [
+                        msg.buttons[5], msg.buttons[7], msg.buttons[12],
+                        msg.buttons[4], msg.buttons[6], msg.buttons[11],
+                        0, 0,
+                    ]
+                    self._send_can(0x501, b501)
 
-            # 0x501: R1,R2,R3,L1,L2,L3
-            b501 = [
-                msg.buttons[5], msg.buttons[7], msg.buttons[12],
-                msg.buttons[4], msg.buttons[6], msg.buttons[11],
-                0, 0,
-            ]
-            self._send_can(0x501, b501)
-
-            # 0x502: Share, Options, PS
-            b502 = [
-                msg.buttons[8], msg.buttons[9], msg.buttons[10],
-                0, 0, 0, 0, 0,
-            ]
-            self._send_can(0x502, b502)
+                    # 0x502: Share, Options, PS
+                    b502 = [
+                        msg.buttons[8], msg.buttons[9], msg.buttons[10],
+                        0, 0, 0, 0, 0,
+                    ]
+                    self._send_can(0x502, b502)
 
     def _send_can(self, can_id, data):
-        """CAN送信データをcan_nodeへパブリッシュ"""
+        """CAN送信データをcan_nodeへパブリッシュ (1ID毎に1ms休止)"""
         msg = Int32MultiArray()
         msg.data = [can_id] + list(data)
         self.can_pub.publish(msg)
@@ -193,6 +202,7 @@ class RobowareNode(Node):
             self.state['last_can'] = (
                 f"ID:0x{can_id:03X} Data:{list(data)}"
             )
+        time.sleep(0.001)
 
     def _print_display(self):
         with self.lock:

@@ -1,0 +1,33 @@
+[0.740s] Invoking command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data --force
+[1.036s] running develop
+[1.244s] running egg_info
+[1.244s] writing honrobo_pkg.egg-info/PKG-INFO
+[1.245s] writing dependency_links to honrobo_pkg.egg-info/dependency_links.txt
+[1.245s] writing entry points to honrobo_pkg.egg-info/entry_points.txt
+[1.245s] writing requirements to honrobo_pkg.egg-info/requires.txt
+[1.245s] writing top-level names to honrobo_pkg.egg-info/top_level.txt
+[1.247s] reading manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+[1.248s] writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'
+[1.250s] running build_ext
+[1.250s] Creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)
+[1.251s] Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.251s] Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.251s] Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.251s] Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.251s] Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg
+[1.252s] 
+[1.252s] Installed /home/haru/Documents/honrobo_2026/build/honrobo_pkg
+[1.252s] running symlink_data
+[1.252s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/resource/honrobo_pkg -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index/packages
+[1.252s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/package.xml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg
+[1.252s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/launch/nav2.launch.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/launch
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/config/nav2_params.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/config
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_test.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.253s] symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_test.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map
+[1.279s] Invoked command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg' returned '0': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data --force

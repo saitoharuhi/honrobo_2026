@@ -43,6 +43,28 @@ if ! command -v tmux &> /dev/null; then
     exit 1
 fi
 
+# ROS 2環境の自動ソース
+if [ -z "$ROS_DISTRO" ]; then
+    ROS_PATH=""
+    for distro in humble foxy galactic iron jazzy; do
+        if [ -d "/opt/ros/$distro" ]; then
+            ROS_PATH="/opt/ros/$distro/setup.bash"
+            break
+        fi
+    done
+    if [ -n "$ROS_PATH" ]; then
+        source "$ROS_PATH"
+    else
+        ANY_ROS=$(ls /opt/ros/ 2>/dev/null | head -1)
+        if [ -n "$ANY_ROS" ]; then
+            source "/opt/ros/$ANY_ROS/setup.bash"
+        else
+            echo -e "${RED}❌ ROS 2環境が見つかりません。ROS 2をインストールするか、sourceしてください。${NC}"
+            exit 1
+        fi
+    fi
+fi
+
 # 依存Pythonライブラリのチェック
 echo -e "${YELLOW}Python依存ライブラリをチェック中...${NC}"
 MISSING_LIBS=()
@@ -63,37 +85,13 @@ if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
 fi
 echo -e "${GREEN}  ✅ 依存ライブラリOK${NC}"
 
-# ROS 2環境の自動ソース & ビルド
+# ビルド処理
 if [ "$SKIP_BUILD" = false ]; then
-    echo -e "${YELLOW}[1/2] ビルド準備中 (ROS 2環境の確認)${NC}"
-    if [ -z "$ROS_DISTRO" ]; then
-        ROS_PATH=""
-        for distro in humble foxy galactic iron jazzy; do
-            if [ -d "/opt/ros/$distro" ]; then
-                ROS_PATH="/opt/ros/$distro/setup.bash"
-                break
-            fi
-        done
-        if [ -n "$ROS_PATH" ]; then
-            echo -e "${GREEN}  -> ${ROS_PATH} をロードします${NC}"
-            source "$ROS_PATH"
-        else
-            ANY_ROS=$(ls /opt/ros/ 2>/dev/null | head -1)
-            if [ -n "$ANY_ROS" ]; then
-                echo -e "${GREEN}  -> /opt/ros/$ANY_ROS/setup.bash をロードします${NC}"
-                source "/opt/ros/$ANY_ROS/setup.bash"
-            else
-                echo -e "${RED}❌ ROS 2環境が見つかりません。ROS 2をインストールするか、sourceしてください。${NC}"
-                exit 1
-            fi
-        fi
-    fi
-
-    echo -e "${YELLOW}  ビルド中...${NC}"
+    echo -e "${YELLOW}[1/2] ビルド中...${NC}"
     cd "$WORKSPACE_DIR"
     
-    # 他PCからのコピー等によるシンボリックリンク破損や絶対パスの不整合を考慮したビルド
     BUILD_SUCCESS=true
+    PYTHONWARNINGS=ignore colcon build --symlink-install > /tmp/colcon_build.log 2>&1 || BUILD_SUCCESS=false
     # 一旦警告無視でビルドを試みる
     PYTHONWARNINGS=ignore colcon build --symlink-install > /tmp/colcon_build.log 2>&1 || BUILD_SUCCESS=false
     

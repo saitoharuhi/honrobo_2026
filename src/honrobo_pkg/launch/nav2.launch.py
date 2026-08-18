@@ -3,7 +3,7 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, GroupAction
 from launch.substitutions import LaunchConfiguration
-from launch.conditions import IfCondition
+from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import RewrittenYaml
@@ -17,6 +17,7 @@ def generate_launch_description():
     params_file = LaunchConfiguration('params_file')
     use_sim_time = LaunchConfiguration('use_sim_time')
     use_rviz = LaunchConfiguration('use_rviz')
+    use_amcl = LaunchConfiguration('use_amcl')
 
     # Declare arguments
     declare_map_yaml_cmd = DeclareLaunchArgument(
@@ -43,13 +44,29 @@ def generate_launch_description():
         description='Whether to start RViz'
     )
 
-    # Lifecycle nodes to manage
-    lifecycle_nodes = [
+    declare_use_amcl_cmd = DeclareLaunchArgument(
+        'use_amcl',
+        default_value='false',
+        description='Whether to enable AMCL for LiDAR self-position localization'
+    )
+
+    # Lifecycle nodes to manage (without amcl)
+    lifecycle_nodes_no_amcl = [
         'map_server',
         'planner_server',
         'controller_server',
         'behavior_server',
         'bt_navigator'
+    ]
+
+    # Lifecycle nodes to manage (with amcl)
+    lifecycle_nodes_with_amcl = [
+        'map_server',
+        'planner_server',
+        'controller_server',
+        'behavior_server',
+        'bt_navigator',
+        'amcl'
     ]
 
     # Map Server
@@ -62,6 +79,16 @@ def generate_launch_description():
             {'use_sim_time': use_sim_time},
             {'yaml_filename': map_yaml_file}
         ]
+    )
+
+    # AMCL Node (LiDAR 自己位置推定)
+    amcl_node = Node(
+        condition=IfCondition(use_amcl),
+        package='nav2_amcl',
+        executable='amcl',
+        name='amcl',
+        output='screen',
+        parameters=[params_file, {'use_sim_time': use_sim_time}]
     )
 
     # Planner Server
@@ -101,8 +128,9 @@ def generate_launch_description():
         parameters=[params_file, {'use_sim_time': use_sim_time}]
     )
 
-    # Lifecycle Manager
-    lifecycle_manager_node = Node(
+    # Lifecycle Manager (Without AMCL)
+    lifecycle_manager_no_amcl_node = Node(
+        condition=UnlessCondition(use_amcl),
         package='nav2_lifecycle_manager',
         executable='lifecycle_manager',
         name='lifecycle_manager_service',
@@ -110,19 +138,34 @@ def generate_launch_description():
         parameters=[
             {'use_sim_time': use_sim_time},
             {'autostart': True},
-            {'node_names': lifecycle_nodes}
+            {'node_names': lifecycle_nodes_no_amcl}
         ]
     )
 
-    # Static Transform map -> odom (0,0,0,0,0,0)
+    # Lifecycle Manager (With AMCL)
+    lifecycle_manager_with_amcl_node = Node(
+        condition=IfCondition(use_amcl),
+        package='nav2_lifecycle_manager',
+        executable='lifecycle_manager',
+        name='lifecycle_manager_service',
+        output='screen',
+        parameters=[
+            {'use_sim_time': use_sim_time},
+            {'autostart': True},
+            {'node_names': lifecycle_nodes_with_amcl}
+        ]
+    )
+
+    # Static Transform map -> odom (Only active when AMCL is OFF)
     static_tf_node = Node(
+        condition=UnlessCondition(use_amcl),
         package='tf2_ros',
         executable='static_transform_publisher',
         name='static_tf_map_to_odom',
         arguments=['--x', '0.0', '--y', '0.0', '--z', '0.0',
                    '--yaw', '0.0', '--pitch', '0.0', '--roll', '0.0',
                    '--frame-id', 'map', '--child-frame-id', 'odom'],
-         output='screen'
+        output='screen'
     )
 
     rviz_config_dir = os.path.join(
@@ -145,14 +188,17 @@ def generate_launch_description():
     ld.add_action(declare_params_file_cmd)
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_rviz_cmd)
+    ld.add_action(declare_use_amcl_cmd)
 
     # Add Nodes
     ld.add_action(map_server_node)
+    ld.add_action(amcl_node)
     ld.add_action(planner_server_node)
     ld.add_action(controller_server_node)
     ld.add_action(behavior_server_node)
     ld.add_action(bt_navigator_node)
-    ld.add_action(lifecycle_manager_node)
+    ld.add_action(lifecycle_manager_no_amcl_node)
+    ld.add_action(lifecycle_manager_with_amcl_node)
     ld.add_action(static_tf_node)
     ld.add_action(rviz_node)
 

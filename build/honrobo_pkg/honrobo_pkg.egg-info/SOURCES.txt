@@ -29,4 +29,6 @@ map/map_blue.png
 map/map_blue.yaml
 map/map_red.png
 map/map_red.yaml
+map/map_test.png
+map/map_test.yaml
 resource/honrobo_pkg

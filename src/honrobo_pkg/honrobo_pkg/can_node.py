@@ -71,9 +71,10 @@ CAN_SIGNALS = {
 class CanNode(Node):
     """SocketCAN ↔ ROS 2 ブリッジノード"""
 
-    def __init__(self):
+    def __init__(self, no_can=False):
         super().__init__('can_node')
 
+        self.no_can = no_can
         self.bus = None
         self.running = True
 
@@ -81,7 +82,7 @@ class CanNode(Node):
         self.state = {
             'rx': {},
             'tx': 'None',
-            'status': 'Connecting...',
+            'status': 'Connecting...' if not no_can else 'Mock Mode (No CAN)',
             'error': 'None',
             'rx_count': 0,
             'heartbeat': 0,
@@ -100,9 +101,11 @@ class CanNode(Node):
 
         self.seen_ids = set()
         self.display_lock = threading.Lock()
+        self.tx_lock = threading.Lock()
+        self.last_tx_time = 0.0
 
-        # CAN読み取りタイマー (100Hz)
-        self.create_timer(0.01, self._can_reader_timer)
+        # CAN読み取りタイマー (1000Hz / 1ms)
+        self.create_timer(0.001, self._can_reader_timer)
         # 画面表示タイマー (20Hz)
         self.create_timer(0.05, self._print_display)
         # ステータス確認タイマー (1Hz)
@@ -116,7 +119,7 @@ class CanNode(Node):
     # ─── CAN送信 ───────────────────────────────
     def _tx_callback(self, msg):
         """roboware_nodeからのデータをCANフレームとして送信"""
-        if not self.bus or len(msg.data) < 1:
+        if len(msg.data) < 1:
             return
 
         can_id = msg.data[0]
@@ -135,12 +138,41 @@ class CanNode(Node):
                 is_extended_id=False,
             )
 
-            if self.bus and self.running:
-                self.bus.send(can_msg)
+            with self.tx_lock:
+                # 前回の送信完了時刻から1ms経過していることを確認
+                now = time.time()
+                elapsed = now - self.last_tx_time
+                if elapsed < 0.001:
+                    time.sleep(0.001 - elapsed)
+
+                if not self.no_can and self.bus and self.running:
+                    max_retries = 3
+                    sent_success = False
+                    for attempt in range(max_retries):
+                        try:
+                            self.bus.send(can_msg, timeout=0.01)
+                            sent_success = True
+                            break
+                        except (can.CanError, OSError) as send_err:
+                            self.get_logger().warn(
+                                f"CAN send attempt {attempt + 1}/3 failed for ID 0x{can_id:03X}: {send_err}"
+                            )
+                            time.sleep(0.001)
+
+                    if not sent_success:
+                        self.get_logger().error(
+                            f"Failed to send CAN msg ID: 0x{can_id:03X} after {max_retries} retries"
+                        )
+
+                # 1IDごとに1msの送信休止を確実に挿入
+                time.sleep(0.001)
+                self.last_tx_time = time.time()
 
             with self.display_lock:
                 hex_str = " ".join([f"{b:02X}" for b in data_bytes])
                 self.state['tx'] = f"ID:0x{can_id:03X} Data:[{hex_str}]"
+                if self.no_can:
+                    self.state['tx'] += " (MOCKED)"
 
         except Exception as e:
             self.get_logger().error(f"TX Error: {e}")
@@ -150,6 +182,11 @@ class CanNode(Node):
     # ─── CAN接続 ───────────────────────────────
     def _setup_can_bus(self):
         """SocketCAN (can0) への接続を試みる"""
+        if self.no_can:
+            with self.display_lock:
+                self.state['status'] = "Mock Mode (No CAN)"
+            return True
+
         try:
             self.get_logger().info("Connecting to can0...")
             self.bus = can.Bus(
@@ -168,6 +205,9 @@ class CanNode(Node):
     # ─── CAN受信タイマー ───────────────────────
     def _can_reader_timer(self):
         """非ブロッキングでCANメッセージを一括読み出し"""
+        if self.no_can:
+            return
+
         if not self.bus:
             if not self._setup_can_bus():
                 return
@@ -323,8 +363,19 @@ class CanNode(Node):
 
 
 def main(args=None):
-    rclpy.init(args=args)
-    node = CanNode()
+    if args is None:
+        args = sys.argv[:]
+    
+    no_can = False
+    filtered_args = []
+    for arg in args:
+        if arg in ('-no-can', '--no-can'):
+            no_can = True
+        else:
+            filtered_args.append(arg)
+
+    rclpy.init(args=filtered_args)
+    node = CanNode(no_can=no_can)
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:

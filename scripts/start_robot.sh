@@ -27,10 +27,10 @@ SKIP_CAN=false
 SKIP_BUILD=false
 for arg in "$@"; do
     case $arg in
-        --no-can)   SKIP_CAN=true ;;
-        --no-build) SKIP_BUILD=true ;;
+        --no-can|-no-can) SKIP_CAN=true ;;
+        --no-build)       SKIP_BUILD=true ;;
         --help|-h)
-            echo "使い方: bash scripts/start_robot.sh [--no-can] [--no-build]"
+            echo "使い方: bash scripts/start_robot.sh [--no-can|-no-can] [--no-build]"
             exit 0 ;;
     esac
 done
@@ -43,6 +43,28 @@ echo -e "${CYAN}============================================${NC}"
 if ! command -v tmux &> /dev/null; then
     echo -e "${RED}❌ tmux未インストール: sudo apt install tmux${NC}"
     exit 1
+fi
+
+# ROS 2環境の自動ソース
+if [ -z "$ROS_DISTRO" ]; then
+    ROS_PATH=""
+    for distro in humble foxy galactic iron jazzy; do
+        if [ -d "/opt/ros/$distro" ]; then
+            ROS_PATH="/opt/ros/$distro/setup.bash"
+            break
+        fi
+    done
+    if [ -n "$ROS_PATH" ]; then
+        source "$ROS_PATH"
+    else
+        ANY_ROS=$(ls /opt/ros/ 2>/dev/null | head -1)
+        if [ -n "$ANY_ROS" ]; then
+            source "/opt/ros/$ANY_ROS/setup.bash"
+        else
+            echo -e "${RED}❌ ROS 2環境が見つかりません。ROS 2をインストールするか、sourceしてください。${NC}"
+            exit 1
+        fi
+    fi
 fi
 
 # CAN セットアップ
@@ -76,7 +98,7 @@ if [ ${#MISSING_LIBS[@]} -ne 0 ]; then
     exit 1
 fi
 
-# Nav2 依存パッケージの確認
+# Nav2 依存パッケージの確認 (ROS 2環境がsourceされている状態でチェック)
 DISTRO="${ROS_DISTRO:-humble}"
 MISSING_NAV2=false
 python3 -c "import nav2_common" 2>/dev/null || MISSING_NAV2=true
@@ -90,45 +112,18 @@ if [ "$MISSING_NAV2" = true ]; then
 fi
 echo -e "${GREEN}  ✅ 依存ライブラリ & Nav2 OK${NC}"
 
-# ROS 2環境の自動ソース & ビルド
+# ワークスペースのビルド
 if [ "$SKIP_BUILD" = false ]; then
-    echo -e "${YELLOW}[2/3] ビルド準備中 (ROS 2環境の確認)${NC}"
-    if [ -z "$ROS_DISTRO" ]; then
-        ROS_PATH=""
-        for distro in humble foxy galactic iron jazzy; do
-            if [ -d "/opt/ros/$distro" ]; then
-                ROS_PATH="/opt/ros/$distro/setup.bash"
-                break
-            fi
-        done
-        if [ -n "$ROS_PATH" ]; then
-            echo -e "${GREEN}  -> ${ROS_PATH} をロードします${NC}"
-            source "$ROS_PATH"
-        else
-            ANY_ROS=$(ls /opt/ros/ 2>/dev/null | head -1)
-            if [ -n "$ANY_ROS" ]; then
-                echo -e "${GREEN}  -> /opt/ros/$ANY_ROS/setup.bash をロードします${NC}"
-                source "/opt/ros/$ANY_ROS/setup.bash"
-            else
-                echo -e "${RED}❌ ROS 2環境が見つかりません。ROS 2をインストールするか、sourceしてください。${NC}"
-                exit 1
-            fi
-        fi
-    fi
-
+    echo -e "${YELLOW}[2/3] ビルド準備中...${NC}"
     echo -e "${YELLOW}  ビルド中...${NC}"
     cd "$WORKSPACE_DIR"
     
-    # 他PCからのコピー等によるシンボリックリンク破損や絶対パスの不整合を考慮したビルド
     BUILD_SUCCESS=true
-    # 一旦警告無視でビルドを試みる
     PYTHONWARNINGS=ignore colcon build --symlink-install > /tmp/colcon_build.log 2>&1 || BUILD_SUCCESS=false
     
     if [ "$BUILD_SUCCESS" = false ]; then
         echo -e "${YELLOW}⚠️ ビルドが失敗しました。古いビルドキャッシュをクリーンアップして再試行します...${NC}"
-        # 古いディレクトリを完全削除
         rm -rf build/ install/ log/ 2>/dev/null || true
-        # 再度ビルドを実行
         echo -e "${YELLOW}  再ビルド中...${NC}"
         PYTHONWARNINGS=ignore colcon build --symlink-install 2>&1 | tail -5 || {
             echo -e "${RED}❌ 再ビルドも失敗しました。ログを確認してください:${NC}"
@@ -136,7 +131,6 @@ if [ "$SKIP_BUILD" = false ]; then
             exit 1
         }
     else
-        # 成功時は最後の数行だけ表示
         cat /tmp/colcon_build.log | tail -5
     fi
     source "$WORKSPACE_DIR/install/setup.bash"
@@ -172,12 +166,16 @@ echo -e " 競技エリア・マップ (Map Zone) の選択"
 echo -e "============================================${NC}"
 echo "1) 赤ゾーン (Red Zone - Left Side)"
 echo "2) 青ゾーン (Blue Zone - Right Side)"
-read -p "選択 [1-2] (デフォルト: 1): " ZONE_INPUT
+echo "3) テストフィールド (Test Field - 2.0m Square)"
+read -p "選択 [1-3] (デフォルト: 1): " ZONE_INPUT
 
 MAP_FILE="map_red.yaml"
 if [ "$ZONE_INPUT" = "2" ]; then
     echo -e "${GREEN}  -> 青ゾーン用のマップ (map_blue.yaml) を使用します。${NC}"
     MAP_FILE="map_blue.yaml"
+elif [ "$ZONE_INPUT" = "3" ]; then
+    echo -e "${GREEN}  -> テスト用マップ (map_test.yaml) を使用します。${NC}"
+    MAP_FILE="map_test.yaml"
 else
     echo -e "${GREEN}  -> 赤ゾーン用のマップ (map_red.yaml) を使用します。${NC}"
     MAP_FILE="map_red.yaml"
@@ -201,7 +199,11 @@ sleep 1
 
 # ② can_node
 tmux new-window -t "$SESSION_NAME" -n "can"
-tmux send-keys -t "$SESSION_NAME:can" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh can_node" C-m
+if [ "$SKIP_CAN" = true ]; then
+    tmux send-keys -t "$SESSION_NAME:can" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh can_node --no-can" C-m
+else
+    tmux send-keys -t "$SESSION_NAME:can" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh can_node" C-m
+fi
 sleep 0.5
 
 # ③ roboware_node
