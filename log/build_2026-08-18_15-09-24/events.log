@@ -1,0 +1,7 @@
+[0.000000] (-) TimerEvent: {}
+[0.000101] (honrobo_pkg) JobQueued: {'identifier': 'honrobo_pkg', 'dependencies': OrderedDict()}
+[0.000136] (honrobo_pkg) JobStarted: {'identifier': 'honrobo_pkg'}
+[0.099176] (-) TimerEvent: {}
+[0.199386] (-) TimerEvent: {}
+[0.228938] (honrobo_pkg) JobEnded: {'identifier': 'honrobo_pkg', 'rc': 0}
+[0.239470] (-) EventReactorShutdown: {}

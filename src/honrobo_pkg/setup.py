@@ -44,6 +44,7 @@ setup(
             'ps4_node      = honrobo_pkg.ps4_node:main',
             'roboware_node = honrobo_pkg.roboware_node:main',
             'web_node      = honrobo_pkg.web_node:main',
+            'monitor_node  = honrobo_pkg.monitor_node:main',
         ],
     },
 )

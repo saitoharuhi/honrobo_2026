@@ -120,21 +120,31 @@ else
 fi
 
 # tmux セッション準備
-echo -e "${YELLOW}[2/2] 操縦者側ノード起動中...${NC}"
+echo -e "${YELLOW}[2/2] 操縦者側ノード & モニター起動中...${NC}"
 tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
 
-# ① ps4_node のみを起動
-tmux new-session -d -s "$SESSION_NAME" -n "ps4"
-tmux send-keys -t "$SESSION_NAME:ps4" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh ps4_node" C-m
+# ① 操縦者用メインウィンドウ (左: ps4_node / 右: monitor_node)
+tmux new-session -d -s "$SESSION_NAME" -n "operator"
+tmux send-keys -t "$SESSION_NAME:operator" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh ps4_node" C-m
+sleep 1
+
+# 右ペインに分割して monitor_node を起動
+tmux split-window -h -t "$SESSION_NAME:operator"
+tmux send-keys -t "$SESSION_NAME:operator.1" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh monitor_node" C-m
+sleep 0.5
+
+# 最後に左ペイン(コントローラー操作)にフォーカスを合わせる
+tmux select-pane -t "$SESSION_NAME:operator.0"
 
 echo ""
 echo -e "${GREEN}============================================${NC}"
-echo -e "${GREEN} ✅ 操縦者側ノード (ps4_node) 起動完了!${NC}"
+echo -e "${GREEN} ✅ 操縦者側ノード & リアルタイムモニター起動完了!${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo "  ※ロボットPC側で 'start_robot.sh' が起動していることを確認してください。"
 echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
 echo "  停止:           bash scripts/stop_all.sh"
+echo "  画面構成:       左半分: PS4コントローラー入力状態 / 右半分: 自己位置＆CAN送信値モニター"
 echo ""
 
 tmux attach -t "$SESSION_NAME"

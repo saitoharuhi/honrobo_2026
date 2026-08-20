@@ -160,6 +160,10 @@ class OtosOdomNode(Node):
 
         self.port = _arduino_port
         self.ser = None
+        
+        # 接続管理用
+        self.reconnect_cooldown = 1.0  # 再接続の試行間隔 (秒)
+        self.last_reconnect_time = 0.0
 
         if self.port:
             try:
@@ -167,6 +171,7 @@ class OtosOdomNode(Node):
             except Exception as e:
                 with _output_lock:
                     _latest_lines['arduino_err'] = f"[ARDUINO INIT] {e}"
+                self.ser = None
 
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
 
@@ -180,25 +185,57 @@ class OtosOdomNode(Node):
         self.true_y = 0.0
         self.tf_broadcaster = TransformBroadcaster(self)
 
+        # 追加データ保持用 (STM32等からの拡張データ)
+        self.position_mode = 0
+        self.e1_dist = 0.0
+        self.e2_dist = 0.0
+        self.e3_dist = 0.0
+        self.e4_dist = 0.0
+
     def update(self):
         """シリアルからデータを読み取り、オドメトリを計算・配信する"""
-        if not self.port:
-            return
+        current_time = time.time()
 
+        # ポート接続がない、もしくは切断された場合、再検出と接続を試みる
         if not self.ser:
+            if current_time - self.last_reconnect_time < self.reconnect_cooldown:
+                return
+            self.last_reconnect_time = current_time
+
+            # ポートの再スキャン
+            auto_detect_ports()
+            self.port = _arduino_port
+
+            if not self.port:
+                with _output_lock:
+                    tag = "MICRO" if self.use_micro else "ARDUINO"
+                    _latest_lines['arduino_err'] = f"[{tag} SEARCHING] 接続可能なポートが見つかりません。捜索中..."
+                return
+
             try:
                 self.ser = serial.Serial(self.port, 115200, timeout=0.1)
                 with _output_lock:
                     _latest_lines['arduino_err'] = ""
+                self.get_logger().info(f"Successfully reconnected to serial port: {self.port}")
             except Exception as e:
                 with _output_lock:
                     tag = "MICRO" if self.use_micro else "ARDUINO"
-                    _latest_lines['arduino_err'] = f"[{tag} RECONNECT] {e}"
-                time.sleep(0.5)
+                    err_str = str(e)
+                    if "Permission denied" in err_str or "PermissionError" in err_str or "[Errno 13]" in err_str:
+                        _latest_lines['arduino_err'] = (
+                            f"[{tag} PERMISSION ERROR] {self.port} の読み書き権限がありません。\n"
+                            "  【対策】以下のセットアップスクリプトを実行してください：\n"
+                            "  bash scripts/setup_serial_rules.sh"
+                        )
+                    else:
+                        _latest_lines['arduino_err'] = f"[{tag} CONNECT ERROR] {self.port} への接続失敗: {e}"
+                self.ser = None
                 return
 
-        if self.ser.in_waiting > 0:
-            try:
+        # 接続中の受信データ処理
+        try:
+            # in_waiting のチェック自体でシリアル切断時に例外が発生することがあります
+            if self.ser.in_waiting > 0:
                 line = self.ser.readline().decode('utf-8', errors='ignore').strip()
                 if not line or line.startswith('#'):
                     return
@@ -240,6 +277,24 @@ class OtosOdomNode(Node):
                         else:
                             return
 
+                # 拡張データの抽出 (もし存在すれば)
+                mode_match = re.search(r'mode\s*:\s*(-?\d+)', line, re.IGNORECASE)
+                e1_match = re.search(r'e1\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+                e2_match = re.search(r'e2\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+                e3_match = re.search(r'e3\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+                e4_match = re.search(r'e4\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
+
+                if mode_match:
+                    self.position_mode = int(mode_match.group(1))
+                if e1_match:
+                    self.e1_dist = float(e1_match.group(1))
+                if e2_match:
+                    self.e2_dist = float(e2_match.group(1))
+                if e3_match:
+                    self.e3_dist = float(e3_match.group(1))
+                if e4_match:
+                    self.e4_dist = float(e4_match.group(1))
+
                 if self.use_micro:
                     # 💡 外部マイコン直接自己位置受信モード (ミリメートル単位・度数法単位に固定)
                     self.true_x = val1 / 1000.0
@@ -251,7 +306,9 @@ class OtosOdomNode(Node):
                     combined = (
                         f"EXTERNAL MODE (Microcontroller Serial)\n"
                         f"  [RAW RX] {line}\n"
-                        f"  [PARSED] X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Yaw: {z_deg:>7.2f} °"
+                        f"  [PARSED] X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Yaw: {z_deg:>7.2f} °\n"
+                        f"  [STATUS] Mode: {self.position_mode}\n"
+                        f"  [ENCODERS] E1: {self.e1_dist:.1f} | E2: {self.e2_dist:.1f} | E3: {self.e3_dist:.1f} | E4: {self.e4_dist:.1f}"
                     )
                 else:
                     # 💡 従来モード (OTOS + ジャイロ統合)
@@ -327,16 +384,35 @@ class OtosOdomNode(Node):
                 t.transform.rotation = msg.pose.pose.orientation
                 self.tf_broadcaster.sendTransform(t)
 
-            except ValueError as e:
-                with _output_lock:
-                    _latest_lines['arduino_err'] = f"[PARSE ERROR] {e}"
-            except UnicodeDecodeError as e:
-                with _output_lock:
-                    _latest_lines['arduino_err'] = f"[DECODE ERROR] {e}"
-            except Exception as e:
-                with _output_lock:
-                    _latest_lines['arduino_err'] = f"[UPDATE ERROR] {e}"
-                self.ser = None
+        except ValueError as e:
+            with _output_lock:
+                _latest_lines['arduino_err'] = f"[PARSE ERROR] {e}"
+        except UnicodeDecodeError as e:
+            with _output_lock:
+                _latest_lines['arduino_err'] = f"[DECODE ERROR] {e}"
+        except (serial.SerialException, OSError) as e:
+            # 物理的な切断（マイコンの取り外し等）を検知してクローズ＆再スキャン移行
+            with _output_lock:
+                tag = "MICRO" if self.use_micro else "ARDUINO"
+                _latest_lines['arduino_err'] = f"[{tag} DISCONNECTED] 接続が失われました: {e}"
+            self.get_logger().warn(f"Sensor microcontroller disconnected. Searching for port...")
+            try:
+                if self.ser:
+                    self.ser.close()
+            except Exception:
+                pass
+            self.ser = None
+            self.port = None
+        except Exception as e:
+            with _output_lock:
+                _latest_lines['arduino_err'] = f"[UPDATE ERROR] {e}"
+            try:
+                if self.ser:
+                    self.ser.close()
+            except Exception:
+                pass
+            self.ser = None
+            self.port = None
 
     @staticmethod
     def _euler_to_quat(roll, pitch, yaw):

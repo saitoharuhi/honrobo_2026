@@ -65,6 +65,7 @@ class RobowareNode(Node):
             'buttons': [], 'nav_cmd': 'None', 'last_can': 'None',
         }
         self.lock = threading.Lock()
+        self.control_style = "LOCAL"
         self.create_timer(0.05, self._print_display)
         # CAN送信周波数を 1000Hz (0.001秒周期 / 1ms) に統一するタイマー
         self.create_timer(0.001, self._can_tx_timer)
@@ -154,12 +155,23 @@ class RobowareNode(Node):
                 v_y_field = msg.axes[1] * MAX_SPEED
                 vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
 
-                yaw = self.current_yaw
-                cos_y = math.cos(yaw)
-                sin_y = math.sin(yaw)
+                # R1ボタン (インデックス5) が押されている間のみ「フィールド基準操縦」、離しているときは「ロボットローカル基準操縦」
+                is_field_oriented = (len(msg.buttons) > 5 and msg.buttons[5] == 1)
+                self.control_style = "FIELD" if is_field_oriented else "LOCAL"
 
-                v_x_local = v_x_field * cos_y + v_y_field * sin_y
-                v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                if is_field_oriented:
+                    # フィールド基準操縦:
+                    #   オドメトリ角はX東基準(前=Y北は90度)。
+                    #   初期位置でスティック前進(v_y_field)が正しく前(Y)に進むよう、90度(pi/2)のオフセットを補正。
+                    yaw = self.current_yaw - (math.pi / 2.0)
+                    cos_y = math.cos(yaw)
+                    sin_y = math.sin(yaw)
+                    v_x_local = v_x_field * cos_y + v_y_field * sin_y
+                    v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                else:
+                    # ロボットローカル基準操縦 (自己位置のYawに依存せず、スティック方向へ直接進む)
+                    v_x_local = v_x_field
+                    v_y_local = v_y_field
 
                 vx = int(v_x_local * VEL_SCALE)
                 vy = int(v_y_local * VEL_SCALE)
@@ -209,7 +221,7 @@ class RobowareNode(Node):
             sys.stdout.write('\033[2J\033[H')
             sys.stdout.write("=" * 52 + "\n")
             sys.stdout.write(
-                f" ROBOWARE NODE | Mode: {self.state['mode']}\n"
+                f" ROBOWARE NODE | Mode: {self.state['mode']} ({self.control_style})\n"
             )
             sys.stdout.write(
                 f"               | Yaw:  {math.degrees(self.current_yaw):>6.1f} deg (Odom Rx: {self.odom_count})\n"
