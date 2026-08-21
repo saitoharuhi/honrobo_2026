@@ -9,6 +9,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import Joy
 import pygame
 import sys
+import time
 
 BUTTON_MAP = {
     0: 'Square', 1: 'Cross', 2: 'Circle', 3: 'Triangle',
@@ -30,6 +31,7 @@ class Ps4Node(Node):
         pygame.init()
         pygame.joystick.init()
         self.joystick = None
+        self.last_connect_time = 0.0
         self._connect()
         
         # L2 / R2 初期値補正用フラグ
@@ -42,8 +44,15 @@ class Ps4Node(Node):
         self.btns_disp = []
 
     def _connect(self):
+        # 高頻度の再試行を防ぐ（1秒以上のインターバル）
+        now = time.time()
+        if now - self.last_connect_time < 1.0:
+            return
+        self.last_connect_time = now
+
         pygame.joystick.quit()
         pygame.joystick.init()
+        pygame.event.pump()
         count = pygame.joystick.get_count()
         self.joystick = None
 
@@ -56,6 +65,8 @@ class Ps4Node(Node):
                 if "wireless controller" in name or "sony" in name or "playstation" in name:
                     self.joystick = joy
                     self.get_logger().info(f"Connected to PS4 Controller: {joy.get_name()} (Device {i})")
+                    self.l2_initialized = False
+                    self.r2_initialized = False
                     break
                 else:
                     joy.quit()
@@ -66,18 +77,36 @@ class Ps4Node(Node):
             try:
                 self.joystick = pygame.joystick.Joystick(0)
                 self.joystick.init()
+                self.l2_initialized = False
+                self.r2_initialized = False
                 self.get_logger().warn(f"PS4 Controller name not matched. Fallback to device 0: {self.joystick.get_name()}")
             except Exception as e:
                 self.joystick = None
 
     def _read_input(self):
-        pygame.event.pump()
+        # 物理的な抜き差しイベントの検出とバッファクリア
+        for event in pygame.event.get():
+            if hasattr(pygame, 'JOYDEVICEREMOVED') and event.type == pygame.JOYDEVICEREMOVED:
+                self.get_logger().warn("Joystick disconnected event detected.")
+                self.joystick = None
+            elif hasattr(pygame, 'JOYDEVICEADDED') and event.type == pygame.JOYDEVICEADDED:
+                self.get_logger().info("Joystick connected event detected.")
+                self.joystick = None
+
         if not self.joystick:
             self._connect()
             if not self.joystick:
+                self.axes_disp = [0.0] * 6
+                self.btns_disp = []
                 return
+
         try:
-            num_axes = min(self.joystick.get_numaxes(), 6)
+            # 接続チェック（デバイスが切断された場合は get_numaxes でエラーになる、または0が返る）
+            num_axes = self.joystick.get_numaxes()
+            if num_axes == 0:
+                raise pygame.error("Joystick has 0 axes (likely disconnected)")
+
+            num_axes = min(num_axes, 6)
             raw_axes = []
             for i in range(num_axes):
                 raw_axes.append(self.joystick.get_axis(i))
@@ -143,8 +172,10 @@ class Ps4Node(Node):
             msg.buttons = buttons
             self.pub.publish(msg)
         except pygame.error as e:
-            self.get_logger().warn(f"Controller error: {e}")
+            self.get_logger().warn(f"Controller disconnected: {e}")
             self.joystick = None
+            self.axes_disp = [0.0] * 6
+            self.btns_disp = []
 
     def _print_display(self):
         sys.stdout.write('\033[2J\033[H')

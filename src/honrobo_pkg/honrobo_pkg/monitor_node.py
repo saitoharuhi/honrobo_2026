@@ -10,7 +10,7 @@ monitor_node.py — 操縦者用リアルタイム・ロボット状態モニタ
 import rclpy
 from rclpy.node import Node
 from nav_msgs.msg import Odometry
-from std_msgs.msg import Int32MultiArray, Bool
+from std_msgs.msg import Int32MultiArray, Bool, String
 import sys
 import math
 import struct
@@ -37,10 +37,13 @@ class OperatorMonitorNode(Node):
         self.decoded_vel = {"vx": 0.0, "vy": 0.0, "vw": 0.0}
         self.decoded_yaw = 0.0
 
+        self.robot_ip = "Unknown (Waiting for robot...)"
+
         # サブスクライバ設定
         self.create_subscription(Odometry, 'odom', self._odom_cb, 10)
         self.create_subscription(Bool, 'auto_mode', self._mode_cb, 10)
         self.create_subscription(Int32MultiArray, 'can_tx', self._can_tx_cb, 10)
+        self.create_subscription(String, 'robot_ip', self._ip_cb, 10)
 
         # 画面更新タイマー (10Hz / 0.1s周期)
         self.create_timer(0.1, self._render_screen)
@@ -64,6 +67,9 @@ class OperatorMonitorNode(Node):
     def _mode_cb(self, msg: Bool):
         self.auto_mode = msg.data
         self.mode_str = "AUTO" if msg.data else "MANUAL"
+
+    def _ip_cb(self, msg: String):
+        self.robot_ip = msg.data
 
     def _can_tx_cb(self, msg: Int32MultiArray):
         if len(msg.data) < 1:
@@ -119,6 +125,10 @@ class OperatorMonitorNode(Node):
         else:
             buf.append(f"  [MODE]      \033[1;32m{self.mode_str:<10}\033[0m (Manual Controller)")
             
+        buf.append("----------------------------------------------------")
+        buf.append(f"  [ROBOT IP]  {self.robot_ip}")
+        buf.append(f"    Web UI  :  http://{self.robot_ip}:8080")
+        buf.append(f"    WebSocket:  ws://{self.robot_ip}:8765")
         buf.append("----------------------------------------------------")
         
         # 自己位置表示

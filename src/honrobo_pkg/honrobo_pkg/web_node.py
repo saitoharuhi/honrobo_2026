@@ -19,7 +19,7 @@ from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import Odometry, OccupancyGrid
 from geometry_msgs.msg import Twist, PoseStamped
-from std_msgs.msg import Bool, Int32MultiArray
+from std_msgs.msg import Bool, Int32MultiArray, String
 from sensor_msgs.msg import Joy
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from rcl_interfaces.srv import SetParameters
@@ -707,6 +707,7 @@ class WebNavNode(Node):
         self.mode_pub = self.create_publisher(Bool, 'auto_mode', 10)
         self.can_pub = self.create_publisher(Int32MultiArray, 'can_tx', 10)
         self.cmd_pub = self.create_publisher(Twist, 'nav_cmd', 10)  # 念のための Twist 停止配信用
+        self.ip_pub = self.create_publisher(String, 'robot_ip', 10)
 
         # Nav2 アクションクライアントの初期化
         self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
@@ -755,6 +756,16 @@ class WebNavNode(Node):
         self.map_origin_x = -0.5
         self.map_origin_y = -0.5
         self.map_image_name = "map_red.png"
+
+        # IPアドレス定期配信タイマー (1分周期)
+        self.ip_address_str = get_local_ip()
+        self._publish_ip()  # 起動直後に即座に1回配信
+        self.create_timer(60.0, self._publish_ip)
+
+    def _publish_ip(self):
+        msg = String()
+        msg.data = self.ip_address_str
+        self.ip_pub.publish(msg)
 
     def _map_cb(self, msg):
         """受信したマップデータから赤ゾーン・青ゾーン・テストマップを自動判別し、プリセット座標や配信情報を更新する"""
