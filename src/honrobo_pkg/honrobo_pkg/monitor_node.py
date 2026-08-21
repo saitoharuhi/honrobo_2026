@@ -35,6 +35,7 @@ class OperatorMonitorNode(Node):
         self.last_can_bytes = []
         self.last_can_time = 0.0
         self.decoded_vel = {"vx": 0.0, "vy": 0.0, "vw": 0.0}
+        self.decoded_yaw = 0.0
 
         # サブスクライバ設定
         self.create_subscription(Odometry, 'odom', self._odom_cb, 10)
@@ -81,6 +82,14 @@ class OperatorMonitorNode(Node):
                 self.decoded_vel["vx"] = vx / 10.0
                 self.decoded_vel["vy"] = vy / 10.0
                 self.decoded_vel["vw"] = vw / 10.0
+            except Exception:
+                pass
+        # 自己位置Yaw ID: 0x520 の場合はデコードする (度数法の整数, int16型2B)
+        elif self.last_can_id == 0x520 and len(self.last_can_bytes) >= 2:
+            try:
+                b_data = bytes(self.last_can_bytes[:2])
+                yaw_val = struct.unpack('>h', b_data)[0]
+                self.decoded_yaw = float(yaw_val)
             except Exception:
                 pass
 
@@ -132,8 +141,13 @@ class OperatorMonitorNode(Node):
             buf.append(f"      Vx (Lat)   : {self.decoded_vel['vx']:>6.1f} mm/s")
             buf.append(f"      Vy (Fwd)   : {self.decoded_vel['vy']:>6.1f} mm/s")
             buf.append(f"      Vw (Rotate): {self.decoded_vel['vw']:>6.1f} deg/s")
+        elif self.last_can_id == 0x520:
+            buf.append(f"    Yaw Angle Decoded:")
+            buf.append(f"      Yaw (Deg)  : {self.decoded_yaw:>6.0f} deg")
+            buf.append("")
+            buf.append("")
         else:
-            buf.append("    (No active velocity payload to decode)")
+            buf.append("    (No active velocity/yaw payload to decode)")
             buf.append("")
             buf.append("")
             

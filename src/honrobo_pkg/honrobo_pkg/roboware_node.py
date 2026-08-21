@@ -71,13 +71,22 @@ class RobowareNode(Node):
         self.create_timer(0.001, self._can_tx_timer)
 
     def _odom_cb(self, msg):
-        """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得"""
+        """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得し、CAN送信(0x520)"""
         self.odom_count += 1
         q = msg.pose.pose.orientation
         # クォータニオンからYaw(ヨー角)への変換
         siny_cosp = 2.0 * (q.w * q.z + q.x * q.y)
         cosy_cosp = 1.0 - 2.0 * (q.y * q.y + q.z * q.z)
         self.current_yaw = math.atan2(siny_cosp, cosy_cosp)
+
+        # 0x520: 自己位置のYaw (度数法の整数, int16型2B, ビッグエンディアン) を送信
+        try:
+            yaw_deg = math.degrees(self.current_yaw)
+            yaw_int = int(round(yaw_deg))
+            data = struct.pack('>h', yaw_int)
+            self._send_can(0x520, data)
+        except Exception as e:
+            self.get_logger().error(f"Failed to send Yaw via CAN 0x520: {e}")
 
     def _mode_cb(self, msg):
         self.auto_mode = msg.data
