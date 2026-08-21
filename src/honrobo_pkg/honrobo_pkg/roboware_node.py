@@ -66,9 +66,11 @@ class RobowareNode(Node):
         }
         self.lock = threading.Lock()
         self.control_style = "LOCAL"
+        self.field_oriented_mode = False  # モードのトグル状態 (True: FIELD / False: LOCAL)
+        self.prev_triangle_state = 0      # 三角ボタンの前回の状態
         self.create_timer(0.05, self._print_display)
-        # CAN送信周波数を 1000Hz (0.001秒周期 / 1ms) に統一するタイマー
-        self.create_timer(0.001, self._can_tx_timer)
+        # CAN送信周波数を 100Hz (0.01秒周期 / 10ms) に統一するタイマー
+        self.create_timer(0.01, self._can_tx_timer)
 
     def _odom_cb(self, msg):
         """自己位置オドメトリから現在の姿勢(Yaw)をラジアンで取得し、CAN送信(0x520)"""
@@ -117,6 +119,14 @@ class RobowareNode(Node):
             ]
         self.latest_joy_msg = msg
 
+        # 三角ボタン (buttons[3]) の立ち上がりエッジ検出で FIELD/LOCAL 切り替え
+        if len(msg.buttons) > 3:
+            current_triangle = msg.buttons[3]
+            if current_triangle == 1 and self.prev_triangle_state == 0:
+                self.field_oriented_mode = not self.field_oriented_mode
+                self.get_logger().info(f"操縦モード切替: {'FIELD (マップ基準)' if self.field_oriented_mode else 'LOCAL (ロボット基準)'}")
+            self.prev_triangle_state = current_triangle
+
         # 2. 自動運転中の緊急割り込み（コントローラー操作を検知したら自動運転を即座に非常停止）
         if self.auto_mode:
             joy_active = False
@@ -164,14 +174,12 @@ class RobowareNode(Node):
                 v_y_field = msg.axes[1] * MAX_SPEED
                 vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
 
-                # R1ボタン (インデックス5) が押されている間のみ「フィールド基準操縦」、離しているときは「ロボットローカル基準操縦」
-                is_field_oriented = (len(msg.buttons) > 5 and msg.buttons[5] == 1)
+                # 三角ボタンで切り替えたモード状態を使用する
+                is_field_oriented = self.field_oriented_mode
                 self.control_style = "FIELD" if is_field_oriented else "LOCAL"
 
                 if is_field_oriented:
                     # フィールド基準操縦:
-                    #   オドメトリ角はX東基準(前=Y北は90度)。
-                    #   初期位置でスティック前進(v_y_field)が正しく前(Y)に進むよう、90度(pi/2)のオフセットを補正。
                     cos_y = math.cos(self.current_yaw)
                     sin_y = math.sin(self.current_yaw)
                     v_x_local = v_x_field * cos_y + v_y_field * sin_y

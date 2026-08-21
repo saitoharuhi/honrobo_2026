@@ -443,6 +443,7 @@ def arduino_thread():
             try:
                 node.update()
                 rclpy.spin_once(node, timeout_sec=0.01)
+                time.sleep(0.002)  # ビジーウェイト防止用のスリープ
             except Exception as e:
                 with _output_lock:
                     _latest_lines['arduino_err'] = f"[LOOP ERROR] {e}"

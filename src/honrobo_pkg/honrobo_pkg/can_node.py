@@ -104,8 +104,8 @@ class CanNode(Node):
         self.tx_lock = threading.Lock()
         self.last_tx_time = 0.0
 
-        # CAN読み取りタイマー (1000Hz / 1ms)
-        self.create_timer(0.001, self._can_reader_timer)
+        # CAN読み取りタイマー (100Hz / 10ms)
+        self.create_timer(0.01, self._can_reader_timer)
         # 画面表示タイマー (20Hz)
         self.create_timer(0.05, self._print_display)
         # ステータス確認タイマー (1Hz)
