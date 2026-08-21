@@ -172,9 +172,8 @@ class RobowareNode(Node):
                     # フィールド基準操縦:
                     #   オドメトリ角はX東基準(前=Y北は90度)。
                     #   初期位置でスティック前進(v_y_field)が正しく前(Y)に進むよう、90度(pi/2)のオフセットを補正。
-                    yaw = self.current_yaw - (math.pi / 2.0)
-                    cos_y = math.cos(yaw)
-                    sin_y = math.sin(yaw)
+                    cos_y = math.cos(self.current_yaw)
+                    sin_y = math.sin(self.current_yaw)
                     v_x_local = v_x_field * cos_y + v_y_field * sin_y
                     v_y_local = -v_x_field * sin_y + v_y_field * cos_y
                 else:

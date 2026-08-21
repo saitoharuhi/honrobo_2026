@@ -50,8 +50,17 @@ class Ps4Node(Node):
             return
         self.last_connect_time = now
 
-        pygame.joystick.quit()
-        pygame.joystick.init()
+        # SDL自体を完全に再起動し、ヘッドレス環境でのデバイス再スキャンを強制
+        try:
+            pygame.quit()
+            import os
+            os.environ["SDL_VIDEODRIVER"] = "dummy"
+            pygame.init()
+            pygame.joystick.init()
+        except Exception as e:
+            self.get_logger().error(f"Failed to re-initialize pygame: {e}")
+            return
+
         pygame.event.pump()
         count = pygame.joystick.get_count()
         self.joystick = None
@@ -91,7 +100,6 @@ class Ps4Node(Node):
                 self.joystick = None
             elif hasattr(pygame, 'JOYDEVICEADDED') and event.type == pygame.JOYDEVICEADDED:
                 self.get_logger().info("Joystick connected event detected.")
-                self.joystick = None
 
         if not self.joystick:
             self._connect()

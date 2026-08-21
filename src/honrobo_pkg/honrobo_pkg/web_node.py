@@ -982,10 +982,9 @@ class WebNavNode(Node):
                 vx_field = v_target * math.cos(self.direct_line_angle)
                 vy_field = v_target * math.sin(self.direct_line_angle)
                 
-                # フィールド速度 -> ロボットローカル速度 (オドメトリ角とロボット正面の90度の位相差を補正)
-                yaw_offset = self.cur_yaw - (math.pi / 2.0)
-                cmd.linear.x = vx_field * math.cos(yaw_offset) + vy_field * math.sin(yaw_offset)
-                cmd.linear.y = -vx_field * math.sin(yaw_offset) + vy_field * math.cos(yaw_offset)
+                # フィールド速度 -> ロボットローカル速度 (オドメトリ姿勢角をそのまま使用)
+                cmd.linear.x = vx_field * math.cos(self.cur_yaw) + vy_field * math.sin(self.cur_yaw)
+                cmd.linear.y = -vx_field * math.sin(self.cur_yaw) + vy_field * math.cos(self.cur_yaw)
                 cmd.angular.z = max(-0.8, min(0.8, 1.5 * yaw_error))
                 self.cmd_pub.publish(cmd)
                 return
