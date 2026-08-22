@@ -1,8 +1,8 @@
-pygame
-pyserial
+setuptools
 python-can
 rclpy
-setuptools
+pygame
+pyserial
 websockets
 
 [test]

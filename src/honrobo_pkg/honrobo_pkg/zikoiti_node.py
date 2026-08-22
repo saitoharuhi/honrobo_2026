@@ -370,7 +370,8 @@ class OtosOdomNode(Node):
                 msg.child_frame_id = 'base_link'
                 msg.pose.pose.position.x = self.true_x
                 msg.pose.pose.position.y = self.true_y
-                msg.pose.pose.orientation = self._euler_to_quat(0, 0, z_rad)
+                odom_yaw = z_rad + math.pi / 2.0
+                msg.pose.pose.orientation = self._euler_to_quat(0, 0, odom_yaw)
                 self.odom_pub.publish(msg)
 
                 # TF ブロードキャスト (odom -> base_link)

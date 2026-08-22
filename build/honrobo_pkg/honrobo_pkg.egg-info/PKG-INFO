@@ -1,13 +1,15 @@
 Metadata-Version: 2.1
-Name: honrobo-pkg
+Name: honrobo_pkg
 Version: 1.0.0
 Summary: honrobo_2026 ロボット制御パッケージ
-Home-page: UNKNOWN
 Maintainer: haru
 Maintainer-email: robotic.engineer.dream@gmail.com
 License: MIT
-Platform: UNKNOWN
+Requires-Dist: setuptools
+Requires-Dist: python-can
+Requires-Dist: rclpy
+Requires-Dist: pygame
+Requires-Dist: pyserial
+Requires-Dist: websockets
 Provides-Extra: test
-
-UNKNOWN
-
+Requires-Dist: pytest; extra == "test"

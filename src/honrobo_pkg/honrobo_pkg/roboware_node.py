@@ -180,8 +180,10 @@ class RobowareNode(Node):
 
                 if is_field_oriented:
                     # フィールド基準操縦:
-                    cos_y = math.cos(self.current_yaw)
-                    sin_y = math.sin(self.current_yaw)
+                    #   オドメトリ角は正面が90度基準（ROS 2標準）になったため、回転角計算のために90度(pi/2)を引いて補正。
+                    yaw_calc = self.current_yaw - math.pi / 2.0
+                    cos_y = math.cos(yaw_calc)
+                    sin_y = math.sin(yaw_calc)
                     v_x_local = v_x_field * cos_y + v_y_field * sin_y
                     v_y_local = -v_x_field * sin_y + v_y_field * cos_y
                 else:
