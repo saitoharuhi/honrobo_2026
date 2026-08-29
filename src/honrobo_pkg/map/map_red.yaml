@@ -1,6 +1,2 @@
-image: map_red.png
-resolution: 0.05
-origin: [-4.05, -10.15, 0.0]
-negate: 0
-occupied_thresh: 0.65
-free_thresh: 0.25
+{free_thresh: 0.25, image: map_red.png, negate: 0, occupied_thresh: 0.65, origin: [
+    -0.65, -4.05, 0.0], resolution: 0.05}
