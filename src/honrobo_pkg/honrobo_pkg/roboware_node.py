@@ -284,6 +284,37 @@ class RobowareNode(Node):
 
                 data = struct.pack('>hhh', vx, vy, vz)
                 self._send_can(0x510, data)
+
+                # 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
+                if len(msg.buttons) > 0:
+                    btns = list(msg.buttons)
+                    if len(btns) < 17:
+                        btns += [0] * (17 - len(btns))
+
+                    # 0x500: ○△×□ + 矢印
+                    b500 = [
+                        btns[2], btns[3],
+                        btns[1], btns[0],
+                        btns[13], btns[14],
+                        btns[15], btns[16],
+                    ]
+                    self._send_can(0x500, b500)
+
+                    # 0x501: R1,R2,R3,L1,L2,L3
+                    b501 = [
+                        btns[5], btns[7], btns[12],
+                        btns[4], btns[6], btns[11],
+                        0, 0,
+                    ]
+                    self._send_can(0x501, b501)
+
+                    # 0x502: Share, Options, PS
+                    b502 = [
+                        btns[8], btns[9], btns[10],
+                        0, 0, 0, 0, 0,
+                    ]
+                    self._send_can(0x502, b502)
+
             elif self.cur_vx_local != 0.0 or self.cur_vy_local != 0.0 or self.cur_vz != 0.0:
                 # コントローラー未受信時の滑らかな減速停止
                 ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(0.0, 0.0, 0.0, dt)
@@ -292,32 +323,6 @@ class RobowareNode(Node):
                 vz = int(ramp_vz * VEL_SCALE)
                 data = struct.pack('>hhh', vx, vy, vz)
                 self._send_can(0x510, data)
-
-                # 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
-                if len(msg.buttons) > 16:
-                    # 0x500: ○△×□ + 矢印
-                    b500 = [
-                        msg.buttons[2], msg.buttons[3],
-                        msg.buttons[1], msg.buttons[0],
-                        msg.buttons[13], msg.buttons[14],
-                        msg.buttons[15], msg.buttons[16],
-                    ]
-                    self._send_can(0x500, b500)
-
-                    # 0x501: R1,R2,R3,L1,L2,L3
-                    b501 = [
-                        msg.buttons[5], msg.buttons[7], msg.buttons[12],
-                        msg.buttons[4], msg.buttons[6], msg.buttons[11],
-                        0, 0,
-                    ]
-                    self._send_can(0x501, b501)
-
-                    # 0x502: Share, Options, PS
-                    b502 = [
-                        msg.buttons[8], msg.buttons[9], msg.buttons[10],
-                        0, 0, 0, 0, 0,
-                    ]
-                    self._send_can(0x502, b502)
 
     def _send_can(self, can_id, data):
         """CAN送信データをcan_nodeへパブリッシュ (1ID毎に1ms休止)"""
