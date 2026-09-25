@@ -201,8 +201,8 @@ global_costmap:
           obstacle_min_range: 0.0
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        cost_scaling_factor: 10.0
+        inflation_radius: 0.06
 
 local_costmap:
   local_costmap:
@@ -235,8 +235,8 @@ local_costmap:
           obstacle_min_range: 0.0
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 3.0
-        inflation_radius: 0.55
+        cost_scaling_factor: 10.0
+        inflation_radius: 0.06
 
 behavior_server:
   ros__parameters:

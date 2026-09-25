@@ -1,0 +1,28 @@
+[0.908s] Invoking command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data
+[1.100s] Traceback (most recent call last):
+[1.101s]   File "/home/haru/Documents/honrobo_2026/build/honrobo_pkg/setup.py", line 5, in <module>
+[1.101s]     setup(
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/__init__.py", line 104, in setup
+[1.101s]     return distutils.core.setup(**attrs)
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/_distutils/core.py", line 146, in setup
+[1.101s]     _setup_distribution = dist = klass(attrs)
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/dist.py", line 307, in __init__
+[1.101s]     _Distribution.__init__(self, dist_attrs)
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/_distutils/dist.py", line 284, in __init__
+[1.101s]     self.finalize_options()
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/dist.py", line 658, in finalize_options
+[1.101s]     ep(self)
+[1.101s]   File "/home/haru/.local/lib/python3.10/site-packages/setuptools/dist.py", line 675, in _finalize_setup_keywords
+[1.101s]     for ep in metadata.entry_points(group='distutils.setup_keywords'):
+[1.102s]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 1021, in entry_points
+[1.102s]     return SelectableGroups.load(eps).select(**params)
+[1.102s]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 459, in load
+[1.102s]     ordered = sorted(eps, key=by_group)
+[1.102s]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 1019, in <genexpr>
+[1.102s]     dist.entry_points for dist in unique(distributions())
+[1.102s]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 631, in entry_points
+[1.102s]     return EntryPoints._from_text_for(self.read_text('entry_points.txt'), self)
+[1.102s]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 927, in read_text
+[1.102s]     return self._path.joinpath(filename).read_text(encoding='utf-8')
+[1.102s] KeyboardInterrupt
+[1.122s] Invoked command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg' returned '-2': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data

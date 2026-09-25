@@ -67,12 +67,35 @@ if [ -z "$ROS_DISTRO" ]; then
     fi
 fi
 
-# CAN セットアップ
+# CAN セットアップ (CANableの接続有無を自動判定)
 if [ "$SKIP_CAN" = false ]; then
-    echo -e "${YELLOW}[1/3] CAN通信セットアップ (パスワードを求められた場合は入力してEnterを押してください)${NC}"
-    sudo bash "$SCRIPTS_DIR/setup_can.sh"
+    CANABLE_DETECTED=false
+    if ip link show can0 &>/dev/null; then
+        CANABLE_DETECTED=true
+    else
+        CANABLE_CHECK=$(python3 -c "
+import serial.tools.list_ports
+ports = serial.tools.list_ports.comports()
+found = any('canable' in p.description.lower() or '16d0:117e' in p.hwid.lower() for p in ports)
+print('true' if found else 'false')
+" 2>/dev/null || echo "false")
+        if [ "$CANABLE_CHECK" = "true" ]; then
+            CANABLE_DETECTED=true
+        fi
+    fi
+
+    if [ "$CANABLE_DETECTED" = true ]; then
+        echo -e "${YELLOW}[1/3] CAN通信セットアップ (CANable検出済み)...${NC}"
+        if ! sudo bash "$SCRIPTS_DIR/setup_can.sh"; then
+            echo -e "${YELLOW}  ⚠️ CANセットアップに失敗したため、モックモード (--no-can) にフォールバックします。${NC}"
+            SKIP_CAN=true
+        fi
+    else
+        echo -e "${YELLOW}[1/3] ⚠️ CANableが未検出です。CAN通信をモックモード (--no-can) で自動起動します。${NC}"
+        SKIP_CAN=true
+    fi
 else
-    echo -e "${YELLOW}[1/3] CANスキップ${NC}"
+    echo -e "${YELLOW}[1/3] CANスキップ (--no-can 指定)${NC}"
 fi
 
 # シリアルポートの権限自動付与

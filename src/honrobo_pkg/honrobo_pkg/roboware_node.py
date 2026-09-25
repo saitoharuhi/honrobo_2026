@@ -34,9 +34,15 @@ BUTTON_LABELS = [
 ]
 AXIS_LABELS = ['LX', 'LY', 'RX', 'RY', 'L2', 'R2']
 
-MAX_SPEED = 2000.0       # 最大並進速度 (mm/s)
-MAX_ANGULAR = 90.0      # 最大回転速度 (deg/s)
+MAX_SPEED = 1000.0       # 最大並進速度 (mm/s) - 1.0 m/s
+MAX_ANGULAR = 180.0     # 最大回転速度 (deg/s) - 2倍に高速化 (1秒で半回転/180度)
 VEL_SCALE = 10.0        # CAN送信時のスケール倍率
+
+# 33kgオムニ4輪 (マブチ555 24V) 向け 台形加減速パラメータ
+ACCEL_XY = 1500.0       # 並進加速度 (mm/s^2) -> 0から1000mm/sまで約0.67秒
+DECEL_XY = 2200.0       # 並進減速度 (mm/s^2) -> 1000mm/sから停止まで約0.45秒
+ACCEL_ROT = 300.0       # 旋回加速度 (deg/s^2) -> 約0.60秒で最高旋回(180deg/s)へ
+DECEL_ROT = 450.0       # 旋回減速度 (deg/s^2) -> 約0.40秒で素早くスリップレス停止
 
 
 class RobowareNode(Node):
@@ -68,6 +74,13 @@ class RobowareNode(Node):
         self.control_style = "LOCAL"
         self.field_oriented_mode = False  # モードのトグル状態 (True: FIELD / False: LOCAL)
         self.prev_triangle_state = 0      # 三角ボタンの前回の状態
+
+        # 33kgオムニ4輪用 台形加減速スルーレート制御状態
+        self.cur_vx_local = 0.0
+        self.cur_vy_local = 0.0
+        self.cur_vz = 0.0
+        self.last_ramp_time = time.time()
+
         self.create_timer(0.05, self._print_display)
         # CAN送信周波数を 100Hz (0.01秒周期 / 10ms) に統一するタイマー
         self.create_timer(0.01, self._can_tx_timer)
@@ -150,15 +163,85 @@ class RobowareNode(Node):
                 self.mode_pub.publish(mode_msg)
 
                 # 2. ロボットを即座に非常停止 (速度 0)
+                self.cur_vx_local = 0.0
+                self.cur_vy_local = 0.0
+                self.cur_vz = 0.0
                 data = struct.pack('>hhh', 0, 0, 0)
                 self._send_can(0x510, data)
 
                 with self.lock:
                     self.state['mode'] = 'MANUAL (EMERGENCY STOP)'
 
+    def _apply_ramp(self, target_vx, target_vy, target_vz, dt):
+        """33kgオムニ4輪 (マブチ555 24V) の慣性とスリップを防ぐ2Dベクトル台形加減速制御"""
+        if dt <= 0.0:
+            return self.cur_vx_local, self.cur_vy_local, self.cur_vz
+        if dt > 0.1:
+            dt = 0.01
+
+        # ── 1. 並進 (XY) 2Dベクトル台形加減速 ──
+        dx = target_vx - self.cur_vx_local
+        dy = target_vy - self.cur_vy_local
+        dist = math.hypot(dx, dy)
+
+        if dist > 1e-3:
+            cur_speed = math.hypot(self.cur_vx_local, self.cur_vy_local)
+            target_speed = math.hypot(target_vx, target_vy)
+            dot = self.cur_vx_local * target_vx + self.cur_vy_local * target_vy
+
+            # 減速または反転判定
+            is_decel = (target_speed < cur_speed) or (cur_speed > 10.0 and dot < 0)
+            max_accel = DECEL_XY if is_decel else ACCEL_XY
+            max_step = max_accel * dt
+
+            if dist > max_step:
+                self.cur_vx_local += (dx / dist) * max_step
+                self.cur_vy_local += (dy / dist) * max_step
+            else:
+                self.cur_vx_local = target_vx
+                self.cur_vy_local = target_vy
+        else:
+            self.cur_vx_local = target_vx
+            self.cur_vy_local = target_vy
+
+        # 停止付近の微小ハンチング防止
+        if target_vx == 0.0 and target_vy == 0.0 and math.hypot(self.cur_vx_local, self.cur_vy_local) < 5.0:
+            self.cur_vx_local = 0.0
+            self.cur_vy_local = 0.0
+
+        # ── 2. 旋回 (Z) 台形加減速 ──
+        dz = target_vz - self.cur_vz
+        if abs(dz) > 1e-3:
+            cur_rot = abs(self.cur_vz)
+            target_rot = abs(target_vz)
+            is_rot_decel = (target_rot < cur_rot) or (self.cur_vz * target_vz < 0)
+            max_rot_accel = DECEL_ROT if is_rot_decel else ACCEL_ROT
+            max_rot_step = max_rot_accel * dt
+
+            if abs(dz) > max_rot_step:
+                self.cur_vz += math.copysign(max_rot_step, dz)
+            else:
+                self.cur_vz = target_vz
+        else:
+            self.cur_vz = target_vz
+
+        if target_vz == 0.0 and abs(self.cur_vz) < 0.5:
+            self.cur_vz = 0.0
+
+        return self.cur_vx_local, self.cur_vy_local, self.cur_vz
+
     def _can_tx_timer(self):
-        """1000Hz (0.001秒周期 / 1ms) でCANデータを定周期パブリッシュ"""
+        """100Hz (0.01秒周期 / 10ms) でCANデータを定周期パブリッシュ"""
+        now = time.time()
+        dt = now - self.last_ramp_time
+        self.last_ramp_time = now
+
         if self.auto_mode:
+            # 自動運転中は手動の台形制御状態をリセット
+            self.cur_vx_local = 0.0
+            self.cur_vy_local = 0.0
+            self.cur_vz = 0.0
+
             if self.latest_nav_msg is not None:
                 msg = self.latest_nav_msg
                 vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
@@ -169,10 +252,10 @@ class RobowareNode(Node):
         else:
             if self.latest_joy_msg is not None:
                 msg = self.latest_joy_msg
-                # 手動モード時のスティック→CAN送信 (0x510)
+                # 手動モード時のスティック→目標速度 (MAX_SPEED = 1000 mm/s)
                 v_x_field = -msg.axes[0] * MAX_SPEED
                 v_y_field = msg.axes[1] * MAX_SPEED
-                vz = int((msg.axes[2] * MAX_ANGULAR) * VEL_SCALE)
+                vz_target = msg.axes[2] * MAX_ANGULAR
 
                 # 三角ボタンで切り替えたモード状態を使用する
                 is_field_oriented = self.field_oriented_mode
@@ -180,20 +263,33 @@ class RobowareNode(Node):
 
                 if is_field_oriented:
                     # フィールド基準操縦:
-                    #   オドメトリ角は正面が90度基準（ROS 2標準）になったため、回転角計算のために90度(pi/2)を引いて補正。
                     yaw_calc = self.current_yaw - math.pi / 2.0
                     cos_y = math.cos(yaw_calc)
                     sin_y = math.sin(yaw_calc)
-                    v_x_local = v_x_field * cos_y + v_y_field * sin_y
-                    v_y_local = -v_x_field * sin_y + v_y_field * cos_y
+                    target_vx_local = v_x_field * cos_y + v_y_field * sin_y
+                    target_vy_local = -v_x_field * sin_y + v_y_field * cos_y
                 else:
                     # ロボットローカル基準操縦 (自己位置のYawに依存せず、スティック方向へ直接進む)
-                    v_x_local = v_x_field
-                    v_y_local = v_y_field
+                    target_vx_local = v_x_field
+                    target_vy_local = v_y_field
 
-                vx = int(v_x_local * VEL_SCALE)
-                vy = int(v_y_local * VEL_SCALE)
+                # 33kgオムニ4輪・マブチ555向け 台形加減速スルーレート制御を適用
+                ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(
+                    target_vx_local, target_vy_local, vz_target, dt
+                )
 
+                vx = int(ramp_vx * VEL_SCALE)
+                vy = int(ramp_vy * VEL_SCALE)
+                vz = int(ramp_vz * VEL_SCALE)
+
+                data = struct.pack('>hhh', vx, vy, vz)
+                self._send_can(0x510, data)
+            elif self.cur_vx_local != 0.0 or self.cur_vy_local != 0.0 or self.cur_vz != 0.0:
+                # コントローラー未受信時の滑らかな減速停止
+                ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(0.0, 0.0, 0.0, dt)
+                vx = int(ramp_vx * VEL_SCALE)
+                vy = int(ramp_vy * VEL_SCALE)
+                vz = int(ramp_vz * VEL_SCALE)
                 data = struct.pack('>hhh', vx, vy, vz)
                 self._send_can(0x510, data)
 
@@ -260,9 +356,12 @@ class RobowareNode(Node):
 
             btns = (", ".join(self.state['buttons'])
                     if self.state['buttons'] else "None")
-            sys.stdout.write(f"\n[BUTTONS] {btns}\n")
-            sys.stdout.write(f"[NAV CMD] {self.state['nav_cmd']}\n")
-            sys.stdout.write(f"[CAN TX]  {self.state['last_can']}\n")
+            sys.stdout.write(f"[NAV CMD]  {self.state['nav_cmd']}\n")
+            sys.stdout.write(
+                f"[RAMP OUT] VX:{self.cur_vx_local:>6.1f} VY:{self.cur_vy_local:>6.1f} "
+                f"VZ:{self.cur_vz:>5.1f} deg/s (Max: {MAX_SPEED:.0f} mm/s)\n"
+            )
+            sys.stdout.write(f"[CAN TX]   {self.state['last_can']}\n")
             sys.stdout.write("=" * 52 + "\n")
             sys.stdout.flush()
 

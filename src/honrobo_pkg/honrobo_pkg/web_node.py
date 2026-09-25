@@ -679,10 +679,10 @@ conn();
 # ============================================================
 PRESET_LOCATIONS = {
     0: {"x": 0.0, "y": 0.0, "yaw": 0.0, "action_id": 1, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},
-    1: {"x": -1400.0, "y": -2400.0, "yaw": 0.0, "action_id": 5, "turn_yaw": 90.0, "action_mode": "auto", "nav_type": "nav2"},  # 机1付近 (赤デフォルト)
-    2: {"x": -1225.0, "y": -4700.0, "yaw": 0.0, "action_id": 8, "turn_yaw": 180.0, "action_mode": "auto", "nav_type": "nav2"},  # 旗付近 (赤デフォルト)
-    3: {"x": -100.0, "y": 0.0, "yaw": 0.0, "action_id": 3, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},
-    4: {"x": 0.0, "y": -100.0, "yaw": 0.0, "action_id": 4, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},
+    1: {"x": 2400.0, "y": -1400.0, "yaw": 0.0, "action_id": 5, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 机1付近 (赤)
+    2: {"x": 4700.0, "y": -1225.0, "yaw": 0.0, "action_id": 8, "turn_yaw": 90.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 旗付近 (赤)
+    3: {"x": 2400.0, "y": -1400.0, "yaw": 0.0, "action_id": 3, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 赤机の前
+    4: {"x": 2400.0, "y": 1400.0, "yaw": 0.0, "action_id": 4, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},   # 新座標: 青机の前
 }
 
 # ステートマシンの状態定義
@@ -797,18 +797,34 @@ class WebNavNode(Node):
             global PRESET_LOCATIONS
             if is_red:
                 self.map_image_name = "map_red.png"
-                PRESET_LOCATIONS[1]["x"] = -1400.0
-                PRESET_LOCATIONS[1]["y"] = -2400.0
-                PRESET_LOCATIONS[2]["x"] = -1225.0
-                PRESET_LOCATIONS[2]["y"] = -4700.0
-                self.get_logger().info(f"[Zone Detection] RED zone detected (left wall: {left_wall_pixels} px). Coordinates updated.")
+                PRESET_LOCATIONS[1]["x"] = 2400.0
+                PRESET_LOCATIONS[1]["y"] = -1400.0
+                PRESET_LOCATIONS[1]["turn_yaw"] = 0.0
+                PRESET_LOCATIONS[2]["x"] = 4700.0
+                PRESET_LOCATIONS[2]["y"] = -1225.0
+                PRESET_LOCATIONS[2]["turn_yaw"] = 90.0
+                PRESET_LOCATIONS[3]["x"] = 2400.0
+                PRESET_LOCATIONS[3]["y"] = -1400.0
+                PRESET_LOCATIONS[3]["turn_yaw"] = 0.0
+                PRESET_LOCATIONS[4]["x"] = 2400.0
+                PRESET_LOCATIONS[4]["y"] = 1400.0
+                PRESET_LOCATIONS[4]["turn_yaw"] = 0.0
+                self.get_logger().info(f"[Zone Detection] RED zone detected (left wall: {left_wall_pixels} px). Rotated coordinates updated.")
             else:
                 self.map_image_name = "map_blue.png"
-                PRESET_LOCATIONS[1]["x"] = -900.0
-                PRESET_LOCATIONS[1]["y"] = -2425.0
-                PRESET_LOCATIONS[2]["x"] = -1025.0
-                PRESET_LOCATIONS[2]["y"] = -4700.0
-                self.get_logger().info(f"[Zone Detection] BLUE zone detected (left wall: {left_wall_pixels} px). Coordinates updated.")
+                PRESET_LOCATIONS[1]["x"] = 2425.0
+                PRESET_LOCATIONS[1]["y"] = -900.0
+                PRESET_LOCATIONS[1]["turn_yaw"] = 0.0
+                PRESET_LOCATIONS[2]["x"] = 4700.0
+                PRESET_LOCATIONS[2]["y"] = -1025.0
+                PRESET_LOCATIONS[2]["turn_yaw"] = 90.0
+                PRESET_LOCATIONS[3]["x"] = 2400.0
+                PRESET_LOCATIONS[3]["y"] = -1400.0
+                PRESET_LOCATIONS[3]["turn_yaw"] = 0.0
+                PRESET_LOCATIONS[4]["x"] = 2400.0
+                PRESET_LOCATIONS[4]["y"] = 1400.0
+                PRESET_LOCATIONS[4]["turn_yaw"] = 0.0
+                self.get_logger().info(f"[Zone Detection] BLUE zone detected (left wall: {left_wall_pixels} px). Rotated coordinates updated.")
 
     def _odom_cb(self, msg):
         self.cur_x = msg.pose.pose.position.x

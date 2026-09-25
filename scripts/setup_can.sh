@@ -29,32 +29,23 @@ for p in ports:
 " 2>/dev/null)
 
 if [ -z "$CAN_PORT" ]; then
-    echo "  ⚠️  CANableが自動検出されませんでした。/dev/ttyACM* からフォールバック検索します..."
+    echo "  ⚠️  CANableが自動検出されませんでした。/dev/ttyACM* から非STLinkデバイスを検索します..."
     ACM_DEVICES=($(ls /dev/ttyACM* 2>/dev/null || true))
-    if [ ${#ACM_DEVICES[@]} -eq 0 ]; then
-        echo "  ❌ /dev/ttyACM* が見つかりません。"
-        echo "     USB-CANアダプターが接続されているか確認してください。"
-        exit 1
-    elif [ ${#ACM_DEVICES[@]} -eq 1 ]; then
-        CAN_PORT="${ACM_DEVICES[0]}"
-        echo "  → 唯一のACMデバイスをCANポートとして選択: $CAN_PORT"
-    else
-        # 複数ある場合はSTLinkではない方を優先して探す
-        for dev in "${ACM_DEVICES[@]}"; do
-            DEV_NAME=$(basename "$dev")
-            if [ -d "/sys/class/tty/$DEV_NAME/device" ]; then
-                # STLinkなどのシリアルポートであるか簡易チェック
-                if ! grep -q -i "stlink" "/sys/class/tty/$DEV_NAME/device/interface" 2>/dev/null; then
-                    CAN_PORT="$dev"
-                    echo "  → 非STLinkデバイスをCANポートとして自動選択: $CAN_PORT"
-                    break
-                fi
+    for dev in "${ACM_DEVICES[@]}"; do
+        DEV_NAME=$(basename "$dev")
+        if [ -d "/sys/class/tty/$DEV_NAME/device" ]; then
+            # STLinkなどのシリアルポートであるかチェック
+            if ! grep -q -i "stlink" "/sys/class/tty/$DEV_NAME/device/interface" 2>/dev/null; then
+                CAN_PORT="$dev"
+                echo "  → 非STLinkデバイスをCANポートとして選択: $CAN_PORT"
+                break
             fi
-        done
-        if [ -z "$CAN_PORT" ]; then
-            CAN_PORT="${ACM_DEVICES[0]}"
-            echo "  → フォールバックとして最初のデバイスを選択: $CAN_PORT"
         fi
+    done
+    if [ -z "$CAN_PORT" ]; then
+        echo "  ❌ CANableデバイスが見つかりません。"
+        echo "     (ST-LINK等のマイコンはCANポートとして誤認しないよう除外されました)"
+        exit 1
     fi
 else
     echo "  ✅ CANableデバイスを自動検出しました: $CAN_PORT"

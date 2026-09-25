@@ -198,9 +198,13 @@ class CanNode(Node):
                 self.state['status'] = "Connected (can0)"
             return True
         except Exception as e:
+            self.get_logger().warn(
+                f"can0 への接続に失敗しました ({e})。Mock Mode (No CAN) に自動切り替えします。"
+            )
+            self.no_can = True
             with self.display_lock:
-                self.state['status'] = f"Error: {e}"
-            return False
+                self.state['status'] = "Mock Mode (Auto Fallback)"
+            return True
 
     # ─── CAN受信タイマー ───────────────────────
     def _can_reader_timer(self):
