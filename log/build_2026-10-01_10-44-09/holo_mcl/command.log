@@ -1,0 +1,4 @@
+Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_mcl': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_mcl -- -j12 -l12
+Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_mcl' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_mcl -- -j12 -l12
+Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_mcl': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_mcl
+Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_mcl' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_mcl

@@ -30,8 +30,8 @@ CAN_SIGNALS = {
         'signals': {
             'Circle':   {'start_byte': 0, 'length': 1, 'type': 'uint8'},
             'Triangle': {'start_byte': 1, 'length': 1, 'type': 'uint8'},
-            'Square':   {'start_byte': 2, 'length': 1, 'type': 'uint8'},
-            'Cross':    {'start_byte': 3, 'length': 1, 'type': 'uint8'},
+            'Cross':    {'start_byte': 2, 'length': 1, 'type': 'uint8'},
+            'Square':   {'start_byte': 3, 'length': 1, 'type': 'uint8'},
             'Up':       {'start_byte': 4, 'length': 1, 'type': 'uint8'},
             'Down':     {'start_byte': 5, 'length': 1, 'type': 'uint8'},
             'Left':     {'start_byte': 6, 'length': 1, 'type': 'uint8'},
@@ -64,6 +64,12 @@ CAN_SIGNALS = {
             'VY': {'start_byte': 2, 'length': 2, 'type': 'int16', 'unit': 'mm/s'},
             'VW': {'start_byte': 4, 'length': 2, 'type': 'int16', 'unit': 'deg/s*10'},
         }
+    },
+    0x520: {
+        'name': 'Yaw_Angle',
+        'signals': {
+            'Yaw': {'start_byte': 0, 'length': 2, 'type': 'int16', 'unit': 'deg'},
+        }
     }
 }
 
@@ -81,6 +87,8 @@ class CanNode(Node):
         # 表示用データ
         self.state = {
             'rx': {},
+            'tx_stats': {},
+            'tx_count': 0,
             'tx': 'None',
             'status': 'Connecting...' if not no_can else 'Mock Mode (No CAN)',
             'error': 'None',
@@ -89,7 +97,7 @@ class CanNode(Node):
             'version': can.__version__,
         }
 
-        # 既知IDを事前登録
+        # 送信・受信既知IDを事前登録
         for arbid in CAN_SIGNALS:
             self.state['rx'][arbid] = {
                 'ts': '--:--:--', 'dlc': 0, 'data': '--', 'count': 0,
@@ -98,11 +106,20 @@ class CanNode(Node):
                     'signals': {},
                 }
             }
+            self.state['tx_stats'][arbid] = {
+                'ts': '--:--:--', 'data': '--', 'count': 0,
+                'name': CAN_SIGNALS[arbid]['name'],
+                'decoded': None,
+            }
 
         self.seen_ids = set()
         self.display_lock = threading.Lock()
         self.tx_lock = threading.Lock()
         self.last_tx_time = 0.0
+        self.last_connect_try = 0.0
+
+        # 初回接続試行
+        self._setup_can_bus()
 
         # CAN読み取りタイマー (100Hz / 10ms)
         self.create_timer(0.01, self._can_reader_timer)
@@ -139,40 +156,52 @@ class CanNode(Node):
             )
 
             with self.tx_lock:
-                # 前回の送信完了時刻から1ms経過していることを確認
+                # 前回の送信完了時刻から0.2ms経過していることを確認
                 now = time.time()
                 elapsed = now - self.last_tx_time
-                if elapsed < 0.001:
-                    time.sleep(0.001 - elapsed)
+                if elapsed < 0.0002:
+                    time.sleep(0.0002 - elapsed)
 
-                if not self.no_can and self.bus and self.running:
-                    max_retries = 3
-                    sent_success = False
-                    for attempt in range(max_retries):
+                if not self.no_can:
+                    if not self.bus:
+                        self._setup_can_bus()
+
+                    if self.bus and self.running:
                         try:
-                            self.bus.send(can_msg, timeout=0.01)
-                            sent_success = True
-                            break
+                            self.bus.send(can_msg, timeout=0.005)
+                        except can.CanOperationError:
+                            # 送信キュー一時満杯 (ENOBUFS: errno 105) は安全にスキップ
+                            pass
                         except (can.CanError, OSError) as send_err:
                             self.get_logger().warn(
-                                f"CAN send attempt {attempt + 1}/3 failed for ID 0x{can_id:03X}: {send_err}"
+                                f"CAN send failed for ID 0x{can_id:03X}: {send_err}"
                             )
-                            time.sleep(0.001)
+                            err_str = str(send_err).lower()
+                            if "down" in err_str or "closed" in err_str or "device" in err_str:
+                                self.bus = None
 
-                    if not sent_success:
-                        self.get_logger().error(
-                            f"Failed to send CAN msg ID: 0x{can_id:03X} after {max_retries} retries"
-                        )
-
-                # 1IDごとに1msの送信休止を確実に挿入
-                time.sleep(0.001)
                 self.last_tx_time = time.time()
 
             with self.display_lock:
                 hex_str = " ".join([f"{b:02X}" for b in data_bytes])
+                ts = datetime.now().strftime("%H:%M:%S.%f")[:-3]
                 self.state['tx'] = f"ID:0x{can_id:03X} Data:[{hex_str}]"
                 if self.no_can:
                     self.state['tx'] += " (MOCKED)"
+
+                if can_id not in self.state['tx_stats']:
+                    self.state['tx_stats'][can_id] = {
+                        'name': CAN_SIGNALS[can_id]['name'] if can_id in CAN_SIGNALS else 'Unknown',
+                        'count': 0,
+                        'data': '--',
+                        'ts': ts,
+                        'decoded': None
+                    }
+                self.state['tx_stats'][can_id]['count'] += 1
+                self.state['tx_stats'][can_id]['data'] = hex_str
+                self.state['tx_stats'][can_id]['ts'] = ts
+                self.state['tx_stats'][can_id]['decoded'] = self._decode_signals(can_id, bytes(data_bytes))
+                self.state['tx_count'] += 1
 
         except Exception as e:
             self.get_logger().error(f"TX Error: {e}")
@@ -181,11 +210,17 @@ class CanNode(Node):
 
     # ─── CAN接続 ───────────────────────────────
     def _setup_can_bus(self):
-        """SocketCAN (can0) への接続を試みる"""
+        """SocketCAN (can0) への接続を試みる (失敗時は定期リトライ可能)"""
         if self.no_can:
             with self.display_lock:
                 self.state['status'] = "Mock Mode (No CAN)"
             return True
+
+        now = time.time()
+        # 1秒以内の頻繁な接続試行を抑制
+        if self.bus is None and (now - self.last_connect_try < 1.0):
+            return False
+        self.last_connect_try = now
 
         try:
             self.get_logger().info("Connecting to can0...")
@@ -196,15 +231,12 @@ class CanNode(Node):
             )
             with self.display_lock:
                 self.state['status'] = "Connected (can0)"
+            self.get_logger().info("✅ Successfully connected to can0!")
             return True
         except Exception as e:
-            self.get_logger().warn(
-                f"can0 への接続に失敗しました ({e})。Mock Mode (No CAN) に自動切り替えします。"
-            )
-            self.no_can = True
             with self.display_lock:
-                self.state['status'] = "Mock Mode (Auto Fallback)"
-            return True
+                self.state['status'] = f"Waiting for can0... ({e})"
+            return False
 
     # ─── CAN受信タイマー ───────────────────────
     def _can_reader_timer(self):
@@ -293,7 +325,7 @@ class CanNode(Node):
 
     # ─── ターミナル表示 ────────────────────────
     def _print_display(self):
-        """ターミナルにCAN通信状況をリアルタイム表示"""
+        """ターミナルにCAN通信状況（TX・RX双方）をリアルタイム表示"""
         try:
             with self.display_lock:
                 self.state['heartbeat'] += 1
@@ -301,34 +333,29 @@ class CanNode(Node):
 
                 sys.stdout.write('\033[2J\033[H')
                 sys.stdout.write(
-                    "=" * 80 + "\n"
+                    "=" * 88 + "\n"
                     f" CAN NODE [{blink}] | "
                     f"Status: {self.state['status']} | "
-                    f"RX: {self.state['rx_count']} | "
-                    f"lib-can: v{self.state['version']}\n"
+                    f"TX Total: {self.state['tx_count']} | "
+                    f"RX Total: {self.state['rx_count']} | "
+                    f"v{self.state['version']}\n"
                 )
                 if self.state['error'] != 'None':
                     sys.stdout.write(
                         f" ERROR: {self.state['error']}\n"
                     )
-                sys.stdout.write("=" * 80 + "\n")
+                sys.stdout.write("=" * 88 + "\n")
 
-                sys.stdout.write(f"[LAST TX] {self.state['tx']}\n")
-                sys.stdout.write("-" * 80 + "\n")
-
+                # ── 送信 (TX) テーブル ──
+                sys.stdout.write(f" [TRANSMITTED (TX) - 100Hz ロボット指令]\n")
                 sys.stdout.write(
-                    f"{'TIME':<12} | {'CAN ID':<6} | "
-                    f"{'CNT':<4} | {'DATA':<23} | DECODED\n"
+                    f"{'TIME':<12} | {'CAN ID':<6} | {'CNT':<6} | {'DATA':<23} | DECODED / VALUE\n"
                 )
-                sys.stdout.write("-" * 100 + "\n")
+                sys.stdout.write("-" * 88 + "\n")
 
-                for arbid in sorted(self.state['rx'].keys()):
-                    info = self.state['rx'][arbid]
-                    name = (
-                        info['decoded']['name']
-                        if info.get('decoded') else "Unknown"
-                    )
-
+                for arbid in sorted(self.state['tx_stats'].keys()):
+                    info = self.state['tx_stats'][arbid]
+                    name = info.get('name', 'Unknown')
                     decoded_str = ""
                     if info.get('decoded') and info['decoded'].get('signals'):
                         parts = [
@@ -340,19 +367,56 @@ class CanNode(Node):
                     sys.stdout.write(
                         f"{info.get('ts', '--'):<12} | "
                         f"0x{arbid:03X}  | "
-                        f"{info['count']:<4} | "
+                        f"{info['count']:<6} | "
                         f"{info.get('data', '--'):<23} | "
                         f"{name}{decoded_str}\n"
                     )
 
-                sys.stdout.write("=" * 80 + "\n")
+                sys.stdout.write("-" * 88 + "\n")
+
+                # ── 受信 (RX) テーブル ──
+                sys.stdout.write(f" [RECEIVED (RX) - マイコン受信データ]\n")
+                sys.stdout.write(
+                    f"{'TIME':<12} | {'CAN ID':<6} | {'CNT':<6} | {'DATA':<23} | DECODED\n"
+                )
+                sys.stdout.write("-" * 88 + "\n")
+
+                rx_items = [k for k in sorted(self.state['rx'].keys()) if self.state['rx'][k]['count'] > 0]
+                if not rx_items:
+                    sys.stdout.write("  (No frames received from microcontrollers yet)\n")
+                else:
+                    for arbid in rx_items:
+                        info = self.state['rx'][arbid]
+                        name = (
+                            info['decoded']['name']
+                            if info.get('decoded') else "Unknown"
+                        )
+                        decoded_str = ""
+                        if info.get('decoded') and info['decoded'].get('signals'):
+                            parts = [
+                                f"{n}:{d['value']}"
+                                for n, d in info['decoded']['signals'].items()
+                            ]
+                            decoded_str = " -> " + ", ".join(parts)
+
+                        sys.stdout.write(
+                            f"{info.get('ts', '--'):<12} | "
+                            f"0x{arbid:03X}  | "
+                            f"{info['count']:<6} | "
+                            f"{info.get('data', '--'):<23} | "
+                            f"{name}{decoded_str}\n"
+                        )
+
+                sys.stdout.write("=" * 88 + "\n")
                 sys.stdout.flush()
         except Exception as e:
             self.get_logger().error(f"Display error: {e}")
 
     def _status_callback(self):
-        """定期ステータス確認"""
-        if self.bus:
+        """定期ステータス確認 & 再接続チェック"""
+        if not self.no_can and self.bus is None:
+            self._setup_can_bus()
+        elif self.bus:
             try:
                 if self.bus.state.name == 'ACTIVE':
                     self.get_logger().debug("CAN bus active")

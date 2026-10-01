@@ -1,0 +1,4 @@
+source;share/holo_lidar_converter/local_setup.bash
+source;share/holo_lidar_converter/local_setup.dsv
+source;share/holo_lidar_converter/local_setup.sh
+source;share/holo_lidar_converter/local_setup.zsh

@@ -1,2 +1,1 @@
-{free_thresh: 0.25, image: map.png, negate: 0, occupied_thresh: 0.65, origin: [-0.65,
-    -4.05, 0.0], resolution: 0.05}
+{free_thresh: 0.25, image: map.png, negate: 0, occupied_thresh: 0.65, origin: [-0.65, -4.05, 0.0], resolution: 0.05}

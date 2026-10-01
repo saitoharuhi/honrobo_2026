@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/haru/Documents/honrobo_2026/build/holo_lidar_converter/libholo_lidar_converter.so" "TARGETS" "holo_lidar_converter" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "bin")

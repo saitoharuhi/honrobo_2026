@@ -10,8 +10,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        ('share/' + package_name + '/launch', ['launch/nav2.launch.py']),
-        ('share/' + package_name + '/config', ['config/nav2_params.yaml']),
+        ('share/' + package_name + '/launch', ['launch/nav2.launch.py', 'launch/localization.launch.py']),
+        ('share/' + package_name + '/config', ['config/nav2_params.yaml', 'config/mcl_params.yaml']),
         ('share/' + package_name + '/map', [
             'map/map.yaml', 'map/map.png',
             'map/map_red.yaml', 'map/map_red.png',
@@ -45,6 +45,8 @@ setup(
             'roboware_node = honrobo_pkg.roboware_node:main',
             'web_node      = honrobo_pkg.web_node:main',
             'monitor_node  = honrobo_pkg.monitor_node:main',
+            'nav_gui       = honrobo_pkg.nav_gui_node:main',
+            'scan_filter   = honrobo_pkg.scan_filter_node:main',
         ],
     },
 )

@@ -1,0 +1,1 @@
+Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/holo_lidar_converter -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_lidar_converter

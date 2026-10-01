@@ -8,7 +8,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 # 停止対象のセッションリスト
-SESSIONS=("honrobo" "honrobo_robot" "honrobo_operator")
+SESSIONS=("honrobo" "honrobo_robot" "honrobo_operator" "honrobo_manual")
 
 for SESSION_NAME in "${SESSIONS[@]}"; do
     if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
@@ -46,8 +46,10 @@ for port in 8080 8765; do
     fi
 done
 
-# 4. Nav2 関連の全プロセスを終了
+# 4. Nav2 および LiDAR 関連の全プロセスを終了
 pkill -f "nav2" 2>/dev/null || true
 pkill -9 -f "nav2" 2>/dev/null || true
+pkill -f "rplidar_node" 2>/dev/null || true
+pkill -9 -f "rplidar_node" 2>/dev/null || true
 
 echo -e "${GREEN}  ✅ クリーンアップ完了${NC}"

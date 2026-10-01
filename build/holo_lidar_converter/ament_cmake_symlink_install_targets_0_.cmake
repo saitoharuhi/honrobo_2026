@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/haru/Documents/honrobo_2026/build/holo_lidar_converter/laserscan_to_pointcloud2" "TARGETS" "laserscan_to_pointcloud2" "DESTINATION" "lib/holo_lidar_converter")

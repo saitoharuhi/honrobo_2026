@@ -7,7 +7,15 @@ from launch.conditions import IfCondition, UnlessCondition
 from launch_ros.actions import Node
 from launch_ros.descriptions import ParameterFile
 from nav2_common.launch import RewrittenYaml
+import serial.tools.list_ports
 
+def find_lidar_port():
+    ports = serial.tools.list_ports.comports()
+    for p in ports:
+        # RPLIDAR (CP210x USB to UART Bridge) を検出
+        if '10c4:ea60' in p.hwid.lower() or 'cp210' in p.description.lower():
+            return p.device
+    return '/dev/ttyUSB0'  # 見つからなかった場合のフォールバック
 
 def generate_launch_description():
     pkg_share = get_package_share_directory('honrobo_pkg')
@@ -46,8 +54,14 @@ def generate_launch_description():
 
     declare_use_amcl_cmd = DeclareLaunchArgument(
         'use_amcl',
-        default_value='false',
+        default_value='true',
         description='Whether to enable AMCL for LiDAR self-position localization'
+    )
+
+    declare_use_lidar_cmd = DeclareLaunchArgument(
+        'use_lidar',
+        default_value='true',
+        description='Whether to launch RPLIDAR S1 node'
     )
 
     # Lifecycle nodes to manage (without amcl)
@@ -168,6 +182,36 @@ def generate_launch_description():
         output='screen'
     )
 
+    # RPLIDAR S1 Node
+    use_lidar = LaunchConfiguration('use_lidar')
+    rplidar_node = Node(
+        condition=IfCondition(use_lidar),
+        package='rplidar_ros',
+        executable='rplidar_node',
+        name='rplidar_node',
+        parameters=[{
+            'channel_type': 'serial',
+            'serial_port': find_lidar_port(),
+            'serial_baudrate': 256000,      # S1のデフォルト
+            'frame_id': 'laser',
+            'inverted': False,
+            'angle_compensate': True,
+        }],
+        output='screen'
+    )
+
+    # Static Transform base_link -> laser (ロボット中心から前方へ0.475m, 高さ0.2m, 180度反転を適用)
+    laser_tf_node = Node(
+        condition=IfCondition(use_lidar),
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_tf_base_to_laser',
+        arguments=['--x', '0.475', '--y', '0.0', '--z', '0.2',
+                   '--yaw', '3.14159265', '--pitch', '0.0', '--roll', '0.0',
+                   '--frame-id', 'base_link', '--child-frame-id', 'laser'],
+        output='screen'
+    )
+
     rviz_config_dir = os.path.join(
         get_package_share_directory('nav2_bringup'),
         'rviz',
@@ -189,10 +233,13 @@ def generate_launch_description():
     ld.add_action(declare_use_sim_time_cmd)
     ld.add_action(declare_use_rviz_cmd)
     ld.add_action(declare_use_amcl_cmd)
+    ld.add_action(declare_use_lidar_cmd)
 
     # Add Nodes
     ld.add_action(map_server_node)
     ld.add_action(amcl_node)
+    ld.add_action(rplidar_node)
+    ld.add_action(laser_tf_node)
     ld.add_action(planner_server_node)
     ld.add_action(controller_server_node)
     ld.add_action(behavior_server_node)

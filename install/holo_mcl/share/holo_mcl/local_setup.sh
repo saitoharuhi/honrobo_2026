@@ -1,0 +1,1 @@
+/home/haru/Documents/honrobo_2026/build/holo_mcl/ament_cmake_environment_hooks/local_setup.sh

@@ -1,0 +1,1 @@
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/haru/Documents/honrobo_2026/build/holo_mcl/libholo_mcl.so" "TARGETS" "holo_mcl" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "bin")

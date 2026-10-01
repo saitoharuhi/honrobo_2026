@@ -44,6 +44,9 @@ _should_exit = False
 # 外部マイコン直接自己位置使用フラグ
 _use_micro = False
 
+# ジャイロ/Yaw回転方向反転フラグ (デフォルト: False)
+_invert_yaw = False
+
 # 自動検出されたポート
 _arduino_port = None
 _status_message = "ポート検索中..."
@@ -92,8 +95,10 @@ def auto_detect_ports():
             desc = p.description.lower()
             hwid = p.hwid.lower()
 
-            # CANable (SocketCAN用) は絶対に対象外
+            # CANable (SocketCAN用) と RPLIDAR は絶対に対象外
             if 'canable' in desc or '16d0:117e' in hwid:
+                continue
+            if '10c4:ea60' in hwid or 'rplidar' in desc:
                 continue
             if used_can_port and p.device == used_can_port:
                 continue
@@ -103,13 +108,15 @@ def auto_detect_ports():
                 target_port = p.device
                 break
 
-        # 2次探索: 見つからなかった場合のフォールバック（CANableと使用中ポートを除いた最初のACM/USB）
+        # 2次探索: 見つからなかった場合のフォールバック
         if not target_port:
             for p in ports:
                 desc = p.description.lower()
                 hwid = p.hwid.lower()
 
                 if 'canable' in desc or '16d0:117e' in hwid:
+                    continue
+                if '10c4:ea60' in hwid or 'rplidar' in desc:
                     continue
                 if used_can_port and p.device == used_can_port:
                     continue
@@ -151,18 +158,26 @@ def setup_permissions():
 # ROS 2 自己位置推定ノード
 # ============================================================
 class OtosOdomNode(Node):
-    """Arduino(OTOS) + ジャイロ 統合オドメトリノード"""
+    """Arduino(OTOS) + ジャイロ 統合オドメトリノード
+    
+    holo_mcu_bridge スタイルの絶対位置追跡方式を採用。
+    差分計算による累積誤差・90度ズレバグを根本解決。
+    """
 
     def __init__(self):
         super().__init__('zikoiti_node')
         self.declare_parameter('use_microcontroller', False)
         self.use_micro = self.get_parameter('use_microcontroller').value or _use_micro
+        self.declare_parameter('invert_yaw', _invert_yaw)
+        self.invert_yaw = bool(self.get_parameter('invert_yaw').value)
+        self.declare_parameter('yaw_offset', 90.0)
+        self.yaw_offset = float(self.get_parameter('yaw_offset').value)
 
         self.port = _arduino_port
         self.ser = None
         
         # 接続管理用
-        self.reconnect_cooldown = 1.0  # 再接続の試行間隔 (秒)
+        self.reconnect_cooldown = 1.0
         self.last_reconnect_time = 0.0
 
         if self.port:
@@ -174,23 +189,41 @@ class OtosOdomNode(Node):
                 self.ser = None
 
         self.odom_pub = self.create_publisher(Odometry, 'odom', 10)
-
-        # 統合位置計算用
-        self.prev_x_raw = None
-        self.prev_y_raw = None
-        self.prev_theta_arduino = None
-
-        # ジャイロ角度を考慮した真の座標
-        self.true_x = 0.0
-        self.true_y = 0.0
         self.tf_broadcaster = TransformBroadcaster(self)
 
-        # 追加データ保持用 (STM32等からの拡張データ)
+        # ── holo_mcu_bridge スタイルの絶対位置追跡 ──
+        # マイコンが送ってくる「生の絶対座標」と「出力する座標」の差（オフセット）
+        self.offset_x_m = 0.0
+        self.offset_y_m = 0.0
+        self.offset_yaw_rad = 0.0
+        self.has_received_data = False
+        self.last_raw_x_m = 0.0
+        self.last_raw_y_m = 0.0
+        self.last_raw_yaw_rad = 0.0
+
+        # 速度計算用
+        self.last_pub_time = None
+        self.last_pub_x_m = 0.0
+        self.last_pub_y_m = 0.0
+        self.last_pub_yaw_rad = 0.0
+
+        # 追加データ保持用
         self.position_mode = 0
         self.e1_dist = 0.0
         self.e2_dist = 0.0
         self.e3_dist = 0.0
         self.e4_dist = 0.0
+
+        # パーサー用 regex (holo_mcu_bridge と同一)
+        import re as _re
+        self._pat_full = _re.compile(
+            r"X:([-\d\.]+)\s+Y:([-\d\.]+)\s+Yaw:([-\d\.]+)"
+        )
+
+    def _normalize_angle_rad(self, a):
+        while a > math.pi:  a -= 2 * math.pi
+        while a < -math.pi: a += 2 * math.pi
+        return a
 
     def update(self):
         """シリアルからデータを読み取り、オドメトリを計算・配信する"""
@@ -221,169 +254,27 @@ class OtosOdomNode(Node):
                 with _output_lock:
                     tag = "MICRO" if self.use_micro else "ARDUINO"
                     err_str = str(e)
-                    if "Permission denied" in err_str or "PermissionError" in err_str or "[Errno 13]" in err_str:
+                    if "Permission denied" in err_str or "[Errno 13]" in err_str:
                         _latest_lines['arduino_err'] = (
                             f"[{tag} PERMISSION ERROR] {self.port} の読み書き権限がありません。\n"
-                            "  【対策】以下のセットアップスクリプトを実行してください：\n"
-                            "  bash scripts/setup_serial_rules.sh"
+                            "  bash scripts/setup_serial_rules.sh を実行してください"
                         )
                     else:
-                        _latest_lines['arduino_err'] = f"[{tag} CONNECT ERROR] {self.port} への接続失敗: {e}"
+                        _latest_lines['arduino_err'] = f"[{tag} CONNECT ERROR] {self.port}: {e}"
                 self.ser = None
                 return
 
         # 接続中の受信データ処理
         try:
-            # in_waiting のチェック自体でシリアル切断時に例外が発生することがあります
             if self.ser.in_waiting > 0:
                 line = self.ser.readline().decode('utf-8', errors='ignore').strip()
                 if not line or line.startswith('#'):
                     return
 
-                # 画面表示用にRAWの受信行を保存
                 with _output_lock:
                     _latest_lines['raw_rx'] = line
 
-                # 1. まず、あらゆるラベル（X:, Y:, mm, degなど）にマッチして個別に数値を抽出できるか試みる
-                x_match = re.search(r'x\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-                y_match = re.search(r'y\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-                yaw_match = re.search(r'(yaw|head|z|yaw_deg|yaw_rad|w|omega|gyro)\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-
-                if x_match and y_match and yaw_match:
-                    val1 = float(x_match.group(1))
-                    val2 = float(y_match.group(1))
-                    val3 = float(yaw_match.group(2))
-                else:
-                    # 2. 個別ラベルが無い場合、あるいはマッチしない場合
-                    # カンマ区切りの文字列から数字だけを抽出してパースする
-                    parts = line.split(',')
-                    if len(parts) >= 3:
-                        val1_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[0])
-                        val2_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[1])
-                        val3_nums = re.findall(r'[-+]?\d*\.\d+|\d+', parts[2])
-                        if val1_nums and val2_nums and val3_nums:
-                            val1 = float(val1_nums[0])
-                            val2 = float(val2_nums[0])
-                            val3 = float(val3_nums[0])
-                        else:
-                            return
-                    else:
-                        # 3. カンマが無く、スペース区切りやその他のノイズ混じり文字列の場合の最終手段
-                        all_nums = re.findall(r'[-+]?\d*\.\d+|\d+', line)
-                        if len(all_nums) >= 3:
-                            val1 = float(all_nums[0])
-                            val2 = float(all_nums[1])
-                            val3 = float(all_nums[2])
-                        else:
-                            return
-
-                # 拡張データの抽出 (もし存在すれば)
-                mode_match = re.search(r'mode\s*:\s*(-?\d+)', line, re.IGNORECASE)
-                e1_match = re.search(r'e1\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-                e2_match = re.search(r'e2\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-                e3_match = re.search(r'e3\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-                e4_match = re.search(r'e4\s*:\s*(-?\d+(?:\.\d+)?)', line, re.IGNORECASE)
-
-                if mode_match:
-                    self.position_mode = int(mode_match.group(1))
-                if e1_match:
-                    self.e1_dist = float(e1_match.group(1))
-                if e2_match:
-                    self.e2_dist = float(e2_match.group(1))
-                if e3_match:
-                    self.e3_dist = float(e3_match.group(1))
-                if e4_match:
-                    self.e4_dist = float(e4_match.group(1))
-
-                if self.use_micro:
-                    # 💡 外部マイコン直接自己位置受信モード (ミリメートル単位・度数法単位に固定)
-                    self.true_x = val1 / 1000.0
-                    self.true_y = val2 / 1000.0
-                    z_deg = val3
-                    z_rad = math.radians(val3)
-
-                    # 外部用のターミナル表示文言
-                    combined = (
-                        f"EXTERNAL MODE (Microcontroller Serial)\n"
-                        f"  [RAW RX] {line}\n"
-                        f"  [PARSED] X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Yaw: {z_deg:>7.2f} °\n"
-                        f"  [STATUS] Mode: {self.position_mode}\n"
-                        f"  [ENCODERS] E1: {self.e1_dist:.1f} | E2: {self.e2_dist:.1f} | E3: {self.e3_dist:.1f} | E4: {self.e4_dist:.1f}"
-                    )
-                else:
-                    # 💡 従来モード (OTOS + ジャイロ統合)
-                    # ジャイロはマイコンに直接接続されており、val3 (head_deg) として一緒に送信されます
-                    x_inch, y_inch, head_deg = val1, val2, val3
-                    x_m_raw = x_inch * 0.0254
-                    y_m_raw = y_inch * 0.0254
-                    theta_arduino = math.radians(head_deg)
-
-                    # 初回: 現在値を基準点として保存
-                    if self.prev_x_raw is None:
-                        self.prev_x_raw = x_m_raw
-                        self.prev_y_raw = y_m_raw
-                        self.prev_theta_arduino = theta_arduino
-
-                    # Z(ω) はマイコンから送られてきたジャイロの値 (head_deg) をそのまま使用
-                    z_deg = head_deg
-                    z_rad = theta_arduino
-
-                    # 1. Arduino座標系での移動量（差分）
-                    delta_x_ard = x_m_raw - self.prev_x_raw
-                    delta_y_ard = y_m_raw - self.prev_y_raw
-
-                    # 2. ロボットローカル座標系への逆変換
-                    cos_a = math.cos(self.prev_theta_arduino)
-                    sin_a = math.sin(self.prev_theta_arduino)
-                    local_dx = delta_x_ard * cos_a + delta_y_ard * sin_a
-                    local_dy = -delta_x_ard * sin_a + delta_y_ard * cos_a
-
-                    # 3. ジャイロ角度でワールド座標系へ変換
-                    cos_g = math.cos(z_rad)
-                    sin_g = math.sin(z_rad)
-                    true_dx = local_dx * cos_g - local_dy * sin_g
-                    true_dy = local_dx * sin_g + local_dy * cos_g
-
-                    # 4. 真の座標を更新
-                    self.true_x += true_dx
-                    self.true_y += true_dy
-
-                    # 次回計算用に保存
-                    self.prev_x_raw = x_m_raw
-                    self.prev_y_raw = y_m_raw
-                    self.prev_theta_arduino = theta_arduino
-
-                    # 内部用のターミナル表示文言
-                    combined = (
-                        f"INTERNAL FUSION MODE (OTOS + Gyro via Arduino)\n"
-                        f"  [RAW RX] {line}\n"
-                        f"  [FUSED]  X: {self.true_x:>6.3f} m, Y: {self.true_y:>6.3f} m, Gyro: {z_deg:>7.2f} °"
-                    )
-
-                with _output_lock:
-                    _latest_lines['combined'] = combined
-
-                # ROS 2 Odometry 配信
-                msg = Odometry()
-                msg.header.stamp = self.get_clock().now().to_msg()
-                msg.header.frame_id = 'odom'
-                msg.child_frame_id = 'base_link'
-                msg.pose.pose.position.x = self.true_x
-                msg.pose.pose.position.y = self.true_y
-                odom_yaw = z_rad + math.pi / 2.0
-                msg.pose.pose.orientation = self._euler_to_quat(0, 0, odom_yaw)
-                self.odom_pub.publish(msg)
-
-                # TF ブロードキャスト (odom -> base_link)
-                t = TransformStamped()
-                t.header.stamp = msg.header.stamp
-                t.header.frame_id = 'odom'
-                t.child_frame_id = 'base_link'
-                t.transform.translation.x = self.true_x
-                t.transform.translation.y = self.true_y
-                t.transform.translation.z = 0.0
-                t.transform.rotation = msg.pose.pose.orientation
-                self.tf_broadcaster.sendTransform(t)
+                self._parse_and_publish(line)
 
         except ValueError as e:
             with _output_lock:
@@ -392,7 +283,6 @@ class OtosOdomNode(Node):
             with _output_lock:
                 _latest_lines['arduino_err'] = f"[DECODE ERROR] {e}"
         except (serial.SerialException, OSError) as e:
-            # 物理的な切断（マイコンの取り外し等）を検知してクローズ＆再スキャン移行
             with _output_lock:
                 tag = "MICRO" if self.use_micro else "ARDUINO"
                 _latest_lines['arduino_err'] = f"[{tag} DISCONNECTED] 接続が失われました: {e}"
@@ -415,6 +305,158 @@ class OtosOdomNode(Node):
             self.ser = None
             self.port = None
 
+    def _parse_and_publish(self, line: str):
+        """シリアル行をパースしてオドメトリを配信 (holo_mcu_bridge スタイル)"""
+        # X:xxx Y:xxx Yaw:xxx 形式を優先パース
+        m = self._pat_full.search(line)
+        if m:
+            raw_val1 = float(m.group(1))
+            raw_val2 = float(m.group(2))
+            raw_yaw_deg = float(m.group(3))
+        else:
+            # フォールバック: カンマ区切り / スペース区切り数値
+            import re as _re
+            parts = line.split(',')
+            if len(parts) >= 3:
+                nums = [_re.findall(r'[-+]?\d*\.?\d+', p) for p in parts[:3]]
+                if all(nums):
+                    raw_val1, raw_val2 = float(nums[0][0]), float(nums[1][0])
+                    raw_yaw_deg = float(nums[2][0])
+                else:
+                    return
+            else:
+                all_nums = _re.findall(r'[-+]?\d*\.?\d+', line)
+                if len(all_nums) >= 3:
+                    raw_val1, raw_val2, raw_yaw_deg = float(all_nums[0]), float(all_nums[1]), float(all_nums[2])
+                else:
+                    return
+
+        # 拡張データ抽出
+        import re as _re
+        for attr, pattern in [('position_mode', r'[Mm]ode\s*:?\s*(-?\d+)'),
+                               ('e1_dist', r'[Ee]1\s*:?\s*(-?[\d.]+)'),
+                               ('e2_dist', r'[Ee]2\s*:?\s*(-?[\d.]+)'),
+                               ('e3_dist', r'[Ee]3\s*:?\s*(-?[\d.]+)'),
+                               ('e4_dist', r'[Ee]4\s*:?\s*(-?[\d.]+)')]:
+            mm = _re.search(pattern, line)
+            if mm:
+                setattr(self, attr, float(mm.group(1)))
+
+        # ── 座標変換 (holo_mcu_bridge 方式) ──
+        if self.use_micro:
+            # 外部マイコン直接自己位置モード: 単位 mm → m
+            raw_x_m = raw_val1 / 1000.0
+            raw_y_m = raw_val2 / 1000.0
+        else:
+            # OTOS内蔵モード: 単位 inch → m
+            raw_x_m = raw_val1 * 0.0254
+            raw_y_m = raw_val2 * 0.0254
+
+        # Yaw: invert → rad
+        if self.invert_yaw:
+            raw_yaw_deg = -raw_yaw_deg
+        raw_yaw_rad = self._normalize_angle_rad(math.radians(raw_yaw_deg))
+
+        # 初回パケット: 起動時の生座標・生Yawを基準として記録
+        # X/Yと同様に Yaw も「起動時からの変化量」に変換することで、
+        # ジャイロが電源ON時にランダムな値を持っていても常に yaw_offset(90°)でスタートできる
+        if not self.has_received_data:
+            self.offset_x_m    = raw_x_m
+            self.offset_y_m    = raw_y_m
+            self.offset_yaw_rad = raw_yaw_rad   # 起動時の生Yaw角を基準に保存
+            self.has_received_data = True
+            self.get_logger().info(
+                f"初回受信: X={raw_x_m:.3f}m, Y={raw_y_m:.3f}m, Yaw_raw={math.degrees(raw_yaw_rad):.1f}° → 基準点記録完了"
+            )
+
+        self.last_raw_x_m    = raw_x_m
+        self.last_raw_y_m    = raw_y_m
+        self.last_raw_yaw_rad = raw_yaw_rad
+
+        # 1. 起動時を原点としたセンサローカルな移動量
+        local_x = raw_x_m - self.offset_x_m
+        local_y = raw_y_m - self.offset_y_m
+
+        # 2. ROS座標系への回転変換
+        # マイコン(OTOS)の座標系は「起動時の向き」が+X軸。
+        # 一方、ROS側の初期姿勢は yaw_offset (例: 90度 = +Y軸方向)。
+        # したがって、OTOSの座標をそのまま使うと進行方向が90度ズレてしまう。
+        # OTOSの絶対座標を yaw_offset 分だけ回転させて ROS座標系に合わせる。
+        theta0 = math.radians(self.yaw_offset)
+        x_ros = local_x * math.cos(theta0) - local_y * math.sin(theta0)
+        y_ros = local_x * math.sin(theta0) + local_y * math.cos(theta0)
+
+        # Yaw = (現在の生Yaw - 起動時の生Yaw) + yaw_offset
+        delta_yaw = self._normalize_angle_rad(raw_yaw_rad - self.offset_yaw_rad)
+        yaw_rad   = self._normalize_angle_rad(delta_yaw + theta0)
+
+        # 速度計算
+        now_time = time.time()
+        vx = vy = wz = 0.0
+        if self.last_pub_time is not None:
+            dt = now_time - self.last_pub_time
+            if 0.001 < dt < 0.5:
+                dx_g = x_ros - self.last_pub_x_m
+                dy_g = y_ros - self.last_pub_y_m
+                dyaw = self._normalize_angle_rad(yaw_rad - self.last_pub_yaw_rad)
+                cos_y = math.cos(yaw_rad)
+                sin_y = math.sin(yaw_rad)
+                vx = dx_g * cos_y + dy_g * sin_y
+                vy = -dx_g * sin_y + dy_g * cos_y
+                wz = dyaw / dt
+
+        self.last_pub_time = now_time
+        self.last_pub_x_m = x_ros
+        self.last_pub_y_m = y_ros
+        self.last_pub_yaw_rad = yaw_rad
+
+        # ターミナル表示
+        inv_str = " (InvertYaw)" if self.invert_yaw else ""
+        mode_str = "EXTERNAL (Microcontroller)" if self.use_micro else "INTERNAL (OTOS+Gyro)"
+        combined = (
+            f"MODE: {mode_str}\n"
+            f"  [RAW RX] {line}\n"
+            f"  [POSE]   X: {x_ros:>7.3f} m  Y: {y_ros:>7.3f} m  Yaw: {math.degrees(yaw_rad):>7.2f}°{inv_str}\n"
+            f"  [STATUS] Mode: {int(self.position_mode)}  "
+            f"E1:{self.e1_dist:.0f} E2:{self.e2_dist:.0f} E3:{self.e3_dist:.0f} E4:{self.e4_dist:.0f}"
+        )
+        with _output_lock:
+            _latest_lines['combined'] = combined
+
+        # ── ROS 2 Odometry 配信 ──
+        now_ros = self.get_clock().now().to_msg()
+        msg = Odometry()
+        msg.header.stamp = now_ros
+        msg.header.frame_id = 'odom'
+        msg.child_frame_id = 'base_link'
+        msg.pose.pose.position.x = x_ros
+        msg.pose.pose.position.y = y_ros
+        msg.pose.pose.orientation = self._euler_to_quat(0, 0, yaw_rad)
+        msg.twist.twist.linear.x = vx
+        msg.twist.twist.linear.y = vy
+        msg.twist.twist.angular.z = wz
+        # 共分散 (holo_mcu_bridge スタイル)
+        cov = [0.0] * 36
+        cov[0]  = 0.001  # X
+        cov[7]  = 0.001  # Y
+        cov[14] = 99999.0
+        cov[21] = 99999.0
+        cov[28] = 99999.0
+        cov[35] = 0.001  # Yaw
+        msg.pose.covariance = cov
+        msg.twist.covariance = cov
+        self.odom_pub.publish(msg)
+
+        # ── TF: odom → base_link ──
+        t = TransformStamped()
+        t.header.stamp = now_ros
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_link'
+        t.transform.translation.x = x_ros
+        t.transform.translation.y = y_ros
+        t.transform.translation.z = 0.0
+        t.transform.rotation = msg.pose.pose.orientation
+        self.tf_broadcaster.sendTransform(t)
     @staticmethod
     def _euler_to_quat(roll, pitch, yaw):
         """オイラー角 → クォータニオン変換"""
@@ -464,10 +506,16 @@ def arduino_thread():
 # メインエントリーポイント
 # ============================================================
 def main():
-    global _should_exit, _use_micro, manual_gyro_port, manual_arduino_port
+    global _should_exit, _use_micro, _invert_yaw, manual_gyro_port, manual_arduino_port
 
     # 引数から外部マイコン直接自己位置使用モードであるかを判別
-    _use_micro = '--use-micro' in sys.argv or any('use_microcontroller:=true' in arg for arg in sys.argv)
+    _use_micro = '--use-micro' in sys.argv or any('use_microcontroller:=true' in arg.lower() for arg in sys.argv)
+
+    # ヨー角反転設定の解析 (デフォルト: True, 右旋回で正のセンサー値をROS REP-103規格に合わせて反転)
+    if '--no-invert-yaw' in sys.argv or any('invert_yaw:=false' in arg.lower() for arg in sys.argv):
+        _invert_yaw = False
+    elif '--invert-yaw' in sys.argv or any('invert_yaw:=true' in arg.lower() for arg in sys.argv):
+        _invert_yaw = True
 
     # 手動指定ポートの簡易解析
     for i, arg in enumerate(sys.argv):
@@ -497,25 +545,30 @@ def main():
                 )
                 arduino_err = _latest_lines.get('arduino_err', '')
 
-                # 画面を上書き（カーソルを左上へ）
-                sys.stdout.write('\033[H')
-                sys.stdout.write("====================================================\n")
+                # 画面を上書き（各行末尾に \033[K を付与して残像を完全にクリア）
+                buf = ["\033[H"]
+                buf.append("====================================================\033[K")
                 if _use_micro:
-                    sys.stdout.write("  ZIKOITI NODE | Mode: EXTERNAL (Microcontroller Serial)\n")
+                    buf.append("  ZIKOITI NODE | Mode: EXTERNAL (Microcontroller Serial)\033[K")
                 else:
-                    sys.stdout.write("  ZIKOITI NODE | Mode: INTERNAL (OTOS + Gyro via Arduino)\n")
-                sys.stdout.write("====================================================\n")
-                sys.stdout.write(f"[PORT STATUS] {_status_message}\n")
-                sys.stdout.write("----------------------------------------------------\n")
-                sys.stdout.write(f"[ESTIMATION]\n{combined}\n")
-                sys.stdout.write("----------------------------------------------------\n")
+                    buf.append("  ZIKOITI NODE | Mode: INTERNAL (OTOS + Gyro via Arduino)\033[K")
+                buf.append("====================================================\033[K")
+                buf.append(f"[PORT STATUS] {_status_message}\033[K")
+                buf.append("----------------------------------------------------\033[K")
+                buf.append("[ESTIMATION]\033[K")
+                for c_line in combined.split('\n'):
+                    buf.append(f"{c_line}\033[K")
+                buf.append("----------------------------------------------------\033[K")
 
                 if arduino_err:
-                    sys.stdout.write("[ERROR LOGS]\n")
-                    sys.stdout.write(f"  Serial: {arduino_err}\n")
+                    buf.append("[ERROR LOGS]\033[K")
+                    buf.append(f"  Serial: {arduino_err}\033[K")
                 else:
-                    sys.stdout.write("\033[K\n\033[K\n")
-                sys.stdout.write("====================================================\n")
+                    buf.append("\033[K")
+                    buf.append("\033[K")
+                buf.append("====================================================\033[K")
+                
+                sys.stdout.write("\n".join(buf) + "\n")
                 sys.stdout.flush()
 
             time.sleep(0.05)

@@ -34,15 +34,15 @@ BUTTON_LABELS = [
 ]
 AXIS_LABELS = ['LX', 'LY', 'RX', 'RY', 'L2', 'R2']
 
-MAX_SPEED = 1000.0       # 最大並進速度 (mm/s) - 1.0 m/s
-MAX_ANGULAR = 180.0     # 最大回転速度 (deg/s) - 2倍に高速化 (1秒で半回転/180度)
-VEL_SCALE = 10.0        # CAN送信時のスケール倍率
+MAX_SPEED = 1000.0        # 最大並進速度 (mm/s) - 1.0 m/s
+MAX_ANGULAR = 90.0        # 最大回転速度 (deg/s) - 90 deg/s
+VEL_SCALE = 10.0          # CAN送信時のスケール倍率
 
 # 33kgオムニ4輪 (マブチ555 24V) 向け 台形加減速パラメータ
-ACCEL_XY = 1500.0       # 並進加速度 (mm/s^2) -> 0から1000mm/sまで約0.67秒
-DECEL_XY = 2200.0       # 並進減速度 (mm/s^2) -> 1000mm/sから停止まで約0.45秒
-ACCEL_ROT = 300.0       # 旋回加速度 (deg/s^2) -> 約0.60秒で最高旋回(180deg/s)へ
-DECEL_ROT = 450.0       # 旋回減速度 (deg/s^2) -> 約0.40秒で素早くスリップレス停止
+ACCEL_XY = 400.0          # 並進加速度 (mm/s^2)
+DECEL_XY = 600.0          # 並進減速度 (mm/s^2)
+ACCEL_ROT = 75.0          # 旋回加速度 (deg/s^2)
+DECEL_ROT = 112.5         # 旋回減速度 (deg/s^2)
 
 
 class RobowareNode(Node):
@@ -72,6 +72,7 @@ class RobowareNode(Node):
         }
         self.lock = threading.Lock()
         self.control_style = "LOCAL"
+        self.speed_scale = 1.0
         self.field_oriented_mode = False  # モードのトグル状態 (True: FIELD / False: LOCAL)
         self.prev_triangle_state = 0      # 三角ボタンの前回の状態
 
@@ -80,6 +81,10 @@ class RobowareNode(Node):
         self.cur_vy_local = 0.0
         self.cur_vz = 0.0
         self.last_ramp_time = time.time()
+        self.last_joy_time = 0.0
+        self.last_nav_time = 0.0
+        self.joy_msg_count = 0
+        self.can_tx_count = 0
 
         self.create_timer(0.05, self._print_display)
         # CAN送信周波数を 100Hz (0.01秒周期 / 10ms) に統一するタイマー
@@ -111,6 +116,7 @@ class RobowareNode(Node):
             )
 
     def _nav_cb(self, msg):
+        self.last_nav_time = time.time()
         vx_display = msg.linear.x * 1000.0
         vy_display = msg.linear.y * 1000.0
         vz_display = math.degrees(msg.angular.z)
@@ -122,6 +128,8 @@ class RobowareNode(Node):
         self.latest_nav_msg = msg
 
     def _joy_cb(self, msg):
+        self.joy_msg_count += 1
+        self.last_joy_time = time.time()
         # 1. 画面表示用の状態更新（表示のみ）
         with self.lock:
             self.state['axes'] = list(msg.axes)
@@ -237,115 +245,148 @@ class RobowareNode(Node):
         self.last_ramp_time = now
 
         if self.auto_mode:
-            # 自動運転中は手動の台形制御状態をリセット
-            self.cur_vx_local = 0.0
-            self.cur_vy_local = 0.0
-            self.cur_vz = 0.0
-
-            if self.latest_nav_msg is not None:
+            # ── 自動運転モード (/nav_cmd 入力に台形加減速を適用) ──
+            is_nav_valid = (self.latest_nav_msg is not None) and ((now - self.last_nav_time) < 0.5)
+            if is_nav_valid:
                 msg = self.latest_nav_msg
-                vx = int(msg.linear.x * 1000.0 * VEL_SCALE)
-                vy = int(msg.linear.y * 1000.0 * VEL_SCALE)
-                vz = int(math.degrees(msg.angular.z) * VEL_SCALE)
-                data = struct.pack('>hhh', vx, vy, vz)
-                self._send_can(0x510, data)
+                target_vx_local = msg.linear.x * 1000.0
+                target_vy_local = msg.linear.y * 1000.0
+                vz_target = math.degrees(msg.angular.z)
+            else:
+                target_vx_local = 0.0
+                target_vy_local = 0.0
+                vz_target = 0.0
+            raw_btns = []
+            self.control_style = "AUTO"
         else:
-            if self.latest_joy_msg is not None:
-                msg = self.latest_joy_msg
-                # 手動モード時のスティック→目標速度 (MAX_SPEED = 1000 mm/s)
-                v_x_field = -msg.axes[0] * MAX_SPEED
-                v_y_field = msg.axes[1] * MAX_SPEED
-                vz_target = msg.axes[2] * MAX_ANGULAR
+            # ── 手動操縦モード ──
+            # コントローラーが接続され、直近0.5秒以内に受信があるか判定
+            is_joy_valid = (self.latest_joy_msg is not None) and ((now - self.last_joy_time) < 0.5)
 
-                # 三角ボタンで切り替えたモード状態を使用する
+            if is_joy_valid:
+                msg = self.latest_joy_msg
+                
+                # L1ボタン(インデックス4)が押されている場合は低速・微調整モード (例: 25%の速度)
+                slow_mode = (len(msg.buttons) > 4 and msg.buttons[4] == 1)
+                self.speed_scale = 0.25 if slow_mode else 1.0
+
+                v_x_field = -msg.axes[0] * MAX_SPEED * self.speed_scale
+                v_y_field = msg.axes[1] * MAX_SPEED * self.speed_scale
+                vz_target = -msg.axes[2] * MAX_ANGULAR * self.speed_scale
+
                 is_field_oriented = self.field_oriented_mode
-                self.control_style = "FIELD" if is_field_oriented else "LOCAL"
+                base_style = "FIELD" if is_field_oriented else "LOCAL"
+                self.control_style = f"{base_style} (SLOW)" if slow_mode else base_style
 
                 if is_field_oriented:
-                    # フィールド基準操縦:
-                    yaw_calc = self.current_yaw - math.pi / 2.0
+                    # フィールド基準操縦 (v_y_field: +Xフィールド直進, v_x_field: +Yフィールド横移動)
+                    yaw_calc = self.current_yaw
                     cos_y = math.cos(yaw_calc)
                     sin_y = math.sin(yaw_calc)
-                    target_vx_local = v_x_field * cos_y + v_y_field * sin_y
-                    target_vy_local = -v_x_field * sin_y + v_y_field * cos_y
+                    target_vy_local =  v_y_field * cos_y + v_x_field * sin_y
+                    target_vx_local = -v_y_field * sin_y + v_x_field * cos_y
                 else:
-                    # ロボットローカル基準操縦 (自己位置のYawに依存せず、スティック方向へ直接進む)
+                    # ロボットローカル基準操縦
                     target_vx_local = v_x_field
                     target_vy_local = v_y_field
 
-                # 33kgオムニ4輪・マブチ555向け 台形加減速スルーレート制御を適用
-                ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(
-                    target_vx_local, target_vy_local, vz_target, dt
-                )
+                raw_btns = list(msg.buttons)
+            else:
+                # コントローラー未接続またはタイムアウト時は目標速度0 & ボタン全0
+                target_vx_local = 0.0
+                target_vy_local = 0.0
+                vz_target = 0.0
+                raw_btns = []
 
-                vx = int(ramp_vx * VEL_SCALE)
-                vy = int(ramp_vy * VEL_SCALE)
-                vz = int(ramp_vz * VEL_SCALE)
+        # 4輪オムニ車輪最大速度の飽和防止 (車輪合成速度がMAX_SPEEDを超えないようにスケーリング)
+        # 車輪表面速度: |V_trans| + R * |omega| <= MAX_SPEED
+        ROBOT_RADIUS_MM = 350.0  # 中心からホイールまでの実効距離 (mm)
+        rot_lin_speed = abs(math.radians(vz_target)) * ROBOT_RADIUS_MM
+        trans_speed = math.hypot(target_vx_local, target_vy_local)
+        total_wheel_speed = trans_speed + rot_lin_speed
+        if total_wheel_speed > MAX_SPEED and total_wheel_speed > 1e-3:
+            scale = MAX_SPEED / total_wheel_speed
+            target_vx_local *= scale
+            target_vy_local *= scale
+            vz_target *= scale
 
-                data = struct.pack('>hhh', vx, vy, vz)
-                self._send_can(0x510, data)
+        # 33kgオムニ4輪・マブチ555向け 台形加減速スルーレート制御を適用 (手動・自動ともに適用)
+        ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(
+            target_vx_local, target_vy_local, vz_target, dt
+        )
 
-                # 手動モード時のみボタン情報のCAN送信 (0x500, 0x501, 0x502)
-                if len(msg.buttons) > 0:
-                    btns = list(msg.buttons)
-                    if len(btns) < 17:
-                        btns += [0] * (17 - len(btns))
+        vx = int(round(ramp_vx * VEL_SCALE))
+        vy = int(round(ramp_vy * VEL_SCALE))
+        vz = int(round(ramp_vz * VEL_SCALE))
+        vx = max(-32767, min(32767, vx))
+        vy = max(-32767, min(32767, vy))
+        vz = max(-32767, min(32767, vz))
 
-                    # 0x500: ○△×□ + 矢印
-                    b500 = [
-                        btns[2], btns[3],
-                        btns[1], btns[0],
-                        btns[13], btns[14],
-                        btns[15], btns[16],
-                    ]
-                    self._send_can(0x500, b500)
+        # ① 速度指令 (0x510) を必ず100Hzで定周期パブリッシュ
+        data = struct.pack('>hhh', vx, vy, vz)
+        self._send_can(0x510, data)
 
-                    # 0x501: R1,R2,R3,L1,L2,L3
-                    b501 = [
-                        btns[5], btns[7], btns[12],
-                        btns[4], btns[6], btns[11],
-                        0, 0,
-                    ]
-                    self._send_can(0x501, b501)
+        # ② ボタン情報 (0x500, 0x501, 0x502) を必ず100Hzで定周期パブリッシュ
+        btns = list(raw_btns)
+        if len(btns) < 17:
+            btns += [0] * (17 - len(btns))
 
-                    # 0x502: Share, Options, PS
-                    b502 = [
-                        btns[8], btns[9], btns[10],
-                        0, 0, 0, 0, 0,
-                    ]
-                    self._send_can(0x502, b502)
+        # 0x500: ○△×□ + 矢印
+        b500 = [
+            btns[2], btns[3],
+            btns[1], btns[0],
+            btns[13], btns[14],
+            btns[15], btns[16],
+        ]
+        self._send_can(0x500, b500)
 
-            elif self.cur_vx_local != 0.0 or self.cur_vy_local != 0.0 or self.cur_vz != 0.0:
-                # コントローラー未受信時の滑らかな減速停止
-                ramp_vx, ramp_vy, ramp_vz = self._apply_ramp(0.0, 0.0, 0.0, dt)
-                vx = int(ramp_vx * VEL_SCALE)
-                vy = int(ramp_vy * VEL_SCALE)
-                vz = int(ramp_vz * VEL_SCALE)
-                data = struct.pack('>hhh', vx, vy, vz)
-                self._send_can(0x510, data)
+        # 0x501: R1,R2,R3,L1,L2,L3
+        b501 = [
+            btns[5], btns[7], btns[12],
+            btns[4], btns[6], btns[11],
+            0, 0,
+        ]
+        self._send_can(0x501, b501)
+
+        # 0x502: Share, Options, PS
+        b502 = [
+            btns[8], btns[9], btns[10],
+            0, 0, 0, 0, 0,
+        ]
+        self._send_can(0x502, b502)
 
     def _send_can(self, can_id, data):
-        """CAN送信データをcan_nodeへパブリッシュ (1ID毎に1ms休止)"""
+        """CAN送信データをcan_nodeへパブリッシュ (高速ノンブロッキング)"""
         msg = Int32MultiArray()
         msg.data = [can_id] + list(data)
         self.can_pub.publish(msg)
+        self.can_tx_count += 1
         with self.lock:
             self.state['last_can'] = (
                 f"ID:0x{can_id:03X} Data:{list(data)}"
             )
-        time.sleep(0.001)
 
     def _print_display(self):
+        now = time.time()
         with self.lock:
             sys.stdout.write('\033[2J\033[H')
-            sys.stdout.write("=" * 52 + "\n")
+            sys.stdout.write("=" * 56 + "\n")
             sys.stdout.write(
                 f" ROBOWARE NODE | Mode: {self.state['mode']} ({self.control_style})\n"
             )
             sys.stdout.write(
                 f"               | Yaw:  {math.degrees(self.current_yaw):>6.1f} deg (Odom Rx: {self.odom_count})\n"
             )
-            sys.stdout.write("=" * 52 + "\n")
+            sys.stdout.write("=" * 56 + "\n")
+
+            # Joy接続状態の可視化
+            if self.joy_msg_count > 0 and (now - self.last_joy_time) < 0.5:
+                joy_status = f"CONNECTED ({self.joy_msg_count} msgs, {(now - self.last_joy_time)*1000:.0f}ms ago)"
+            elif self.joy_msg_count > 0:
+                joy_status = f"TIMEOUT (last {(now - self.last_joy_time):.1f}s ago)"
+            else:
+                joy_status = "WAITING FOR /ps4_joy..."
+            sys.stdout.write(f"[JOY STATUS] {joy_status}\n")
 
             sys.stdout.write("[STICKS]\n")
             for i, lbl in enumerate(AXIS_LABELS):
@@ -353,21 +394,25 @@ class RobowareNode(Node):
                        if i < len(self.state['axes']) else 0.0)
                 if lbl in ('L2', 'R2'):
                     sys.stdout.write(f"  {lbl}: {val:5.2f} |")
+                elif lbl == 'RX':
+                    spd = val * MAX_ANGULAR * self.speed_scale
+                    sys.stdout.write(f"  {lbl}: {spd:>6.1f} deg/s|")
                 else:
-                    spd = val * MAX_SPEED
+                    spd = val * MAX_SPEED * self.speed_scale
                     sys.stdout.write(f"  {lbl}: {spd:>6.1f} mm/s |")
                 if i % 2 == 1:
                     sys.stdout.write("\n")
 
             btns = (", ".join(self.state['buttons'])
                     if self.state['buttons'] else "None")
+            sys.stdout.write(f"[BUTTONS]  {btns}\n")
             sys.stdout.write(f"[NAV CMD]  {self.state['nav_cmd']}\n")
             sys.stdout.write(
                 f"[RAMP OUT] VX:{self.cur_vx_local:>6.1f} VY:{self.cur_vy_local:>6.1f} "
-                f"VZ:{self.cur_vz:>5.1f} deg/s (Max: {MAX_SPEED:.0f} mm/s)\n"
+                f"VZ:{self.cur_vz:>5.1f} deg/s (Max: {MAX_SPEED * self.speed_scale:.0f} mm/s)\n"
             )
-            sys.stdout.write(f"[CAN TX]   {self.state['last_can']}\n")
-            sys.stdout.write("=" * 52 + "\n")
+            sys.stdout.write(f"[CAN TX]   {self.state['last_can']} (Total: {self.can_tx_count})\n")
+            sys.stdout.write("=" * 56 + "\n")
             sys.stdout.flush()
 
 

@@ -14,6 +14,10 @@ import subprocess
 import socket
 import struct
 import time
+import os
+import cv2
+import numpy as np
+import yaml
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from nav2_msgs.action import NavigateToPose
@@ -24,6 +28,7 @@ from sensor_msgs.msg import Joy
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from rcl_interfaces.srv import SetParameters
 from rcl_interfaces.msg import Parameter, ParameterValue, ParameterType
+
 
 
 def get_local_ip():
@@ -190,6 +195,7 @@ body {
     display: block;
     width: 100%;
     height: 100%;
+    cursor: crosshair;
 }
 .map-img {
     display: block;
@@ -206,23 +212,92 @@ body {
     box-shadow: 0 1px 3px rgba(0,0,0,0.15); cursor: pointer;
     transform: translate(-50%, -50%);
     transition: all 0.1s ease;
+    z-index: 5;
 }
 .map-loc-btn:active { background: #cbd5e1; transform: translate(-50%, -50%) scale(0.9); }
 #btn-home { background: #0f172a; color: #ffffff; border-color: #0f172a; }
 
 .robot-pos-marker {
-    position: absolute; width: 12px; height: 12px; background: #ef4444;
-    border: 1.5px solid #ffffff; border-radius: 50%;
+    position: absolute; width: 14px; height: 14px; background: rgba(30, 41, 59, 0.9);
+    border: 2px solid #38bdf8; border-radius: 3px;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 5px rgba(239, 68, 68, 0.6);
+    box-shadow: 0 0 6px rgba(56, 189, 248, 0.7);
     pointer-events: none;
     display: none;
+    box-sizing: border-box;
+    z-index: 8;
+}
+.robot-hitbox-circle {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1.5px dashed rgba(56, 189, 248, 0.7);
+    border-radius: 50%;
+    pointer-events: none;
 }
 .robot-pos-arrow {
-    position: absolute; top: -5px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
     width: 0; height: 0;
-    border-left: 2.5px solid transparent; border-right: 2.5px solid transparent;
-    border-bottom: 4px solid #ef4444;
+    border-left: 4px solid transparent; border-right: 4px solid transparent;
+    border-bottom: 6px solid #f59e0b;
+}
+
+.target-pos-marker {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.target-hitbox-circle {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px dashed #f43f5e;
+    border-radius: 50%;
+    background: rgba(244, 63, 94, 0.15);
+    pointer-events: none;
+}
+.target-body-box {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    border: 1.5px solid #0284c7;
+    background: rgba(2, 132, 199, 0.18);
+    border-radius: 3px;
+    pointer-events: none;
+}
+.target-pin {
+    position: relative;
+    font-size: 16px;
+    line-height: 1;
+    z-index: 2;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+.target-badge {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15, 23, 42, 0.9);
+    color: #38bdf8;
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    z-index: 3;
+}
+.target-badge.clamped {
+    background: rgba(120, 53, 15, 0.95);
+    color: #fbbf24;
+    border-color: #f59e0b;
+}
+.target-badge.safe {
+    background: rgba(6, 78, 59, 0.95);
+    color: #34d399;
+    border-color: #10b981;
 }
 
 .stop-btn {
@@ -420,22 +495,33 @@ body {
         <!-- 2列目: マップ & 操作ボタン -->
         <div style="display:flex; flex-direction:column; gap:10px; height:100%; min-height:0;">
             <div class="map-card" style="flex:1;">
-                <h3 class="card-title">FIELD MAP & TARGETS</h3>
+                <div style="display:flex; justify-content:space-between; align-items:center; width:100%; margin-bottom:6px;">
+                    <h3 class="card-title" style="margin-bottom:0;">FIELD MAP & TARGETS</h3>
+                    <span id="target-info-tag" style="font-size:10px; color:#64748b; font-family:monospace; font-weight:600;">クリックで目的地指定 (当たり判定 R0.48m)</span>
+                </div>
                 <div class="map-container">
                     <div class="map-wrapper" id="map-wrapper">
                         <img id="map-img" class="map-img" src="/map.png">
-                        <div id="btn-1" class="map-loc-btn" onclick="nav(1)" style="display:none;">1</div>
-                        <div id="btn-2" class="map-loc-btn" onclick="nav(2)" style="display:none;">2</div>
-                        <div id="btn-3" class="map-loc-btn" onclick="nav(3)" style="display:none;">3</div>
-                        <div id="btn-4" class="map-loc-btn" onclick="nav(4)" style="display:none;">4</div>
-                        <div id="btn-home" class="map-loc-btn" onclick="nav(0)" style="display:none;">H</div>
+                        <div id="btn-1" class="map-loc-btn" onclick="selectPresetNav(1)" style="display:none;">1</div>
+                        <div id="btn-2" class="map-loc-btn" onclick="selectPresetNav(2)" style="display:none;">2</div>
+                        <div id="btn-3" class="map-loc-btn" onclick="selectPresetNav(3)" style="display:none;">3</div>
+                        <div id="btn-4" class="map-loc-btn" onclick="selectPresetNav(4)" style="display:none;">4</div>
+                        <div id="btn-home" class="map-loc-btn" onclick="selectPresetNav(0)" style="display:none;">H</div>
+                        <div id="target-marker" class="target-pos-marker" style="display:none;">
+                            <div id="target-hitbox" class="target-hitbox-circle"></div>
+                            <div id="target-body" class="target-body-box"></div>
+                            <div class="target-pin">🎯</div>
+                            <div id="target-badge" class="target-badge">GOAL</div>
+                        </div>
                         <div id="robot-marker" class="robot-pos-marker">
+                            <div id="robot-hitbox" class="robot-hitbox-circle"></div>
                             <div class="robot-pos-arrow"></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div style="display:flex; gap:10px; height:38px; flex-shrink:0;">
+            <div style="display:flex; gap:8px; height:38px; flex-shrink:0;">
+                <button id="btn-nav-target" class="action-exec-btn" onclick="navTarget()" style="flex:1.2; background:#2563eb; display:none; box-shadow:0 2px #1d4ed8;">🚀 GO TO TARGET</button>
                 <button id="btn-exec-action" class="action-exec-btn" onclick="execAction()" style="flex:1;">EXECUTE ACTION</button>
                 <button class="stop-btn" onclick="stp()" style="flex:1;">STOP</button>
             </div>
@@ -452,6 +538,20 @@ body {
                     <button class="tab-btn" onclick="selectTab(4)">Preset 4</button>
                 </div>
                 <div class="config-form">
+                    <div class="form-group">
+                        <span class="form-lbl">目標 X (Target X)</span>
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <input type="number" id="cfg-pos-x" class="form-input" value="0" step="50" onchange="saveConfig()">
+                            <span style="color:#64748b; font-size:10px;">mm</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <span class="form-lbl">目標 Y (Target Y)</span>
+                        <div style="display:flex; align-items:center; gap:2px;">
+                            <input type="number" id="cfg-pos-y" class="form-input" value="0" step="50" onchange="saveConfig()">
+                            <span style="color:#64748b; font-size:10px;">mm</span>
+                        </div>
+                    </div>
                     <div class="form-group">
                         <span class="form-lbl">動作番号 (Action ID)</span>
                         <input type="number" id="cfg-action-id" class="form-input" min="1" max="99" value="1" onchange="saveConfig()">
@@ -501,10 +601,27 @@ const dial=document.getElementById('compass-dial');
 const degLabel=document.getElementById('compass-deg');
 const joyDot=document.getElementById('joy-dot');
 const marker=document.getElementById('robot-marker');
+const robotHitbox=document.getElementById('robot-hitbox');
+const targetMarker=document.getElementById('target-marker');
+const targetHitbox=document.getElementById('target-hitbox');
+const targetBody=document.getElementById('target-body');
+const targetBadge=document.getElementById('target-badge');
+const targetInfoTag=document.getElementById('target-info-tag');
+const btnNavTarget=document.getElementById('btn-nav-target');
 const img=document.getElementById('map-img');
 const wrapper=document.getElementById('map-wrapper');
 const container=document.querySelector('.map-container');
 let currentMapImage = '';
+let latestMapInfo = null;
+
+let customTarget = { x: 2400, y: -1100, yaw: 0.0 };
+let currentTab = 1;
+let presetsConfig = {
+    1: { x: 2400.0, y: -1100.0, action_id: 5, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" },
+    2: { x: 4550.0, y: -1225.0, action_id: 8, turn_yaw: 90.0, action_mode: "auto", nav_type: "nav2" },
+    3: { x: 2400.0, y: -1100.0, action_id: 3, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" },
+    4: { x: 2400.0, y: 1100.0, action_id: 4, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" }
+};
 
 function resizeMapWrapper() {
     if (!img.naturalWidth || !img.naturalHeight || !container || !wrapper) return;
@@ -523,12 +640,89 @@ function resizeMapWrapper() {
     }
     wrapper.style.width = Math.floor(targetWidth) + 'px';
     wrapper.style.height = Math.floor(targetHeight) + 'px';
+    if (latestMapInfo) {
+        updateMarkerScales(latestMapInfo);
+    }
 }
 
 img.onload = () => {
     resizeMapWrapper();
 };
 window.addEventListener('resize', resizeMapWrapper);
+
+function updateMarkerScales(map_info) {
+    if (!map_info || map_info.width <= 0) return;
+    const containerW = wrapper.clientWidth || 300;
+    const ppm = containerW / (map_info.width * map_info.resolution);
+    
+    // 実機寸法: 車体 0.95m x 0.95m, 当たり判定円 直径 0.96m (R=0.48m)
+    const bodyPx = Math.max(12, Math.round(0.95 * ppm));
+    const hitboxPx = Math.max(14, Math.round(0.96 * ppm));
+
+    marker.style.width = bodyPx + 'px';
+    marker.style.height = bodyPx + 'px';
+    if (robotHitbox) {
+        robotHitbox.style.width = hitboxPx + 'px';
+        robotHitbox.style.height = hitboxPx + 'px';
+    }
+
+    if (targetBody) {
+        targetBody.style.width = bodyPx + 'px';
+        targetBody.style.height = bodyPx + 'px';
+    }
+    if (targetHitbox) {
+        targetHitbox.style.width = hitboxPx + 'px';
+        targetHitbox.style.height = hitboxPx + 'px';
+    }
+}
+
+function renderTargetMarker(x_mm, y_mm, yaw_deg, badgeText) {
+    if (!latestMapInfo || latestMapInfo.width <= 0) return;
+    const bx = x_mm / 1000.0;
+    const by = y_mm / 1000.0;
+    const bpx = (bx - latestMapInfo.origin_x) / latestMapInfo.resolution;
+    const bpy = latestMapInfo.height - ((by - latestMapInfo.origin_y) / latestMapInfo.resolution);
+    const bpctX = (bpx / latestMapInfo.width) * 100;
+    const bpctY = (bpy / latestMapInfo.height) * 100;
+
+    targetMarker.style.left = Math.max(0, Math.min(100, bpctX)) + '%';
+    targetMarker.style.top = Math.max(0, Math.min(100, bpctY)) + '%';
+    
+    if (targetBody) {
+        targetBody.style.transform = 'translate(-50%, -50%) rotate(' + (90 - yaw_deg) + 'deg)';
+    }
+    if (badgeText && targetBadge) {
+        targetBadge.innerText = badgeText;
+    }
+    targetMarker.style.display = 'flex';
+    btnNavTarget.style.display = 'block';
+}
+
+function setCustomTarget(x_mm, y_mm, optional_yaw) {
+    const yaw = (optional_yaw !== undefined) ? optional_yaw : (parseFloat(document.getElementById('cfg-turn-yaw').value) || 0.0);
+    customTarget = { x: x_mm, y: y_mm, yaw: yaw };
+
+    document.getElementById('cfg-pos-x').value = x_mm;
+    document.getElementById('cfg-pos-y').value = y_mm;
+    if (presetsConfig[currentTab]) {
+        presetsConfig[currentTab].x = x_mm;
+        presetsConfig[currentTab].y = y_mm;
+    }
+
+    renderTargetMarker(x_mm, y_mm, yaw, 'TARGET');
+    targetBadge.className = 'target-badge';
+    targetInfoTag.innerText = `目標確認中: (${x_mm}, ${y_mm})`;
+
+    if (w && w.readyState === 1) {
+        w.send(JSON.stringify({
+            action: "check_target",
+            x: x_mm,
+            y: y_mm
+        }));
+    }
+}
+
+// マップクリックによる直接指定機能を廃止 (UI入力で正確な座標を指定する方式へ変更)
 
 function conn(){
     w=new WebSocket(u);
@@ -555,11 +749,13 @@ function conn(){
             document.getElementById('lbl-cmd-vz').innerText=d.cmd_vz.toFixed(0)+'\u00B0/s';
 
             if (d.map_info && d.map_info.width > 0) {
+                latestMapInfo = d.map_info;
                 if (currentMapImage !== d.map_info.image) {
                     currentMapImage = d.map_info.image;
                     img.src = '/map.png?t=' + Date.now();
                 }
                 resizeMapWrapper();
+                updateMarkerScales(d.map_info);
 
                 // ロボットマーカーマッピング
                 const rx = d.x / 1000.0;
@@ -571,7 +767,7 @@ function conn(){
                 
                 marker.style.left = Math.max(0, Math.min(100, pctX)) + '%';
                 marker.style.top = Math.max(0, Math.min(100, pctY)) + '%';
-                marker.style.transform = 'translate(-50%, -50%) rotate('+d.yaw+'deg)';
+                marker.style.transform = 'translate(-50%, -50%) rotate(' + (90 - d.yaw) + 'deg)';
                 marker.style.display = 'block';
 
                 // 各プリセットボタンマッピング
@@ -602,6 +798,41 @@ function conn(){
                 homeBtn.style.top = Math.max(0, Math.min(100, hpctY)) + '%';
                 homeBtn.style.display = 'flex';
             }
+        } else if (d.type === 'target_checked') {
+            customTarget.x = d.x;
+            customTarget.y = d.y;
+            document.getElementById('cfg-pos-x').value = d.x;
+            document.getElementById('cfg-pos-y').value = d.y;
+            if (presetsConfig[currentTab]) {
+                presetsConfig[currentTab].x = d.x;
+                presetsConfig[currentTab].y = d.y;
+            }
+            const yaw = parseFloat(document.getElementById('cfg-turn-yaw').value) || 0.0;
+            if (d.clamped) {
+                renderTargetMarker(d.x, d.y, yaw, `⚠️ 補正済 (${d.clearance}mm)`);
+                targetBadge.className = 'target-badge clamped';
+                targetInfoTag.innerText = `⚠️ 机/壁接近のため安全位置へ自動補正 (余裕: ${d.clearance}mm)`;
+                targetInfoTag.style.color = '#f59e0b';
+            } else {
+                renderTargetMarker(d.x, d.y, yaw, `✔️ 安全 (${d.clearance}mm)`);
+                targetBadge.className = 'target-badge safe';
+                targetInfoTag.innerText = `✔️ 安全位置 (余裕: ${d.clearance}mm)`;
+                targetInfoTag.style.color = '#10b981';
+            }
+        } else if (d.type === 'target_confirmed') {
+            customTarget.x = d.x;
+            customTarget.y = d.y;
+            const yaw = parseFloat(document.getElementById('cfg-turn-yaw').value) || 0.0;
+            renderTargetMarker(d.x, d.y, yaw, `🚀 進行中 (${d.clearance}mm)`);
+            if (d.clamped) {
+                targetBadge.className = 'target-badge clamped';
+                targetInfoTag.innerText = `🚀 目的地へ走行中 (当たり判定補正済: 余裕 ${d.clearance}mm)`;
+                targetInfoTag.style.color = '#f59e0b';
+            } else {
+                targetBadge.className = 'target-badge safe';
+                targetInfoTag.innerText = `🚀 目的地へ走行中 (余裕: ${d.clearance}mm)`;
+                targetInfoTag.style.color = '#2563eb';
+            }
         } else if (d.type === 'nav_status') {
             const stateLbl = document.getElementById('nav-state');
             stateLbl.innerText = d.state.toUpperCase().replace(/_/g, ' ');
@@ -623,17 +854,84 @@ function conn(){
     };
     w.onclose=()=>{document.getElementById('cs').innerText='🔴';setTimeout(conn,2000);};
 }
+
+let gpInterval = null;
+window.addEventListener("gamepadconnected", (e) => {
+    console.log("Gamepad connected!");
+    if (!gpInterval) {
+        gpInterval = setInterval(() => {
+            const gps = navigator.getGamepads();
+            const gp = gps[0];
+            if (gp && w && w.readyState === 1) {
+                let out_axes = [
+                    gp.axes[0], 
+                    -gp.axes[1], 
+                    gp.axes[2], 
+                    -gp.axes[3], 
+                    gp.buttons[6]?.value || 0.0,
+                    gp.buttons[7]?.value || 0.0
+                ];
+                let out_btns = [
+                    gp.buttons[2]?.pressed ? 1 : 0, // Square
+                    gp.buttons[0]?.pressed ? 1 : 0, // Cross
+                    gp.buttons[1]?.pressed ? 1 : 0, // Circle
+                    gp.buttons[3]?.pressed ? 1 : 0, // Triangle
+                    gp.buttons[4]?.pressed ? 1 : 0, // L1
+                    gp.buttons[5]?.pressed ? 1 : 0, // R1
+                    gp.buttons[6]?.pressed ? 1 : 0, // L2
+                    gp.buttons[7]?.pressed ? 1 : 0, // R2
+                    gp.buttons[8]?.pressed ? 1 : 0, // Share
+                    gp.buttons[9]?.pressed ? 1 : 0, // Options
+                    gp.buttons[16]?.pressed ? 1 : 0, // PS
+                    gp.buttons[10]?.pressed ? 1 : 0, // L3
+                    gp.buttons[11]?.pressed ? 1 : 0, // R3
+                    gp.buttons[12]?.pressed ? 1 : 0, // UP
+                    gp.buttons[13]?.pressed ? 1 : 0, // DOWN
+                    gp.buttons[14]?.pressed ? 1 : 0, // LEFT
+                    gp.buttons[15]?.pressed ? 1 : 0, // RIGHT
+                ];
+                w.send(JSON.stringify({
+                    action: "gamepad",
+                    axes: out_axes,
+                    buttons: out_btns
+                }));
+            }
+        }, 50); // 20Hz (0.05s)
+    }
+});
+window.addEventListener("gamepaddisconnected", (e) => {
+    if (gpInterval) {
+        clearInterval(gpInterval);
+        gpInterval = null;
+    }
+});
+
 function nav(id){if(w&&w.readyState===1)w.send(JSON.stringify({action:"navigate_preset",id:id}));}
 function stp(){if(w&&w.readyState===1)w.send(JSON.stringify({action:"stop"}));}
 function execAction(){if(w&&w.readyState===1)w.send(JSON.stringify({action:"execute_action"}));}
 
-let currentTab = 1;
-let presetsConfig = {
-    1: { x: -1400.0, y: -2400.0, action_id: 1, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" },
-    2: { x: -1225.0, y: -4700.0, action_id: 1, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" },
-    3: { x: -100.0, y: 0.0, action_id: 1, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" },
-    4: { x: 0.0, y: -100.0, action_id: 1, turn_yaw: 0.0, action_mode: "auto", nav_type: "nav2" }
-};
+function selectPresetNav(id) {
+    if (id >= 1 && id <= 4) {
+        selectTab(id);
+    } else if (id === 0) {
+        setCustomTarget(0, 0, 0.0);
+    }
+    nav(id);
+}
+
+function navTarget() {
+    if (w && w.readyState === 1) {
+        const navType = document.getElementById('cfg-nav-type').value || "nav2";
+        const turnYaw = parseFloat(document.getElementById('cfg-turn-yaw').value) || 0.0;
+        w.send(JSON.stringify({
+            action: "navigate_point",
+            x: customTarget.x,
+            y: customTarget.y,
+            yaw: turnYaw,
+            nav_type: navType
+        }));
+    }
+}
 
 function selectTab(id) {
     document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
@@ -647,20 +945,42 @@ function selectTab(id) {
 function loadConfigToForm() {
     const cfg = presetsConfig[currentTab];
     if (cfg) {
+        document.getElementById('cfg-pos-x').value = Math.round(cfg.x || 0);
+        document.getElementById('cfg-pos-y').value = Math.round(cfg.y || 0);
         document.getElementById('cfg-action-id').value = cfg.action_id;
         document.getElementById('cfg-turn-yaw').value = cfg.turn_yaw;
         document.getElementById('cfg-nav-type').value = cfg.nav_type || "nav2";
         document.getElementById('cfg-action-mode').value = cfg.action_mode;
+
+        if (cfg.hasOwnProperty('x') && cfg.hasOwnProperty('y')) {
+            customTarget = { x: cfg.x, y: cfg.y, yaw: cfg.turn_yaw };
+            renderTargetMarker(cfg.x, cfg.y, cfg.turn_yaw, 'P' + currentTab);
+            if (w && w.readyState === 1) {
+                w.send(JSON.stringify({ action: "check_target", x: cfg.x, y: cfg.y }));
+            }
+        }
     }
 }
 
 function saveConfig() {
+    const x = parseFloat(document.getElementById('cfg-pos-x').value) || 0.0;
+    const y = parseFloat(document.getElementById('cfg-pos-y').value) || 0.0;
+    presetsConfig[currentTab].x = x;
+    presetsConfig[currentTab].y = y;
     presetsConfig[currentTab].action_id = parseInt(document.getElementById('cfg-action-id').value) || 1;
     presetsConfig[currentTab].turn_yaw = parseFloat(document.getElementById('cfg-turn-yaw').value) || 0.0;
     presetsConfig[currentTab].nav_type = document.getElementById('cfg-nav-type').value;
     presetsConfig[currentTab].action_mode = document.getElementById('cfg-action-mode').value;
     
+    customTarget = { x: x, y: y, yaw: presetsConfig[currentTab].turn_yaw };
+    renderTargetMarker(x, y, customTarget.yaw, 'P' + currentTab);
+
     if (w && w.readyState === 1) {
+        w.send(JSON.stringify({
+            action: "check_target",
+            x: x,
+            y: y
+        }));
         w.send(JSON.stringify({
             action: "update_presets",
             presets: presetsConfig
@@ -679,10 +999,10 @@ conn();
 # ============================================================
 PRESET_LOCATIONS = {
     0: {"x": 0.0, "y": 0.0, "yaw": 0.0, "action_id": 1, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},
-    1: {"x": 2400.0, "y": -1400.0, "yaw": 0.0, "action_id": 5, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 机1付近 (赤)
-    2: {"x": 4700.0, "y": -1225.0, "yaw": 0.0, "action_id": 8, "turn_yaw": 90.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 旗付近 (赤)
-    3: {"x": 2400.0, "y": -1400.0, "yaw": 0.0, "action_id": 3, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 新座標: 赤机の前
-    4: {"x": 2400.0, "y": 1400.0, "yaw": 0.0, "action_id": 4, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},   # 新座標: 青机の前
+    1: {"x": 2400.0, "y": -1100.0, "yaw": 0.0, "action_id": 5, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 机1前 (クリアランス 0.50m)
+    2: {"x": 4550.0, "y": -1225.0, "yaw": 90.0, "action_id": 8, "turn_yaw": 90.0, "action_mode": "auto", "nav_type": "nav2"},  # 旗前 (クリアランス 0.50m)
+    3: {"x": 2400.0, "y": -1100.0, "yaw": 0.0, "action_id": 3, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},  # 赤机前
+    4: {"x": 2400.0, "y": 1100.0, "yaw": 0.0, "action_id": 4, "turn_yaw": 0.0, "action_mode": "auto", "nav_type": "nav2"},   # 青机前
 }
 
 # ステートマシンの状態定義
@@ -708,8 +1028,14 @@ class WebNavNode(Node):
         self.can_pub = self.create_publisher(Int32MultiArray, 'can_tx', 10)
         self.cmd_pub = self.create_publisher(Twist, 'nav_cmd', 10)  # 念のための Twist 停止配信用
         self.ip_pub = self.create_publisher(String, 'robot_ip', 10)
+        self.ps4_pub = self.create_publisher(Joy, 'ps4_joy', 10)
 
-        # Nav2 アクションクライアントの初期化
+        # FastNav (C++ 超高速ナビ) 連携用
+        self.goal_pub = self.create_publisher(PoseStamped, 'goal_pose', 10)
+        self.nav_status_sub = self.create_subscription(String, 'nav_status', self._nav_status_cb, 10)
+        self.nav_done_cb = None
+
+        # Nav2 アクションクライアントの初期化 (フォールバック互換性維持)
         self.nav_to_pose_client = ActionClient(self, NavigateToPose, 'navigate_to_pose')
         
         # ステート管理
@@ -756,11 +1082,123 @@ class WebNavNode(Node):
         self.map_origin_x = -0.5
         self.map_origin_y = -0.5
         self.map_image_name = "map_red.png"
+        self.dist_map = None
+
+        # 初期マップの読み込み (トピック受信前の当たり判定・クリアランス計算用)
+        self._load_initial_map()
 
         # IPアドレス定期配信タイマー (1分周期)
         self.ip_address_str = get_local_ip()
         self._publish_ip()  # 起動直後に即座に1回配信
         self.create_timer(60.0, self._publish_ip)
+
+    def _load_initial_map(self):
+        """起動時に map_red.yaml / map_red.png をロードして初期の当たり判定用距離マップを構築"""
+        try:
+            from ament_index_python.packages import get_package_share_directory
+            yaml_path = None
+            try:
+                pkg_share = get_package_share_directory('honrobo_pkg')
+                yaml_path = os.path.join(pkg_share, 'map', 'map_red.yaml')
+            except Exception:
+                pass
+            if not yaml_path or not os.path.exists(yaml_path):
+                yaml_path = "/home/haru/Documents/honrobo_2026/src/honrobo_pkg/map/map_red.yaml"
+
+            if os.path.exists(yaml_path):
+                with open(yaml_path, 'r') as f:
+                    meta = yaml.safe_load(f)
+                self.map_resolution = float(meta.get('resolution', 0.05))
+                origin = meta.get('origin', [-0.5, -0.5, 0.0])
+                self.map_origin_x = float(origin[0])
+                self.map_origin_y = float(origin[1])
+
+                img_file = meta.get('image', 'map_red.png')
+                img_path = os.path.join(os.path.dirname(yaml_path), img_file)
+                if os.path.exists(img_path):
+                    cv_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+                    if cv_img is not None:
+                        h, w = cv_img.shape
+                        self.map_width = float(w)
+                        self.map_height = float(h)
+                        cv_ros = cv2.flip(cv_img, 0)
+                        bin_grid = np.where(cv_ros < 50, 0, 255).astype(np.uint8)
+                        self.dist_map = cv2.distanceTransform(bin_grid, cv2.DIST_L2, 5) * self.map_resolution
+                        self.get_logger().info(f"Loaded initial fallback map: {w}x{h}, res={self.map_resolution:.3f}")
+        except Exception as e:
+            self.get_logger().warn(f"Failed to load initial map: {e}")
+
+    def adjust_goal_for_hitbox(self, wx, wy):
+        """
+        目標地点の当たり判定チェック & 自動補正
+        機体の当たり判定半径 0.48m (950mm正方形の外接円/衝突半径) に対し、
+        20mmの安全マージンを加えた 0.50m (500mm) のクリアランスを確保する。
+        もし目標地点の障害物距離が 0.48m 未満（壁や机にめり込んでいる）場合、
+        最も近い安全な地点 (クリアランス >= 0.50m) へ自動補正する。
+        """
+        if self.dist_map is None:
+            return wx, wy, 0.50, False
+
+        h, w = self.dist_map.shape
+        col = int(round((wx - self.map_origin_x) / self.map_resolution))
+        row = int(round((wy - self.map_origin_y) / self.map_resolution))
+
+        if col < 0 or col >= w or row < 0 or row >= h:
+            return wx, wy, 0.0, False
+
+        cur_cl = float(self.dist_map[row, col])
+        if cur_cl >= 0.48:
+            return wx, wy, cur_cl, False
+
+        # 障害物・机に近すぎるため最近傍安全セルを探索 (クリアランス >= 0.50m)
+        best_dist_sq = float('inf')
+        best_cell = None
+        max_search_radius = int(1.5 / self.map_resolution)
+
+        for dr in range(-max_search_radius, max_search_radius + 1):
+            nr = row + dr
+            if nr < 0 or nr >= h:
+                continue
+            for dc in range(-max_search_radius, max_search_radius + 1):
+                nc = col + dc
+                if nc < 0 or nc >= w:
+                    continue
+                if self.dist_map[nr, nc] >= 0.50:
+                    d_sq = dr * dr + dc * dc
+                    if d_sq < best_dist_sq:
+                        best_dist_sq = d_sq
+                        best_cell = (nr, nc)
+
+        if best_cell is not None:
+            safe_wx = self.map_origin_x + best_cell[1] * self.map_resolution
+            safe_wy = self.map_origin_y + best_cell[0] * self.map_resolution
+            new_cl = float(self.dist_map[best_cell[0], best_cell[1]])
+            self.get_logger().info(
+                f"[Hitbox Adjust] Target ({wx:.3f}, {wy:.3f}, cl={cur_cl:.3f}m) clamped to "
+                f"safe point ({safe_wx:.3f}, {safe_wy:.3f}, cl={new_cl:.3f}m)"
+            )
+            return safe_wx, safe_wy, new_cl, True
+
+        return wx, wy, cur_cl, False
+
+    def broadcast_presets(self):
+        """現在の全プリセット情報を WebSocket クライアントへ配信"""
+        presets_send = {}
+        for pid, data in PRESET_LOCATIONS.items():
+            if pid == 0:
+                continue
+            presets_send[pid] = {
+                "x": float(data.get("x", 0.0)),
+                "y": float(data.get("y", 0.0)),
+                "action_id": data.get("action_id", 1),
+                "turn_yaw": data.get("turn_yaw", 0.0),
+                "nav_type": data.get("nav_type", "nav2"),
+                "action_mode": data.get("action_mode", "auto")
+            }
+        self.broadcast_to_ws({
+            "type": "presets_sync",
+            "presets": presets_send
+        })
 
     def _publish_ip(self):
         msg = String()
@@ -776,6 +1214,14 @@ class WebNavNode(Node):
         self.map_resolution = float(msg.info.resolution)
         self.map_origin_x = float(msg.info.origin.position.x)
         self.map_origin_y = float(msg.info.origin.position.y)
+
+        # 障害物距離マップのリアルタイム更新
+        try:
+            grid = np.array(msg.data, dtype=np.int8).reshape((h, w))
+            bin_grid = np.where((grid > 50) | (grid < 0), 0, 255).astype(np.uint8)
+            self.dist_map = cv2.distanceTransform(bin_grid, cv2.DIST_L2, 5) * self.map_resolution
+        except Exception as e:
+            self.get_logger().warn(f"Failed to calculate distance transform in _map_cb: {e}")
 
         if w == 40 and h == 40:
             self.map_image_name = "map_test.png"
@@ -797,34 +1243,44 @@ class WebNavNode(Node):
             global PRESET_LOCATIONS
             if is_red:
                 self.map_image_name = "map_red.png"
-                PRESET_LOCATIONS[1]["x"] = 2400.0
-                PRESET_LOCATIONS[1]["y"] = -1400.0
+                p1_x, p1_y, _, _ = self.adjust_goal_for_hitbox(2.4, -1.4)
+                p2_x, p2_y, _, _ = self.adjust_goal_for_hitbox(4.7, -1.225)
+                p3_x, p3_y, _, _ = self.adjust_goal_for_hitbox(2.4, -1.4)
+                p4_x, p4_y, _, _ = self.adjust_goal_for_hitbox(2.4, 1.4)
+                PRESET_LOCATIONS[1]["x"] = round(p1_x * 1000.0)
+                PRESET_LOCATIONS[1]["y"] = round(p1_y * 1000.0)
                 PRESET_LOCATIONS[1]["turn_yaw"] = 0.0
-                PRESET_LOCATIONS[2]["x"] = 4700.0
-                PRESET_LOCATIONS[2]["y"] = -1225.0
+                PRESET_LOCATIONS[2]["x"] = round(p2_x * 1000.0)
+                PRESET_LOCATIONS[2]["y"] = round(p2_y * 1000.0)
                 PRESET_LOCATIONS[2]["turn_yaw"] = 90.0
-                PRESET_LOCATIONS[3]["x"] = 2400.0
-                PRESET_LOCATIONS[3]["y"] = -1400.0
+                PRESET_LOCATIONS[3]["x"] = round(p3_x * 1000.0)
+                PRESET_LOCATIONS[3]["y"] = round(p3_y * 1000.0)
                 PRESET_LOCATIONS[3]["turn_yaw"] = 0.0
-                PRESET_LOCATIONS[4]["x"] = 2400.0
-                PRESET_LOCATIONS[4]["y"] = 1400.0
+                PRESET_LOCATIONS[4]["x"] = round(p4_x * 1000.0)
+                PRESET_LOCATIONS[4]["y"] = round(p4_y * 1000.0)
                 PRESET_LOCATIONS[4]["turn_yaw"] = 0.0
-                self.get_logger().info(f"[Zone Detection] RED zone detected (left wall: {left_wall_pixels} px). Rotated coordinates updated.")
+                self.get_logger().info(f"[Zone Detection] RED zone detected (left wall: {left_wall_pixels} px). Hitbox-safe coordinates updated.")
             else:
                 self.map_image_name = "map_blue.png"
-                PRESET_LOCATIONS[1]["x"] = 2425.0
-                PRESET_LOCATIONS[1]["y"] = -900.0
+                p1_x, p1_y, _, _ = self.adjust_goal_for_hitbox(2.425, 0.95)
+                p2_x, p2_y, _, _ = self.adjust_goal_for_hitbox(4.7, 1.15)
+                p3_x, p3_y, _, _ = self.adjust_goal_for_hitbox(2.4, 0.95)
+                p4_x, p4_y, _, _ = self.adjust_goal_for_hitbox(2.4, -1.1)
+                PRESET_LOCATIONS[1]["x"] = round(p1_x * 1000.0)
+                PRESET_LOCATIONS[1]["y"] = round(p1_y * 1000.0)
                 PRESET_LOCATIONS[1]["turn_yaw"] = 0.0
-                PRESET_LOCATIONS[2]["x"] = 4700.0
-                PRESET_LOCATIONS[2]["y"] = -1025.0
+                PRESET_LOCATIONS[2]["x"] = round(p2_x * 1000.0)
+                PRESET_LOCATIONS[2]["y"] = round(p2_y * 1000.0)
                 PRESET_LOCATIONS[2]["turn_yaw"] = 90.0
-                PRESET_LOCATIONS[3]["x"] = 2400.0
-                PRESET_LOCATIONS[3]["y"] = -1400.0
+                PRESET_LOCATIONS[3]["x"] = round(p3_x * 1000.0)
+                PRESET_LOCATIONS[3]["y"] = round(p3_y * 1000.0)
                 PRESET_LOCATIONS[3]["turn_yaw"] = 0.0
-                PRESET_LOCATIONS[4]["x"] = 2400.0
-                PRESET_LOCATIONS[4]["y"] = 1400.0
+                PRESET_LOCATIONS[4]["x"] = round(p4_x * 1000.0)
+                PRESET_LOCATIONS[4]["y"] = round(p4_y * 1000.0)
                 PRESET_LOCATIONS[4]["turn_yaw"] = 0.0
-                self.get_logger().info(f"[Zone Detection] BLUE zone detected (left wall: {left_wall_pixels} px). Rotated coordinates updated.")
+                self.get_logger().info(f"[Zone Detection] BLUE zone detected (left wall: {left_wall_pixels} px). Hitbox-safe coordinates updated.")
+
+            self.broadcast_presets()
 
     def _odom_cb(self, msg):
         self.cur_x = msg.pose.pose.position.x
@@ -928,12 +1384,17 @@ class WebNavNode(Node):
             asyncio.run_coroutine_threadsafe(do_broadcast(), _ws_loop)
 
     def send_goal(self, x, y, yaw, done_callback):
+        safe_x, safe_y, cl, clamped = self.adjust_goal_for_hitbox(x, y)
+        if clamped:
+            self.get_logger().warn(
+                f"[Hitbox Safety] Clamped goal ({x:.3f}, {y:.3f}) -> ({safe_x:.3f}, {safe_y:.3f}), cl={cl:.3f}m"
+            )
         loc = PRESET_LOCATIONS.get(self.current_preset_id, {})
         nav_type = loc.get("nav_type", "nav2")
         if nav_type == "direct":
-            self.start_direct_drive_goal(x, y, yaw, done_callback)
+            self.start_direct_drive_goal(safe_x, safe_y, yaw, done_callback)
         else:
-            self.send_nav2_goal(x, y, yaw, done_callback)
+            self.send_nav2_goal(safe_x, safe_y, yaw, done_callback)
 
     def _normalize_angle(self, angle):
         while angle > math.pi:
@@ -991,17 +1452,17 @@ class WebNavNode(Node):
                 # 開始時に記録した固定直線角度に向かって直進
                 yaw_error = self._normalize_angle(self.direct_line_angle - self.cur_yaw)
                 
-                # 前進速度 (最大 0.45 m/s, 残り距離に応じた減速)
-                v_target = max(0.08, min(0.45, 1.0 * d_remain))
+                # 前進速度 (最大 0.15 m/s, 残り距離に応じた減速)
+                v_target = max(0.04, min(0.15, 0.4 * d_remain))
                 
                 # 開始時に決まった固定直線ベクトル
                 vx_field = v_target * math.cos(self.direct_line_angle)
                 vy_field = v_target * math.sin(self.direct_line_angle)
                 
-                # フィールド速度 -> ロボットローカル速度 (オドメトリ姿勢角をそのまま使用)
-                cmd.linear.x = vx_field * math.cos(self.cur_yaw) + vy_field * math.sin(self.cur_yaw)
-                cmd.linear.y = -vx_field * math.sin(self.cur_yaw) + vy_field * math.cos(self.cur_yaw)
-                cmd.angular.z = max(-0.8, min(0.8, 1.5 * yaw_error))
+                # フィールド速度 -> ロボットローカル速度 (linear.y: 前後, linear.x: 左右)
+                cmd.linear.y =  vx_field * math.cos(self.cur_yaw) + vy_field * math.sin(self.cur_yaw)
+                cmd.linear.x = -vx_field * math.sin(self.cur_yaw) + vy_field * math.cos(self.cur_yaw)
+                cmd.angular.z = max(-0.2, min(0.2, 0.8 * yaw_error))
                 self.cmd_pub.publish(cmd)
                 return
 
@@ -1024,77 +1485,100 @@ class WebNavNode(Node):
                 if cb:
                     cb()
             else:
-                cmd.angular.z = max(-0.6, min(0.6, 1.2 * yaw_error))
+                cmd.angular.z = max(-0.15, min(0.15, 0.5 * yaw_error))
                 self.cmd_pub.publish(cmd)
 
+    def _nav_status_cb(self, msg):
+        """fast_nav_node (C++ 超高速ナビ) からの自律移動ステータスを受信"""
+        status = msg.data
+        if status == "arrived":
+            self.get_logger().info("FastNav arrived at goal successfully!")
+            cb = self.nav_done_cb
+            self.nav_done_cb = None
+            if cb:
+                cb()
+        elif status in ("cancelled", "planning_failed"):
+            self.get_logger().warn(f"FastNav status: {status}")
+            self.nav_done_cb = None
+            self._transition(STATE_IDLE)
+
     def send_nav2_goal(self, x, y, yaw, done_callback):
-        self.get_logger().info(f"Sending Nav2 goal: X={x:.3f}, Y={y:.3f}, Yaw={math.degrees(yaw):.2f}")
-        
-        goal_msg = NavigateToPose.Goal()
-        goal_msg.pose.header.stamp = self.get_clock().now().to_msg()
-        goal_msg.pose.header.frame_id = 'map'
-        
-        goal_msg.pose.pose.position.x = x
-        goal_msg.pose.pose.position.y = y
-        
-        cy, sy = math.cos(yaw / 2), math.sin(yaw / 2)
-        goal_msg.pose.pose.orientation.w = cy
-        goal_msg.pose.pose.orientation.z = sy
-        
-        self.nav_to_pose_client.wait_for_server()
-        
-        self.get_logger().info("Sending goal request...")
-        self._send_goal_future = self.nav_to_pose_client.send_goal_async(goal_msg)
-        self._send_goal_future.add_done_callback(lambda future: self._goal_response_cb(future, done_callback))
+        self.get_logger().info(f"Sending FastNav goal: X={x:.3f}, Y={y:.3f}, Yaw={math.degrees(yaw):.2f}")
+        self.nav_done_cb = done_callback
 
-    def _goal_response_cb(self, future, done_callback):
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().info("Nav2 goal rejected.")
-            self._transition(STATE_IDLE)
-            return
+        goal_msg = PoseStamped()
+        goal_msg.header.stamp = self.get_clock().now().to_msg()
+        goal_msg.header.frame_id = 'map'
+        goal_msg.pose.position.x = x
+        goal_msg.pose.position.y = y
 
-        self.get_logger().info("Nav2 goal accepted.")
-        self.goal_handle = goal_handle
-        
-        self._get_result_future = goal_handle.get_result_async()
-        self._get_result_future.add_done_callback(lambda future: self._get_result_cb(future, done_callback))
+        cy = math.cos(yaw / 2.0)
+        sy = math.sin(yaw / 2.0)
+        goal_msg.pose.orientation.w = cy
+        goal_msg.pose.orientation.z = sy
 
-    def _get_result_cb(self, future, done_callback):
-        result = future.result()
-        status = result.status
-        self.get_logger().info(f"Nav2 goal finished with status: {status}")
-        
-        if status == 4:  # SUCCEEDED
-            self.get_logger().info("Nav2 goal reached successfully.")
-            if done_callback:
-                done_callback()
-        else:
-            self.get_logger().error("Nav2 goal failed or was cancelled.")
-            self._transition(STATE_IDLE)
+        self.goal_pub.publish(goal_msg)
 
     def _stop(self):
-        if self.goal_handle is not None and self.navigating:
-            self.get_logger().info("Cancelling active Nav2 goal...")
-            self.goal_handle.cancel_goal_async()
-            self.goal_handle = None
-            
-        if self.control_timer is not None:
-            self.control_timer.cancel()
-            self.control_timer = None
+        try:
+            self.nav_done_cb = None
+            if self.control_timer is not None:
+                self.control_timer.cancel()
+                self.control_timer = None
 
-        if self.action_timer is not None:
-            self.action_timer.cancel()
-            self.action_timer = None
+            if self.action_timer is not None:
+                self.action_timer.cancel()
+                self.action_timer = None
 
-        self._transition(STATE_IDLE)
-        self.navigating = False
-        
+            self._transition(STATE_IDLE)
+            self.navigating = False
+
+            mode_msg = Bool()
+            mode_msg.data = False
+            self.mode_pub.publish(mode_msg)
+
+            self.cmd_pub.publish(Twist())
+        except Exception:
+            pass
+
+    def start_nav_point(self, x_mm, y_mm, yaw_deg=None, nav_type="nav2"):
+        """指定座標 (mm, deg) への直接自動走行"""
+        # If yaw_deg is None (not provided), keep current robot yaw
+        if yaw_deg is None:
+            yaw_rad = self.cur_yaw
+        else:
+            yaw_rad = math.radians(float(yaw_deg))
+
+        self.current_preset_id = 99
+        PRESET_LOCATIONS[99] = {
+            "x": safe_x * 1000.0,
+            "y": safe_y * 1000.0,
+            "yaw": math.degrees(yaw_rad),
+            "action_id": 1,
+            "turn_yaw": math.degrees(yaw_rad),
+            "action_mode": "auto",
+            "nav_type": nav_type
+        }
+
         mode_msg = Bool()
-        mode_msg.data = False
+        mode_msg.data = True
         self.mode_pub.publish(mode_msg)
-        
-        self.cmd_pub.publish(Twist())
+
+        self._transition(STATE_NAV_TO_GOAL)
+        self.send_goal(safe_x, safe_y, yaw_rad, self._on_point_goal_reached)
+
+        self.broadcast_to_ws({
+            "type": "target_confirmed",
+            "x": int(round(safe_x * 1000.0)),
+            "y": int(round(safe_y * 1000.0)),
+            "clamped": clamped,
+            "clearance": int(round(cl * 1000.0))
+        })
+
+    def _on_point_goal_reached(self):
+        self.get_logger().info("[Web Nav] Point navigation completed successfully.")
+        self._transition(STATE_IDLE)
+        self._stop()
 
     def start_nav_preset(self, loc_id):
         if loc_id not in PRESET_LOCATIONS:
@@ -1125,14 +1609,12 @@ class WebNavNode(Node):
         loc = PRESET_LOCATIONS.get(self.current_preset_id, {})
         turn_yaw_deg = loc.get("turn_yaw", 0.0)
         
-        self.get_logger().info(f"Starting action sequence. Turning to target angle: {turn_yaw_deg} deg.")
+        self.get_logger().info(f"Starting action sequence. Robot should already be at target angle: {turn_yaw_deg} deg.")
         
-        self.send_goal(
-            self.cur_x, 
-            self.cur_y, 
-            math.radians(turn_yaw_deg), 
-            self._on_turn_completed
-        )
+        # 既に到着時の角度(yaw)とアクション用角度(turn_yaw)を統合しているため、
+        # 到着時点で目標角度は向いている。再度send_goalすると位置ズレを再修正しようとして
+        # 「到着後にまた動く」原因になるため、ここでは直接CAN送信へ進む。
+        self._on_turn_completed()
 
     def _on_turn_completed(self):
         loc = PRESET_LOCATIONS.get(self.current_preset_id, {})
@@ -1252,21 +1734,60 @@ async def ws_handler(websocket, *args, **kwargs):
     try:
         async for message in websocket:
             cmd = json.loads(message)
-            if cmd.get("action") == "navigate_preset" and _node:
+            action = cmd.get("action")
+            if action == "navigate_preset" and _node:
                 _node.start_nav_preset(cmd.get("id"))
-            elif cmd.get("action") == "stop" and _node:
+            elif action == "navigate_point" and _node:
+                x = float(cmd.get("x", 0.0))
+                y = float(cmd.get("y", 0.0))
+                # yaw is optional; if not provided, keep current robot yaw
+                if "yaw" in cmd:
+                    yaw = float(cmd["yaw"])
+                else:
+                    yaw = None
+                nav_type = str(cmd.get("nav_type", "nav2"))
+                _node.start_nav_point(x, y, yaw, nav_type)
+            elif action == "check_target" and _node:
+                raw_x = float(cmd.get("x", 0.0)) / 1000.0
+                raw_y = float(cmd.get("y", 0.0)) / 1000.0
+                safe_x, safe_y, cl, clamped = _node.adjust_goal_for_hitbox(raw_x, raw_y)
+                await websocket.send(json.dumps({
+                    "type": "target_checked",
+                    "orig_x": int(cmd.get("x", 0.0)),
+                    "orig_y": int(cmd.get("y", 0.0)),
+                    "x": int(round(safe_x * 1000.0)),
+                    "y": int(round(safe_y * 1000.0)),
+                    "clearance": int(round(cl * 1000.0)),
+                    "clamped": clamped
+                }))
+            elif action == "gamepad" and _node:
+                axes = cmd.get("axes", [])
+                buttons = cmd.get("buttons", [])
+                joy = Joy()
+                joy.header.stamp = _node.get_clock().now().to_msg()
+                joy.axes = [float(a) for a in axes]
+                joy.buttons = [int(b) for b in buttons]
+                _node.ps4_pub.publish(joy)
+            elif action == "stop" and _node:
                 _node._stop()
-            elif cmd.get("action") == "execute_action" and _node:
+            elif action == "execute_action" and _node:
                 if _node.state == STATE_ACTION:
                     _node.get_logger().info("Manual action execution trigger received from UI.")
                     _node._start_action_sequence()
-            elif cmd.get("action") == "update_presets" and _node:
+            elif action == "update_presets" and _node:
                 presets_data = cmd.get("presets", {})
                 for pid_str, data in presets_data.items():
                     pid = int(pid_str)
                     if pid in PRESET_LOCATIONS:
+                        if "x" in data and "y" in data:
+                            raw_x = float(data["x"]) / 1000.0
+                            raw_y = float(data["y"]) / 1000.0
+                            safe_x, safe_y, _, _ = _node.adjust_goal_for_hitbox(raw_x, raw_y)
+                            PRESET_LOCATIONS[pid]["x"] = round(safe_x * 1000.0)
+                            PRESET_LOCATIONS[pid]["y"] = round(safe_y * 1000.0)
                         PRESET_LOCATIONS[pid]["action_id"] = int(data.get("action_id", 1))
                         PRESET_LOCATIONS[pid]["turn_yaw"] = float(data.get("turn_yaw", 0.0))
+                        PRESET_LOCATIONS[pid]["yaw"] = float(data.get("turn_yaw", 0.0)) # 統一して変更
                         PRESET_LOCATIONS[pid]["nav_type"] = data.get("nav_type", "nav2")
                         PRESET_LOCATIONS[pid]["action_mode"] = data.get("action_mode", "auto")
                 _node.get_logger().info("Presets configuration updated from web UI.")

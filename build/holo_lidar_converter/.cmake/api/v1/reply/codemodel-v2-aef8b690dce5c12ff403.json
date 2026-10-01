@@ -1,0 +1,97 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-f9e60524d9e3ba740791.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.12"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "holo_lidar_converter",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "holo_lidar_converter::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-holo_lidar_converter-cb458387cba1d55d324a.json",
+					"name" : "holo_lidar_converter",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "holo_lidar_converter_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-holo_lidar_converter_uninstall-63b17bcb2530208b375d.json",
+					"name" : "holo_lidar_converter_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "laserscan_to_pointcloud2::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-laserscan_to_pointcloud2-d0b1587ac8c9bd29f111.json",
+					"name" : "laserscan_to_pointcloud2",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "pointcloud2_to_laserscan::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-pointcloud2_to_laserscan-4753d401abcf2237a41f.json",
+					"name" : "pointcloud2_to_laserscan",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-8a9139079313dfbca5cb.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/haru/Documents/honrobo_2026/build/holo_lidar_converter",
+		"source" : "/home/haru/Documents/honrobo_2026/src/holo_lidar_converter"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}

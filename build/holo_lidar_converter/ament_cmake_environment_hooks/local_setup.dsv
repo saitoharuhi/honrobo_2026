@@ -1,0 +1,3 @@
+source;share/holo_lidar_converter/environment/ament_prefix_path.sh
+source;share/holo_lidar_converter/environment/library_path.sh
+source;share/holo_lidar_converter/environment/path.sh

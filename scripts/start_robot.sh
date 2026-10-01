@@ -69,30 +69,39 @@ fi
 
 # CAN セットアップ (CANableの接続有無を自動判定)
 if [ "$SKIP_CAN" = false ]; then
-    CANABLE_DETECTED=false
-    if ip link show can0 &>/dev/null; then
-        CANABLE_DETECTED=true
+    # もし can0 が既に UP 状態であれば、セットアップ不要で即座にOK
+    if ip link show can0 2>/dev/null | grep -q "UP"; then
+        echo -e "${GREEN}[1/3] ✅ can0 は既にアクティブ(UP)です。実CAN通信で起動します。${NC}"
+        SKIP_CAN=false
     else
-        CANABLE_CHECK=$(python3 -c "
+        CANABLE_DETECTED=false
+        if ip link show can0 &>/dev/null; then
+            CANABLE_DETECTED=true
+        else
+            CANABLE_CHECK=$(python3 -c "
 import serial.tools.list_ports
 ports = serial.tools.list_ports.comports()
 found = any('canable' in p.description.lower() or '16d0:117e' in p.hwid.lower() for p in ports)
 print('true' if found else 'false')
 " 2>/dev/null || echo "false")
-        if [ "$CANABLE_CHECK" = "true" ]; then
-            CANABLE_DETECTED=true
+            if [ "$CANABLE_CHECK" = "true" ]; then
+                CANABLE_DETECTED=true
+            fi
         fi
-    fi
 
-    if [ "$CANABLE_DETECTED" = true ]; then
-        echo -e "${YELLOW}[1/3] CAN通信セットアップ (CANable検出済み)...${NC}"
-        if ! sudo bash "$SCRIPTS_DIR/setup_can.sh"; then
-            echo -e "${YELLOW}  ⚠️ CANセットアップに失敗したため、モックモード (--no-can) にフォールバックします。${NC}"
+        if [ "$CANABLE_DETECTED" = true ]; then
+            echo -e "${YELLOW}[1/3] CAN通信セットアップ中...${NC}"
+            if sudo bash "$SCRIPTS_DIR/setup_can.sh"; then
+                echo -e "${GREEN}  ✅ CANセットアップ完了${NC}"
+                SKIP_CAN=false
+            else
+                echo -e "${YELLOW}  ⚠️ CANセットアップに失敗したため、モックモード (--no-can) にフォールバックします。${NC}"
+                SKIP_CAN=true
+            fi
+        else
+            echo -e "${YELLOW}[1/3] ⚠️ CANableが未検出です。CAN通信をモックモード (--no-can) で自動起動します。${NC}"
             SKIP_CAN=true
         fi
-    else
-        echo -e "${YELLOW}[1/3] ⚠️ CANableが未検出です。CAN通信をモックモード (--no-can) で自動起動します。${NC}"
-        SKIP_CAN=true
     fi
 else
     echo -e "${YELLOW}[1/3] CANスキップ (--no-can 指定)${NC}"
@@ -229,37 +238,52 @@ else
 fi
 sleep 0.5
 
-# ③ roboware_node
+# ③ ps4_node (PS4コントローラー - ロボット直結コントローラー対応)
+tmux new-window -t "$SESSION_NAME" -n "ps4"
+tmux send-keys -t "$SESSION_NAME:ps4" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh ps4_node" C-m
+sleep 0.5
+
+# ④ roboware_node
 tmux new-window -t "$SESSION_NAME" -n "roboware"
 tmux send-keys -t "$SESSION_NAME:roboware" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh roboware_node" C-m
 sleep 0.5
 
-# ④ web_node
+# ⑤ web_node
 tmux new-window -t "$SESSION_NAME" -n "web"
 tmux send-keys -t "$SESSION_NAME:web" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh web_node" C-m
 sleep 0.5
 
-# ⑤ nav2 (Nav2自律移動スタック)
-tmux new-window -t "$SESSION_NAME" -n "nav2"
-tmux send-keys -t "$SESSION_NAME:nav2" "$SETUP_CMD && ros2 launch honrobo_pkg nav2.launch.py map:=\$(ros2 pkg prefix honrobo_pkg)/share/honrobo_pkg/map/$MAP_FILE" C-m
+# ⑥ nav (FastNav C++ 超高速オムニナビゲーション + AMCL)
+tmux new-window -t "$SESSION_NAME" -n "nav"
+MAP_PATH="\$(ros2 pkg prefix honrobo_pkg)/share/honrobo_pkg/map/$MAP_FILE"
+tmux send-keys -t "$SESSION_NAME:nav" "$SETUP_CMD && ros2 launch honrobo_pkg localization.launch.py map:=$MAP_PATH & sleep 3 && ros2 run fast_nav_cpp fast_nav_node --ros-args -p map_yaml:=$MAP_PATH" C-m
+sleep 0.5
+
+# ⑦ lidar (RPLIDAR S1)
+tmux new-window -t "$SESSION_NAME" -n "lidar"
+LIDAR_PORT=$(python3 -c "import serial.tools.list_ports; print(next((p.device for p in serial.tools.list_ports.comports() if '10c4:ea60' in (p.hwid or '').lower() or 'cp210' in (p.description or '').lower()), '/dev/ttyUSB0'))")
+tmux send-keys -t "$SESSION_NAME:lidar" "$SETUP_CMD && echo 'PORT=$LIDAR_PORT' && ros2 run rplidar_ros rplidar_node --ros-args -p channel_type:=serial -p serial_port:=$LIDAR_PORT -p serial_baudrate:=256000 -p frame_id:=laser -p angle_compensate:=true; echo -e '\n[LIDAR Stopped. Press ENTER to close.]'; read" C-m
+sleep 0.5
 
 tmux select-window -t "$SESSION_NAME:sensor"
 
 echo ""
 echo -e "${GREEN}============================================${NC}"
-echo -e "${GREEN} ✅ ロボット側ノード起動完了!${NC}"
+echo -e "${GREEN} ✅ ロボット側ノード起動完了 (FastNav C++ 最速ナビ稼働中)!${NC}"
 echo -e "${GREEN}============================================${NC}"
-echo "  ※操縦者PC側で 'start_operator.sh' または 'operator.sh' を起動してください。"
+echo "  ※操縦者PC側で 'start_operator.sh' または 'operator.sh' を起動するか、"
+echo "    ロボットPCにPS4コントローラーを直接接続しても操縦可能です。"
 echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
-echo "  ウィンドウ切替:  Ctrl+B → 数字(0-4)"
+echo "  ウィンドウ切替:  Ctrl+B → 数字(0-5)"
 echo "  停止:           bash scripts/stop_all.sh"
 echo ""
 echo "  [0] sensor   - zikoiti_node (自己位置推定)"
 echo "  [1] can      - can_node (CAN通信)"
-echo "  [2] roboware - roboware_node (制御統合)"
-echo "  [3] web      - web_node (WebSocket/HTTP)"
-echo "  [4] nav2     - nav2.launch.py (Nav2自律移動スタック)"
+echo "  [2] ps4      - ps4_node (PS4コントローラー)"
+echo "  [3] roboware - roboware_node (制御統合)"
+echo "  [4] web      - web_node (WebSocket/HTTP)"
+echo "  [5] nav      - fast_nav_node (C++ 最速オムニ自律移動)"
 echo ""
 
 tmux attach -t "$SESSION_NAME"
