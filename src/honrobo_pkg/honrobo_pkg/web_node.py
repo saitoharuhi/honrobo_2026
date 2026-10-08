@@ -415,6 +415,12 @@ body {
 </style>
 </head>
 <body oncontextmenu="return false;">
+    <div id="disconnect-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; flex-direction:column; justify-content:center; align-items:center; color:white; font-family:sans-serif;">
+        <h1 style="color:#ef4444; font-size:24px; margin-bottom:10px;">⚠️ 通信切断 (Wi-Fi ロスト)</h1>
+        <p style="font-size:14px; text-align:center; max-width:80%;">ロボットとの接続が切れました。<br>Wi-Fiの自動復旧を待機しています...</p>
+        <div style="margin-top:20px; width:40px; height:40px; border:4px solid #ef4444; border-top:4px solid transparent; border-radius:50%; animation: spin 1s linear infinite;"></div>
+    </div>
+    <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>
     <div class="header">
         <h2>ROBOT DASHBOARD</h2>
         <button id="fs-btn" class="fs-btn" onclick="toggleFullscreen()">
@@ -852,7 +858,15 @@ function conn(){
             loadConfigToForm();
         }
     };
-    w.onclose=()=>{document.getElementById('cs').innerText='🔴';setTimeout(conn,2000);};
+    w.onopen = () => {
+        document.getElementById('cs').innerText='🟢';
+        document.getElementById('disconnect-overlay').style.display = 'none';
+    };
+    w.onclose = () => {
+        document.getElementById('cs').innerText='🔴';
+        document.getElementById('disconnect-overlay').style.display = 'flex';
+        setTimeout(conn, 2000);
+    };
 }
 
 let gpInterval = null;

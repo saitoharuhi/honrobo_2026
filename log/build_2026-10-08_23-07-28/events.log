@@ -1,0 +1,46 @@
+[0.000000] (-) TimerEvent: {}
+[0.001169] (-) JobUnselected: {'identifier': 'fast_nav_cpp'}
+[0.001220] (-) JobUnselected: {'identifier': 'holo_lidar_converter'}
+[0.001283] (-) JobUnselected: {'identifier': 'holo_mcl'}
+[0.001366] (honrobo_pkg) JobQueued: {'identifier': 'honrobo_pkg', 'dependencies': OrderedDict()}
+[0.001495] (honrobo_pkg) JobStarted: {'identifier': 'honrobo_pkg'}
+[0.099641] (-) TimerEvent: {}
+[0.199911] (-) TimerEvent: {}
+[0.300180] (-) TimerEvent: {}
+[0.400389] (-) TimerEvent: {}
+[0.500610] (-) TimerEvent: {}
+[0.600848] (-) TimerEvent: {}
+[0.701041] (-) TimerEvent: {}
+[0.801266] (-) TimerEvent: {}
+[0.833449] (honrobo_pkg) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/build', '--no-deps', 'symlink_data'], 'cwd': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg', 'env': {'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'CHROME_DEVTOOLS_MCP_JS': '/opt/antigravity/resources/app.asar.unpacked/node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js', 'AI_AGENT': 'antigravity', 'LANGUAGE': 'ja:en', 'USER': 'haru', 'ANTIGRAVITY_SOURCE_METADATA': '{"tool":{"conversationId":"9a1ae9e5-09a3-45c1-a04c-ed5a58b4484f","stepIndex":8396,"toolCall":{"id":"call_578924","name":"run_command","argumentsJson":"{\\"BypassSandbox\\":true,\\"CommandLine\\":\\"colcon build --symlink-install --packages-select honrobo_pkg 2\\\\u003e\\\\u00261 | tail -n 5\\",\\"Cwd\\":\\"/home/haru/Documents/honrobo_2026\\",\\"WaitMsBeforeAsync\\":5000,\\"toolAction\\":\\"Rebuild package\\",\\"toolSummary\\":\\"Rebuild package\\"}","thinkingSignature":"ErwBCrkBAWkUfRNOFVscge1chF0GDM+XdRsY6lOJ5i/A6iHjqRD7mUtHqCNq4dkN0glA/Zymn8gEexspfjvfP9/uEg6DTOmxy6pUhVFJZG/EU7m03XHzYsOZnjSDtUjBtxw2C9+URi0beqGyzxubJtZIxgtYZvxym/I6MedQJ1ryRXTPNyLOFSvKLkIYtwuLFdGF0m/Z6QSBI+F0H+sHGyLWUJtWvOxONlTJGPtIVQYL9yBt+OWJaaUziZAQGQY="}}}', 'LC_TIME': 'ja_JP.UTF-8', 'XDG_SESSION_TYPE': 'wayland', 'ANTIGRAVITY_AGENTAPI_EXE': '/opt/antigravity/resources/bin/language_server', 'JETSKI_APP_DATA_DIR': 'antigravity', 'SHLVL': '1', 'HOME': '/home/haru', 'CHROME_DESKTOP': 'antigravity.desktop', 'DISABLE_AUTO_UPDATE': 'true', 'DESKTOP_SESSION': 'ubuntu', 'NVM_BIN': '/home/haru/.nvm/versions/node/v20.20.2/bin', 'NVM_INC': '/home/haru/.nvm/versions/node/v20.20.2/include/node', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/haru/.local/share/applications/antigravity.desktop', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'PAGER': 'cat', 'LC_MONETARY': 'ja_JP.UTF-8', 'MANAGERPID': '1969', 'SYSTEMD_EXEC_PID': '2154', 'IM_CONFIG_CHECK_ENV': '1', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'ANTIGRAVITY_AGENT': '1', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '237406', 'AGY_BROWSER_ACTIVE_PORT_FILE': '/home/haru/.config/Antigravity/DevToolsActivePort', 'NVM_DIR': '/home/haru/.nvm', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ZSH_TMUX_AUTOSTARTED': 'true', 'LOGNAME': 'haru', 'AGY_BROWSER_WS_URL': 'ws://127.0.0.1:46113/devtools/browser/8fbf8cce-619f-435b-b3ed-48d35b26e932', '_': '/usr/bin/colcon', 'JOURNAL_STREAM': '8:8021', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'haru', 'TERM': 'dumb', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'FC_FONTATIONS': '1', 'ANTIGRAVITY_LS_VERSION': 'hub-2.12.2', 'PATH': '/home/haru/.gemini/antigravity/bin:/home/haru/.config/Antigravity/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.nvm/versions/node/v20.20.2/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2119,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2119', 'INVOCATION_ID': '49f07da7793c4ad4acfeff557b31eff3', 'PAPERSIZE': 'a4', 'XDG_MENU_PREFIX': 'gnome-', 'LC_ADDRESS': 'ja_JP.UTF-8', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'GDK_BACKEND': 'wayland', 'DISPLAY': ':0', 'LANG': 'ja_JP.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'ANTIGRAVITY_CONVERSATION_ID': '9a1ae9e5-09a3-45c1-a04c-ed5a58b4484f', 'LC_TELEPHONE': 'ja_JP.UTF-8', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.MPI4W3', 'LS_COLORS': '', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'ANTIGRAVITY_PROJECT_ID': '9c964b30-f9e9-4e0a-8833-56955264d7bd', 'SHELL': '/bin/bash', 'ANTIGRAVITY_LS_ADDRESS': 'localhost:46781', 'LC_NAME': 'ja_JP.UTF-8', 'QT_ACCESSIBILITY': '1', 'NO_AT_BRIDGE': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'ja_JP.UTF-8', 'GJS_DEBUG_OUTPUT': 'stderr', 'LC_IDENTIFICATION': 'ja_JP.UTF-8', 'GIT_PAGER': 'cat', 'QT_IM_MODULE': 'ibus', 'ANTIGRAVITY_TRAJECTORY_ID': 'f9dfff6c-bb19-49e7-98eb-900041bc63de', 'PWD': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'ZSH_TMUX_AUTOSTART': 'false', 'NVM_CD_FLAGS': '', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'LC_NUMERIC': 'ja_JP.UTF-8', 'LC_PAPER': 'ja_JP.UTF-8', 'JETSKI_SAFECLIS_SOURCE': '/home/haru/.gemini/antigravity/bin/secplugins/src', 'COLCON': '1', 'ANTIGRAVITY_CSRF_TOKEN': 'f55d4e61-1d69-4ace-a6b6-4fb6c20e42cb', 'PYTHONPATH': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:'}, 'shell': False}
+[0.901369] (-) TimerEvent: {}
+[1.001578] (-) TimerEvent: {}
+[1.101823] (-) TimerEvent: {}
+[1.173128] (honrobo_pkg) StdoutLine: {'line': b'running develop\n'}
+[1.201938] (-) TimerEvent: {}
+[1.302143] (-) TimerEvent: {}
+[1.358381] (honrobo_pkg) StdoutLine: {'line': b'running egg_info\n'}
+[1.370902] (honrobo_pkg) StdoutLine: {'line': b'writing honrobo_pkg.egg-info/PKG-INFO\n'}
+[1.371707] (honrobo_pkg) StdoutLine: {'line': b'writing dependency_links to honrobo_pkg.egg-info/dependency_links.txt\n'}
+[1.372071] (honrobo_pkg) StdoutLine: {'line': b'writing entry points to honrobo_pkg.egg-info/entry_points.txt\n'}
+[1.372441] (honrobo_pkg) StdoutLine: {'line': b'writing requirements to honrobo_pkg.egg-info/requires.txt\n'}
+[1.372757] (honrobo_pkg) StdoutLine: {'line': b'writing top-level names to honrobo_pkg.egg-info/top_level.txt\n'}
+[1.401063] (honrobo_pkg) StdoutLine: {'line': b"reading manifest file 'honrobo_pkg.egg-info/SOURCES.txt'\n"}
+[1.402255] (honrobo_pkg) StdoutLine: {'line': b"writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'\n"}
+[1.402389] (-) TimerEvent: {}
+[1.416672] (honrobo_pkg) StdoutLine: {'line': b'running build_ext\n'}
+[1.416884] (honrobo_pkg) StdoutLine: {'line': b'Creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)\n'}
+[1.417738] (honrobo_pkg) StdoutLine: {'line': b'Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.418058] (honrobo_pkg) StdoutLine: {'line': b'Installing monitor_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.418315] (honrobo_pkg) StdoutLine: {'line': b'Installing nav_gui script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.418544] (honrobo_pkg) StdoutLine: {'line': b'Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.418778] (honrobo_pkg) StdoutLine: {'line': b'Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.418972] (honrobo_pkg) StdoutLine: {'line': b'Installing scan_filter script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.419181] (honrobo_pkg) StdoutLine: {'line': b'Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.419399] (honrobo_pkg) StdoutLine: {'line': b'Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.419711] (honrobo_pkg) StdoutLine: {'line': b'\n'}
+[1.419899] (honrobo_pkg) StdoutLine: {'line': b'Installed /home/haru/Documents/honrobo_2026/build/honrobo_pkg\n'}
+[1.419975] (honrobo_pkg) StdoutLine: {'line': b'running symlink_data\n'}
+[1.459035] (honrobo_pkg) CommandEnded: {'returncode': 0}
+[1.473966] (honrobo_pkg) JobEnded: {'identifier': 'honrobo_pkg', 'rc': 0}
+[1.474850] (-) EventReactorShutdown: {}

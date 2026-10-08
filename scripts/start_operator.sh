@@ -133,7 +133,13 @@ tmux split-window -h -t "$SESSION_NAME:operator"
 tmux send-keys -t "$SESSION_NAME:operator.1" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh monitor_node" C-m
 sleep 0.5
 
+# 新しいウィンドウを開いて Wi-Fi Watchdog (自動復旧) を起動
+tmux new-window -t "$SESSION_NAME" -n "wifi_check"
+tmux send-keys -t "$SESSION_NAME:wifi_check" "bash $WORKSPACE_DIR/scripts/wifi_watchdog.sh" C-m
+sleep 0.5
+
 # 最後に左ペイン(コントローラー操作)にフォーカスを合わせる
+tmux select-window -t "$SESSION_NAME:operator"
 tmux select-pane -t "$SESSION_NAME:operator.0"
 
 echo ""
@@ -145,6 +151,7 @@ echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
 echo "  停止:           bash scripts/stop_all.sh"
 echo "  画面構成:       左半分: PS4コントローラー入力状態 / 右半分: 自己位置＆CAN送信値モニター"
+echo "  [1] wifi_check  : Wi-Fi自動復旧監視"
 echo ""
 
 tmux attach -t "$SESSION_NAME"
