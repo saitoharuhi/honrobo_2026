@@ -150,6 +150,11 @@ tmux new-window -t "$SESSION_NAME" -n "web"
 tmux send-keys -t "$SESSION_NAME:web" "bash $WORKSPACE_DIR/scripts/run_node_wrapper.sh web_node" C-m
 sleep 0.5
 
+# ⑥ Wi-Fi Watchdog (自動復旧)
+tmux new-window -t "$SESSION_NAME" -n "wifi_check"
+tmux send-keys -t "$SESSION_NAME:wifi_check" "bash $WORKSPACE_DIR/scripts/wifi_watchdog.sh" C-m
+sleep 0.5
+
 tmux select-window -t "$SESSION_NAME:sensor"
 
 echo ""
@@ -158,15 +163,16 @@ echo -e "${GREEN} ✅ 手動運転専用モード起動完了!${NC}"
 echo -e "${GREEN}============================================${NC}"
 echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
-echo "  ウィンドウ切替:  Ctrl+B → 数字(0-4)"
+echo "  ウィンドウ切替:  Ctrl+B → 数字(0-5)"
 echo "  セッション離脱:  Ctrl+B → d"
 echo "  停止:           bash scripts/stop_all.sh"
 echo ""
-echo "  [0] sensor   - zikoiti_node (自己位置推定)"
-echo "  [1] can      - can_node (CAN通信)"
-echo "  [2] ps4      - ps4_node (PS4コントローラー)"
-echo "  [3] roboware - roboware_node (制御統合)"
-echo "  [4] web      - web_node (WebSocket/HTTP)"
+echo "  [0] sensor     - zikoiti_node (自己位置推定)"
+echo "  [1] can        - can_node (CAN通信)"
+echo "  [2] ps4        - ps4_node (PS4コントローラー)"
+echo "  [3] roboware   - roboware_node (制御統合)"
+echo "  [4] web        - web_node (WebSocket/HTTP)"
+echo "  [5] wifi_check - Wi-Fi自動復旧監視"
 echo ""
 
 tmux attach -t "$SESSION_NAME"

@@ -269,6 +269,9 @@ sleep 0.5
 tmux new-window -t "$SESSION_NAME" -n "lidar"
 LIDAR_PORT=$(python3 -c "import serial.tools.list_ports; print(next((p.device for p in serial.tools.list_ports.comports() if '10c4:ea60' in (p.hwid or '').lower() or 'cp210' in (p.description or '').lower()), '/dev/ttyUSB0'))")
 tmux send-keys -t "$SESSION_NAME:lidar" "$SETUP_CMD && echo 'PORT=$LIDAR_PORT' && ros2 run rplidar_ros rplidar_node --ros-args -p channel_type:=serial -p serial_port:=$LIDAR_PORT -p serial_baudrate:=256000 -p frame_id:=laser -p angle_compensate:=true; echo -e '\n[LIDAR Stopped. Press ENTER to close.]'; read" C-m
+# ⑧ Wi-Fi Watchdog (自動復旧)
+tmux new-window -t "$SESSION_NAME" -n "wifi_check"
+tmux send-keys -t "$SESSION_NAME:wifi_check" "bash $WORKSPACE_DIR/scripts/wifi_watchdog.sh" C-m
 sleep 0.5
 
 tmux select-window -t "$SESSION_NAME:sensor"
@@ -279,16 +282,18 @@ echo -e "${GREEN} ✅ 全ノード起動完了 (FastNav C++ 最速ナビ稼働�
 echo -e "${GREEN}============================================${NC}"
 echo ""
 echo "  セッション接続:  tmux attach -t $SESSION_NAME"
-echo "  ウィンドウ切替:  Ctrl+B → 数字(0-5)"
+echo "  ウィンドウ切替:  Ctrl+B → 数字(0-7)"
 echo "  セッション離脱:  Ctrl+B → d"
 echo "  停止:           bash scripts/stop_all.sh"
 echo ""
-echo "  [0] sensor   - zikoiti_node (自己位置推定)"
-echo "  [1] can      - can_node (CAN通信)"
-echo "  [2] ps4      - ps4_node (PS4コントローラー)"
-echo "  [3] roboware - roboware_node (制御統合)"
-echo "  [4] web      - web_node (WebSocket/HTTP)"
-echo "  [5] nav      - fast_nav_node (C++ 最速オムニ自律移動)"
+echo "  [0] sensor     - zikoiti_node (自己位置推定)"
+echo "  [1] can        - can_node (CAN通信)"
+echo "  [2] ps4        - ps4_node (PS4コントローラー)"
+echo "  [3] roboware   - roboware_node (制御統合)"
+echo "  [4] web        - web_node (WebSocket/HTTP)"
+echo "  [5] nav        - fast_nav_node (C++ 最速オムニ自律移動)"
+echo "  [6] lidar      - rplidar_node (LiDAR)"
+echo "  [7] wifi_check - Wi-Fi自動復旧監視"
 echo ""
 
 tmux attach -t "$SESSION_NAME"
