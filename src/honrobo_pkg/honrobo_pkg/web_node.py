@@ -589,6 +589,13 @@ body {
     </div>
 
 <script>
+let lastMsgTime = Date.now();
+setInterval(() => {
+    if (Date.now() - lastMsgTime > 3000) {
+        document.getElementById('disconnect-overlay').style.display = 'flex';
+        document.getElementById('cs').innerText='🔴';
+    }
+}, 1000);
 function toggleFullscreen() {
     if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().then(() => {
@@ -734,6 +741,8 @@ function conn(){
     w=new WebSocket(u);
     w.onopen=()=>{document.getElementById('cs').innerText='🟢';};
     w.onmessage=(e)=>{
+        lastMsgTime = Date.now();
+        document.getElementById('disconnect-overlay').style.display = 'none';
         const d=JSON.parse(e.data);
         if(d.type==='status'){
             document.getElementById('px').innerText=d.x;
