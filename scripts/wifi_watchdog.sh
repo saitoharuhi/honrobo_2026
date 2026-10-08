@@ -55,25 +55,42 @@ while true; do
         
         if [ -n "$ANY_CONNECTED" ]; then
             echo "$(date '+%H:%M:%S') ✅ Wi-Fiネットワークに再接続されました！"
-            echo "ROS 2 の stale 状態を解消するため、システムを自動再起動します..."
+            echo "ROS 2 の stale 状態を解消するため、ノードを自動再起動します..."
             
             # 3秒待つ（IPアドレス割り当てなどを確実にするため）
             sleep 3
             
+            # 現在のセッション名を取得
+            SESSION_NAME=""
             if tmux ls 2>/dev/null | grep -q "honrobo_operator"; then
-                RESTART_SCRIPT="start_operator.sh"
+                SESSION_NAME="honrobo_operator"
             elif tmux ls 2>/dev/null | grep -q "honrobo_manual"; then
-                RESTART_SCRIPT="start_manual.sh"
-            else
-                RESTART_SCRIPT="start_robot.sh"
+                SESSION_NAME="honrobo_manual"
+            elif tmux ls 2>/dev/null | grep -q "honrobo"; then
+                SESSION_NAME="honrobo"
             fi
 
-            echo "🚀 $RESTART_SCRIPT を用いて再起動します..."
+            if [ -n "$SESSION_NAME" ]; then
+                echo "🚀 セッション $SESSION_NAME 内のROS 2ノードを再起動中..."
+                # tmuxの全ペインを列挙し、wifi_check以外にCtrl+C -> 2 (再起動) を送信
+                for p in $(tmux list-panes -a -F "#{session_name}:#{window_name}:#{pane_id}" 2>/dev/null | grep "^$SESSION_NAME:"); do
+                    W_NAME=$(echo "$p" | cut -d':' -f2)
+                    P_ID=$(echo "$p" | cut -d':' -f3)
+                    if [ "$W_NAME" != "wifi_check" ]; then
+                        # 終了シグナル送信
+                        tmux send-keys -t "$P_ID" C-c
+                        sleep 0.5
+                        # run_node_wrapper.sh の再起動選択肢 '2' を送信
+                        tmux send-keys -t "$P_ID" "2" C-m
+                    fi
+                done
+                echo "✅ ノードの再起動シグナルを送信しました！"
+            else
+                echo "⚠️ tmuxセッションが見つからないため再起動をスキップします。"
+            fi
             
-            # バックグラウンドでシステム再起動をトリガー
-            nohup bash -c "bash $WORKSPACE_DIR/scripts/stop_all.sh && sleep 3 && bash $WORKSPACE_DIR/scripts/$RESTART_SCRIPT" >/dev/null 2>&1 &
-            
-            exit 0
+            # 再起動ループを防ぐためフラグをリセットしてループに戻る
+            WAITING_FOR_RECONNECT=false
         fi
     fi
 
