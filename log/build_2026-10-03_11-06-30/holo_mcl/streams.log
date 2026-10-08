@@ -1,0 +1,17 @@
+[0.012s] Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_mcl': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/holo_mcl -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_mcl
+[0.236s] -- The C compiler identification is GNU 11.4.0
+[0.236s] -- The CXX compiler identification is GNU 11.4.0
+[0.236s] -- Detecting C compiler ABI info
+[0.236s] -- Detecting C compiler ABI info - done
+[0.236s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.236s] -- Detecting C compile features
+[0.236s] -- Detecting C compile features - done
+[0.239s] -- Detecting CXX compiler ABI info
+[0.315s] -- Detecting CXX compiler ABI info - done
+[0.321s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.321s] -- Detecting CXX compile features
+[0.321s] -- Detecting CXX compile features - done
+[0.325s] -- Found ament_cmake_auto: 1.3.14 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[0.660s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.719s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.822s] Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_mcl' returned '-2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/holo_mcl -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_mcl

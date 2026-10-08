@@ -1,0 +1,71 @@
+[0.016s] Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/fast_nav_cpp -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp
+[0.232s] -- The C compiler identification is GNU 11.4.0
+[0.232s] -- The CXX compiler identification is GNU 11.4.0
+[0.232s] -- Detecting C compiler ABI info
+[0.233s] -- Detecting C compiler ABI info - done
+[0.233s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.233s] -- Detecting C compile features
+[0.233s] -- Detecting C compile features - done
+[0.233s] -- Detecting CXX compiler ABI info
+[0.268s] -- Detecting CXX compiler ABI info - done
+[0.273s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.274s] -- Detecting CXX compile features
+[0.274s] -- Detecting CXX compile features - done
+[0.276s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.603s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.656s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.684s] -- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)
+[0.722s] -- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.727s] -- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[0.737s] -- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[0.749s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[0.766s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[0.814s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[0.817s] -- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[0.915s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[0.945s] -- Found FastRTPS: /opt/ros/humble/include  
+[0.991s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[1.004s] -- Looking for pthread.h
+[1.087s] -- Looking for pthread.h - found
+[1.087s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[1.164s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[1.164s] -- Found Threads: TRUE  
+[1.219s] -- Found geometry_msgs: 4.9.1 (/opt/ros/humble/share/geometry_msgs/cmake)
+[1.234s] -- Found nav_msgs: 4.9.1 (/opt/ros/humble/share/nav_msgs/cmake)
+[1.252s] -- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)
+[1.271s] -- Found tf2: 0.25.20 (/opt/ros/humble/share/tf2/cmake)
+[1.284s] -- Found tf2_ros: 0.25.20 (/opt/ros/humble/share/tf2_ros/cmake)
+[1.368s] -- Found tf2_geometry_msgs: 0.25.20 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)
+[1.385s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[1.386s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[1.386s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[1.406s] -- Found OpenCV: /usr (found version "4.5.4") 
+[1.461s] -- Configuring done
+[1.477s] -- Generating done
+[1.483s] -- Build files have been written to: /home/haru/Documents/honrobo_2026/build/fast_nav_cpp
+[1.512s] Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/fast_nav_cpp -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp
+[1.514s] Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+[1.578s] [ 50%] Building CXX object CMakeFiles/fast_nav_node.dir/src/fast_nav_node.cpp.o
+[26.637s] [100%] Linking CXX executable fast_nav_node
+[27.061s] [100%] Built target fast_nav_node
+[27.070s] Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+[27.071s] Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp
+[27.079s] -- Install configuration: ""
+[27.079s] -- Execute custom install script
+[27.079s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/fast_nav_cpp/fast_nav_node
+[27.088s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/package_run_dependencies/fast_nav_cpp
+[27.095s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/parent_prefix_path/fast_nav_cpp
+[27.102s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/ament_prefix_path.sh
+[27.109s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/ament_prefix_path.dsv
+[27.117s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/path.sh
+[27.125s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/path.dsv
+[27.132s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.bash
+[27.139s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.sh
+[27.146s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.zsh
+[27.153s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.dsv
+[27.160s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.dsv
+[27.168s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/packages/fast_nav_cpp
+[27.176s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/cmake/fast_nav_cppConfig.cmake
+[27.183s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/cmake/fast_nav_cppConfig-version.cmake
+[27.190s] -- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.xml
+[27.200s] Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp

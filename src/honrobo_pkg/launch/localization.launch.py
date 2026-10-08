@@ -1,26 +1,23 @@
-"""
-localization.launch.py
-holo_mcl (natto_library) を使用する自己位置推定ランチファイル。
-
-パイプライン:
-  /scan (LaserScan)
-    → scan_filter_node (/scan_filtered: ロボット後方を除去)
-    → laserscan_to_pointcloud2 (/pointcloud2: base_linkフレームに変換)
-    → holo_mcl (MCL自己位置推定 → map→base_link TF)
-"""
 import os
 from launch import LaunchDescription
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
 
-
 def generate_launch_description():
     pkg_dir = get_package_share_directory('honrobo_pkg')
-    map_yaml   = LaunchConfiguration('map',        default=os.path.join(pkg_dir, 'map', 'map_red.yaml'))
-    mcl_params = LaunchConfiguration('mcl_params', default=os.path.join(pkg_dir, 'config', 'mcl_params.yaml'))
+    map_yaml = LaunchConfiguration('map', default=os.path.join(pkg_dir, 'map', 'map_red.yaml'))
 
     return LaunchDescription([
+        # ── TF: base_link → laser ──
+        # LiDARはロボットの前方(X=0.475m)に180度反転(Yaw=3.14159)して取り付けられている
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='static_tf_base_to_laser',
+            arguments=['0.475', '0.0', '0.2', '3.14159265', '0.0', '0.0', 'base_link', 'laser'],
+            output='screen'
+        ),
 
         # ── 地図サーバー ──
         Node(
@@ -31,23 +28,21 @@ def generate_launch_description():
             parameters=[{'yaml_filename': map_yaml, 'use_sim_time': False}],
         ),
 
-        # ── ライフサイクル管理 (map_server のみ) ──
+        # ── ライフサイクル管理 (map_server, amcl) ──
         Node(
             package='nav2_lifecycle_manager',
             executable='lifecycle_manager',
-            name='lifecycle_manager',
+            name='lifecycle_manager_localization',
             output='screen',
             parameters=[{
                 'use_sim_time': False,
                 'autostart': True,
-                'node_names': ['map_server'],
+                'node_names': ['map_server', 'amcl'],
             }],
         ),
 
-        # ── ① LiDARスキャンフィルタ ──
-        # ロボット後部（robot body が写り込む領域）の点群を除去する
-        # front_angle_deg: この角度未満の範囲（laser frameで0°=robot後方）を無効化
-        # 90° → ロボット後方180°を除去、前方180°のみ使用
+        # ── LiDARスキャンフィルタ ──
+        # ロボット後部の部品が写り込む部分を除去
         Node(
             package='honrobo_pkg',
             executable='scan_filter',
@@ -57,36 +52,28 @@ def generate_launch_description():
             remappings=[('/scan', '/scan')],
         ),
 
-        # ── ② LaserScan → PointCloud2 変換 ──
-        # frame_id='base_link' にすることで、LiDARの取り付けオフセット(x=0.475m, yaw=π)
-        # を TF 経由で自動補正した座標系でMCLに渡す
+        # ── 標準自己位置推定 (nav2_amcl) ──
+        # システムを簡略化・安定化させるため標準のAMCL（オムニ対応）を使用
         Node(
-            package='holo_lidar_converter',
-            executable='laserscan_to_pointcloud2',
-            name='laserscan_to_pointcloud2',
+            package='nav2_amcl',
+            executable='amcl',
+            name='amcl',
             output='screen',
-            parameters=[{'frame_id': 'base_link'}],
-            remappings=[
-                ('laserscan',   '/scan_filtered'),
-                ('pointcloud2', '/pointcloud2'),
-            ],
-        ),
-
-        # ── ③ holo_mcl 自己位置推定 ──
-        Node(
-            package='holo_mcl',
-            executable='mcl',
-            name='mcl',
-            output='screen',
-            parameters=[mcl_params],
-            remappings=[
-                ('occupancy_grid',    '/map'),
-                ('pointcloud2',       '/pointcloud2'),
-                ('odometry',          '/odom'),
-                ('pose',              '/localization/pose'),
-                ('particles',         '/localization/particles'),
-                ('pose_with_covariance', '/localization/pose_with_covariance'),
-                ('initial_pose',      '/initialpose'),
-            ],
+            parameters=[{
+                'use_sim_time': False,
+                'robot_model_type': 'omnidirectional',
+                'odom_frame_id': 'odom',
+                'base_frame_id': 'base_link',
+                'global_frame_id': 'map',
+                'scan_topic': '/scan_filtered',
+                'max_particles': 2000,
+                'min_particles': 500,
+                # ロボットの初期位置（デフォルト設定）
+                'set_initial_pose': True,
+                'initial_pose.x': 2.4,
+                'initial_pose.y': -0.7,
+                'initial_pose.yaw': 1.570796,
+                'tf_broadcast': True,
+            }],
         ),
     ])

@@ -1,0 +1,562 @@
+[0.000000] (-) TimerEvent: {}
+[0.000452] (fast_nav_cpp) JobQueued: {'identifier': 'fast_nav_cpp', 'dependencies': OrderedDict()}
+[0.000490] (holo_lidar_converter) JobQueued: {'identifier': 'holo_lidar_converter', 'dependencies': OrderedDict()}
+[0.000508] (holo_mcl) JobQueued: {'identifier': 'holo_mcl', 'dependencies': OrderedDict()}
+[0.000521] (honrobo_pkg) JobQueued: {'identifier': 'honrobo_pkg', 'dependencies': OrderedDict()}
+[0.000534] (fast_nav_cpp) JobStarted: {'identifier': 'fast_nav_cpp'}
+[0.004796] (holo_lidar_converter) JobStarted: {'identifier': 'holo_lidar_converter'}
+[0.007822] (holo_mcl) JobStarted: {'identifier': 'holo_mcl'}
+[0.010113] (honrobo_pkg) JobStarted: {'identifier': 'honrobo_pkg'}
+[0.015001] (fast_nav_cpp) JobProgress: {'identifier': 'fast_nav_cpp', 'progress': 'cmake'}
+[0.015261] (fast_nav_cpp) Command: {'cmd': ['/usr/bin/cmake', '/home/haru/Documents/honrobo_2026/src/fast_nav_cpp', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp'], 'cwd': '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.016656] (holo_lidar_converter) JobProgress: {'identifier': 'holo_lidar_converter', 'progress': 'cmake'}
+[0.016680] (holo_lidar_converter) Command: {'cmd': ['/usr/bin/cmake', '/home/haru/Documents/honrobo_2026/src/holo_lidar_converter', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_lidar_converter'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.017735] (holo_mcl) JobProgress: {'identifier': 'holo_mcl', 'progress': 'cmake'}
+[0.017821] (holo_mcl) Command: {'cmd': ['/usr/bin/cmake', '/home/haru/Documents/honrobo_2026/src/holo_mcl', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_mcl'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_mcl', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_mcl'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.099789] (-) TimerEvent: {}
+[0.200039] (-) TimerEvent: {}
+[0.231612] (holo_mcl) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.231787] (holo_mcl) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.231849] (holo_mcl) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.231897] (holo_mcl) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.231940] (holo_mcl) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.231983] (holo_mcl) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.232025] (holo_mcl) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.232067] (holo_mcl) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.232128] (holo_lidar_converter) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.232197] (holo_lidar_converter) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.232248] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.232294] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.232375] (holo_lidar_converter) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.232433] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.232487] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.232569] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.232630] (fast_nav_cpp) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[0.232903] (fast_nav_cpp) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[0.232962] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[0.233011] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[0.233058] (fast_nav_cpp) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[0.233170] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[0.233223] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[0.233269] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[0.268484] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.268686] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.268752] (holo_mcl) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[0.273678] (fast_nav_cpp) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.273789] (holo_lidar_converter) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.273862] (holo_mcl) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[0.274042] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.274105] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.274162] (holo_mcl) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[0.274307] (fast_nav_cpp) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.274360] (holo_lidar_converter) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.274407] (holo_mcl) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[0.276302] (holo_mcl) StdoutLine: {'line': b'-- Found ament_cmake_auto: 1.3.14 (/opt/ros/humble/share/ament_cmake_auto/cmake)\n'}
+[0.276363] (holo_lidar_converter) StdoutLine: {'line': b'-- Found ament_cmake_auto: 1.3.14 (/opt/ros/humble/share/ament_cmake_auto/cmake)\n'}
+[0.276859] (fast_nav_cpp) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[0.300175] (-) TimerEvent: {}
+[0.400411] (-) TimerEvent: {}
+[0.500641] (-) TimerEvent: {}
+[0.600025] (holo_mcl) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.600314] (holo_lidar_converter) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.600708] (-) TimerEvent: {}
+[0.602637] (fast_nav_cpp) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[0.652817] (holo_mcl) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.654340] (holo_lidar_converter) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.656822] (fast_nav_cpp) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[0.683996] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[0.700844] (-) TimerEvent: {}
+[0.722214] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.727024] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.737190] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.749806] (fast_nav_cpp) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.766515] (fast_nav_cpp) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.769064] (holo_mcl) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.770230] (holo_lidar_converter) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[0.771633] (honrobo_pkg) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/build', '--no-deps', 'symlink_data'], 'cwd': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg', 'env': {'PYTHONWARNINGS': 'ignore', 'GJS_DEBUG_TOPICS': 'JS ERROR;JS LOG', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'ja:en', 'USER': 'haru', 'LC_TIME': 'ja_JP.UTF-8', 'XDG_SESSION_TYPE': 'wayland', 'SHLVL': '2', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib', 'HOME': '/home/haru', 'OLDPWD': '/home/haru/Documents/honrobo_2026', 'TERM_PROGRAM_VERSION': '20240203-110809-5046fc22', 'DESKTOP_SESSION': 'ubuntu', 'GIO_LAUNCHED_DESKTOP_FILE': '/usr/share/applications/org.wezfurlong.wezterm.desktop', 'ROS_PYTHON_VERSION': '3', 'GNOME_SHELL_SESSION_MODE': 'ubuntu', 'GTK_MODULES': 'gail:atk-bridge', 'LC_MONETARY': 'ja_JP.UTF-8', 'MANAGERPID': '1940', 'SYSTEMD_EXEC_PID': '2129', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '3561', 'WEZTERM_EXECUTABLE': '/usr/bin/wezterm-gui', 'IM_CONFIG_PHASE': '1', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'haru', 'JOURNAL_STREAM': '8:11722', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'USERNAME': 'haru', 'TERM': 'xterm-256color', 'GNOME_DESKTOP_SESSION_ID': 'this-is-deprecated', 'WEZTERM_CONFIG_FILE': '/home/haru/.wezterm.lua', 'ROS_LOCALHOST_ONLY': '0', 'WEZTERM_EXECUTABLE_DIR': '/usr/bin', 'PATH': '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin', 'SESSION_MANAGER': 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095', 'INVOCATION_ID': '663c794a3e0a4e98a848ad00b11c7877', 'PAPERSIZE': 'a4', 'XDG_MENU_PREFIX': 'gnome-', 'LC_ADDRESS': 'ja_JP.UTF-8', 'GNOME_SETUP_DISPLAY': ':1', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'ja_JP.UTF-8', 'XDG_CURRENT_DESKTOP': 'ubuntu:GNOME', 'LC_TELEPHONE': 'ja_JP.UTF-8', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'ubuntu', 'XAUTHORITY': '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'TERM_PROGRAM': 'WezTerm', 'SSH_AGENT_LAUNCHER': 'gnome-keyring', 'SSH_AUTH_SOCK': '/run/user/1000/keyring/ssh', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LC_NAME': 'ja_JP.UTF-8', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'ubuntu', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'ja_JP.UTF-8', 'GJS_DEBUG_OUTPUT': 'stderr', 'LC_IDENTIFICATION': 'ja_JP.UTF-8', 'WEZTERM_CONFIG_DIR': '/home/haru', 'QT_IM_MODULE': 'ibus', 'PWD': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-ubuntu:/etc/xdg', 'XDG_DATA_DIRS': '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop', 'WEZTERM_UNIX_SOCKET': '/run/user/1000/wezterm/gui-sock-3561', 'PYTHONPATH': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'LC_NUMERIC': 'ja_JP.UTF-8', 'LC_PAPER': 'ja_JP.UTF-8', 'WEZTERM_PANE': '0', 'COLCON': '1'}, 'shell': False}
+[0.773944] (holo_mcl) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.775068] (holo_lidar_converter) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.8 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[0.781924] (holo_mcl) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.783025] (holo_lidar_converter) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.8 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[0.792647] (holo_mcl) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.793666] (holo_lidar_converter) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[0.800930] (-) TimerEvent: {}
+[0.807022] (holo_mcl) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.807893] (holo_lidar_converter) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[0.814051] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.817641] (fast_nav_cpp) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.846267] (holo_mcl) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.847201] (holo_lidar_converter) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[0.848639] (holo_mcl) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.849707] (holo_lidar_converter) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.10 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[0.901069] (-) TimerEvent: {}
+[0.915612] (fast_nav_cpp) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.933022] (holo_mcl) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.933231] (holo_lidar_converter) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[0.945908] (fast_nav_cpp) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.965934] (holo_mcl) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.966281] (holo_lidar_converter) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[0.991182] (fast_nav_cpp) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.001131] (-) TimerEvent: {}
+[1.004547] (fast_nav_cpp) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[1.008800] (holo_lidar_converter) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.011901] (holo_mcl) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[1.017788] (holo_lidar_converter) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[1.020610] (holo_mcl) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[1.066331] (honrobo_pkg) StdoutLine: {'line': b'running develop\n'}
+[1.087269] (fast_nav_cpp) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[1.087783] (fast_nav_cpp) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[1.088409] (holo_mcl) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[1.088678] (holo_mcl) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[1.088836] (holo_lidar_converter) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[1.089240] (holo_lidar_converter) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[1.101247] (-) TimerEvent: {}
+[1.163791] (holo_mcl) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[1.164028] (fast_nav_cpp) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[1.164124] (holo_lidar_converter) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[1.164706] (holo_mcl) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.164809] (fast_nav_cpp) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.164992] (holo_lidar_converter) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[1.201343] (-) TimerEvent: {}
+[1.219191] (fast_nav_cpp) StdoutLine: {'line': b'-- Found geometry_msgs: 4.9.1 (/opt/ros/humble/share/geometry_msgs/cmake)\n'}
+[1.234902] (fast_nav_cpp) StdoutLine: {'line': b'-- Found nav_msgs: 4.9.1 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[1.252252] (fast_nav_cpp) StdoutLine: {'line': b'-- Found sensor_msgs: 4.9.1 (/opt/ros/humble/share/sensor_msgs/cmake)\n'}
+[1.271262] (fast_nav_cpp) StdoutLine: {'line': b'-- Found tf2: 0.25.20 (/opt/ros/humble/share/tf2/cmake)\n'}
+[1.279783] (honrobo_pkg) StdoutLine: {'line': b'running egg_info\n'}
+[1.279940] (honrobo_pkg) StdoutLine: {'line': b'creating honrobo_pkg.egg-info\n'}
+[1.284501] (fast_nav_cpp) StdoutLine: {'line': b'-- Found tf2_ros: 0.25.20 (/opt/ros/humble/share/tf2_ros/cmake)\n'}
+[1.295068] (honrobo_pkg) StdoutLine: {'line': b'writing honrobo_pkg.egg-info/PKG-INFO\n'}
+[1.296035] (honrobo_pkg) StdoutLine: {'line': b'writing dependency_links to honrobo_pkg.egg-info/dependency_links.txt\n'}
+[1.296260] (honrobo_pkg) StdoutLine: {'line': b'writing entry points to honrobo_pkg.egg-info/entry_points.txt\n'}
+[1.296595] (honrobo_pkg) StdoutLine: {'line': b'writing requirements to honrobo_pkg.egg-info/requires.txt\n'}
+[1.296807] (honrobo_pkg) StdoutLine: {'line': b'writing top-level names to honrobo_pkg.egg-info/top_level.txt\n'}
+[1.296913] (honrobo_pkg) StdoutLine: {'line': b"writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'\n"}
+[1.301426] (-) TimerEvent: {}
+[1.319180] (holo_mcl) StdoutLine: {'line': b'-- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)\n'}
+[1.320488] (holo_mcl) StdoutLine: {'line': b'-- Found Eigen3: TRUE (found version "3.4.0") \n'}
+[1.320608] (holo_mcl) StdoutLine: {'line': b'-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target\n'}
+[1.329021] (honrobo_pkg) StdoutLine: {'line': b"reading manifest file 'honrobo_pkg.egg-info/SOURCES.txt'\n"}
+[1.329840] (honrobo_pkg) StdoutLine: {'line': b"writing manifest file 'honrobo_pkg.egg-info/SOURCES.txt'\n"}
+[1.346500] (honrobo_pkg) StdoutLine: {'line': b'running build_ext\n'}
+[1.346685] (honrobo_pkg) StdoutLine: {'line': b'Creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages/honrobo-pkg.egg-link (link to .)\n'}
+[1.347451] (honrobo_pkg) StdoutLine: {'line': b'Installing can_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.347703] (honrobo_pkg) StdoutLine: {'line': b'Installing monitor_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.347936] (honrobo_pkg) StdoutLine: {'line': b'Installing nav_gui script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348056] (honrobo_pkg) StdoutLine: {'line': b'Installing ps4_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348239] (honrobo_pkg) StdoutLine: {'line': b'Installing roboware_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348307] (honrobo_pkg) StdoutLine: {'line': b'Installing scan_filter script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348440] (honrobo_pkg) StdoutLine: {'line': b'Installing web_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348499] (honrobo_pkg) StdoutLine: {'line': b'Installing zikoiti_node script to /home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/honrobo_pkg\n'}
+[1.348606] (honrobo_pkg) StdoutLine: {'line': b'\n'}
+[1.348656] (honrobo_pkg) StdoutLine: {'line': b'Installed /home/haru/Documents/honrobo_2026/build/honrobo_pkg\n'}
+[1.348749] (honrobo_pkg) StdoutLine: {'line': b'running symlink_data\n'}
+[1.348873] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index\n'}
+[1.348925] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index\n'}
+[1.349050] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index/packages\n'}
+[1.349104] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/resource/honrobo_pkg -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/ament_index/resource_index/packages\n'}
+[1.349213] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/package.xml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg\n'}
+[1.349306] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/launch\n'}
+[1.349398] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/launch/nav2.launch.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/launch\n'}
+[1.349493] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/launch/localization.launch.py -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/launch\n'}
+[1.349585] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/config\n'}
+[1.349677] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/config/nav2_params.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/config\n'}
+[1.349770] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/config/mcl_params.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/config\n'}
+[1.349870] (honrobo_pkg) StdoutLine: {'line': b'creating /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.349975] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350061] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350167] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350263] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_red.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350357] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350440] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_blue.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350536] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_test.yaml -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.350631] (honrobo_pkg) StdoutLine: {'line': b'symbolically linking /home/haru/Documents/honrobo_2026/build/honrobo_pkg/map/map_test.png -> /home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/map\n'}
+[1.368520] (fast_nav_cpp) StdoutLine: {'line': b'-- Found tf2_geometry_msgs: 0.25.20 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)\n'}
+[1.385063] (fast_nav_cpp) StdoutLine: {'line': b'-- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)\n'}
+[1.386193] (fast_nav_cpp) StdoutLine: {'line': b'-- Found Eigen3: TRUE (found version "3.4.0") \n'}
+[1.386321] (fast_nav_cpp) StdoutLine: {'line': b'-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target\n'}
+[1.390994] (holo_lidar_converter) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.395816] (honrobo_pkg) CommandEnded: {'returncode': 0}
+[1.401523] (-) TimerEvent: {}
+[1.405822] (honrobo_pkg) JobEnded: {'identifier': 'honrobo_pkg', 'rc': 0}
+[1.406291] (fast_nav_cpp) StdoutLine: {'line': b'-- Found OpenCV: /usr (found version "4.5.4") \n'}
+[1.406403] (holo_mcl) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.411636] (holo_mcl) StdoutLine: {'line': b'-- Generating done\n'}
+[1.413793] (holo_lidar_converter) StdoutLine: {'line': b'-- Generating done\n'}
+[1.416644] (holo_mcl) StdoutLine: {'line': b'-- Build files have been written to: /home/haru/Documents/honrobo_2026/build/holo_mcl\n'}
+[1.419737] (holo_lidar_converter) StdoutLine: {'line': b'-- Build files have been written to: /home/haru/Documents/honrobo_2026/build/holo_lidar_converter\n'}
+[1.429574] (holo_mcl) CommandEnded: {'returncode': 0}
+[1.430319] (holo_mcl) JobProgress: {'identifier': 'holo_mcl', 'progress': 'build'}
+[1.431007] (holo_mcl) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/haru/Documents/honrobo_2026/build/holo_mcl', '--', '-j12', '-l12'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_mcl', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_mcl'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.432521] (holo_lidar_converter) CommandEnded: {'returncode': 0}
+[1.432891] (holo_lidar_converter) JobProgress: {'identifier': 'holo_lidar_converter', 'progress': 'build'}
+[1.433116] (holo_lidar_converter) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter', '--', '-j12', '-l12'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.461142] (fast_nav_cpp) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.477367] (fast_nav_cpp) StdoutLine: {'line': b'-- Generating done\n'}
+[1.483639] (fast_nav_cpp) StdoutLine: {'line': b'-- Build files have been written to: /home/haru/Documents/honrobo_2026/build/fast_nav_cpp\n'}
+[1.490389] (holo_mcl) StdoutLine: {'line': b'[ 50%] Building CXX object CMakeFiles/holo_mcl.dir/src/mcl.cpp.o\n'}
+[1.490632] (holo_mcl) StdoutLine: {'line': b'[ 50%] Building CXX object CMakeFiles/mcl.dir/rclcpp_components/node_main_mcl.cpp.o\n'}
+[1.490712] (holo_lidar_converter) StdoutLine: {'line': b'[ 57%] Building CXX object CMakeFiles/laserscan_to_pointcloud2.dir/rclcpp_components/node_main_laserscan_to_pointcloud2.cpp.o\n'}
+[1.490799] (holo_lidar_converter) StdoutLine: {'line': b'[ 57%] Building CXX object CMakeFiles/holo_lidar_converter.dir/src/pointcloud2_to_laserscan.cpp.o\n'}
+[1.490864] (holo_lidar_converter) StdoutLine: {'line': b'[ 57%] Building CXX object CMakeFiles/pointcloud2_to_laserscan.dir/rclcpp_components/node_main_pointcloud2_to_laserscan.cpp.o\n'}
+[1.490925] (holo_lidar_converter) StdoutLine: {'line': b'[ 57%] Building CXX object CMakeFiles/holo_lidar_converter.dir/src/laserscan_to_pointcloud2.cpp.o\n'}
+[1.501690] (-) TimerEvent: {}
+[1.512481] (fast_nav_cpp) CommandEnded: {'returncode': 0}
+[1.513452] (fast_nav_cpp) JobProgress: {'identifier': 'fast_nav_cpp', 'progress': 'build'}
+[1.513809] (fast_nav_cpp) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp', '--', '-j12', '-l12'], 'cwd': '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.578427] (fast_nav_cpp) StdoutLine: {'line': b'[ 50%] Building CXX object CMakeFiles/fast_nav_node.dir/src/fast_nav_node.cpp.o\n'}
+[1.601843] (-) TimerEvent: {}
+[1.702154] (-) TimerEvent: {}
+[1.802457] (-) TimerEvent: {}
+[1.902735] (-) TimerEvent: {}
+[2.003043] (-) TimerEvent: {}
+[2.103342] (-) TimerEvent: {}
+[2.203596] (-) TimerEvent: {}
+[2.303852] (-) TimerEvent: {}
+[2.404131] (-) TimerEvent: {}
+[2.504390] (-) TimerEvent: {}
+[2.604672] (-) TimerEvent: {}
+[2.704943] (-) TimerEvent: {}
+[2.805211] (-) TimerEvent: {}
+[2.905481] (-) TimerEvent: {}
+[3.005749] (-) TimerEvent: {}
+[3.106023] (-) TimerEvent: {}
+[3.206302] (-) TimerEvent: {}
+[3.306573] (-) TimerEvent: {}
+[3.406849] (-) TimerEvent: {}
+[3.507141] (-) TimerEvent: {}
+[3.607398] (-) TimerEvent: {}
+[3.707660] (-) TimerEvent: {}
+[3.807928] (-) TimerEvent: {}
+[3.908202] (-) TimerEvent: {}
+[4.008460] (-) TimerEvent: {}
+[4.108697] (-) TimerEvent: {}
+[4.208934] (-) TimerEvent: {}
+[4.309179] (-) TimerEvent: {}
+[4.409432] (-) TimerEvent: {}
+[4.509690] (-) TimerEvent: {}
+[4.609954] (-) TimerEvent: {}
+[4.710222] (-) TimerEvent: {}
+[4.810488] (-) TimerEvent: {}
+[4.910755] (-) TimerEvent: {}
+[5.011027] (-) TimerEvent: {}
+[5.111305] (-) TimerEvent: {}
+[5.211555] (-) TimerEvent: {}
+[5.311805] (-) TimerEvent: {}
+[5.412053] (-) TimerEvent: {}
+[5.512313] (-) TimerEvent: {}
+[5.539454] (holo_lidar_converter) StdoutLine: {'line': b'[ 71%] Linking CXX executable laserscan_to_pointcloud2\n'}
+[5.553510] (holo_mcl) StdoutLine: {'line': b'[ 75%] Linking CXX executable mcl\n'}
+[5.612450] (-) TimerEvent: {}
+[5.712719] (-) TimerEvent: {}
+[5.729321] (holo_lidar_converter) StdoutLine: {'line': b'[ 71%] Built target laserscan_to_pointcloud2\n'}
+[5.729782] (holo_mcl) StdoutLine: {'line': b'[ 75%] Built target mcl\n'}
+[5.812847] (-) TimerEvent: {}
+[5.913080] (-) TimerEvent: {}
+[6.013325] (-) TimerEvent: {}
+[6.113550] (-) TimerEvent: {}
+[6.213785] (-) TimerEvent: {}
+[6.314011] (-) TimerEvent: {}
+[6.414247] (-) TimerEvent: {}
+[6.514459] (-) TimerEvent: {}
+[6.614673] (-) TimerEvent: {}
+[6.711263] (holo_lidar_converter) StdoutLine: {'line': b'[ 85%] Linking CXX executable pointcloud2_to_laserscan\n'}
+[6.714767] (-) TimerEvent: {}
+[6.814966] (-) TimerEvent: {}
+[6.849809] (holo_lidar_converter) StdoutLine: {'line': b'[ 85%] Built target pointcloud2_to_laserscan\n'}
+[6.915104] (-) TimerEvent: {}
+[7.015326] (-) TimerEvent: {}
+[7.115549] (-) TimerEvent: {}
+[7.215772] (-) TimerEvent: {}
+[7.315993] (-) TimerEvent: {}
+[7.416217] (-) TimerEvent: {}
+[7.516448] (-) TimerEvent: {}
+[7.616670] (-) TimerEvent: {}
+[7.716893] (-) TimerEvent: {}
+[7.817134] (-) TimerEvent: {}
+[7.917360] (-) TimerEvent: {}
+[8.017582] (-) TimerEvent: {}
+[8.117798] (-) TimerEvent: {}
+[8.218012] (-) TimerEvent: {}
+[8.318232] (-) TimerEvent: {}
+[8.418448] (-) TimerEvent: {}
+[8.518661] (-) TimerEvent: {}
+[8.618870] (-) TimerEvent: {}
+[8.719130] (-) TimerEvent: {}
+[8.819342] (-) TimerEvent: {}
+[8.919554] (-) TimerEvent: {}
+[9.019765] (-) TimerEvent: {}
+[9.119975] (-) TimerEvent: {}
+[9.220190] (-) TimerEvent: {}
+[9.320399] (-) TimerEvent: {}
+[9.420608] (-) TimerEvent: {}
+[9.520820] (-) TimerEvent: {}
+[9.621031] (-) TimerEvent: {}
+[9.721287] (-) TimerEvent: {}
+[9.821499] (-) TimerEvent: {}
+[9.921712] (-) TimerEvent: {}
+[10.021921] (-) TimerEvent: {}
+[10.122137] (-) TimerEvent: {}
+[10.222350] (-) TimerEvent: {}
+[10.322556] (-) TimerEvent: {}
+[10.422763] (-) TimerEvent: {}
+[10.522970] (-) TimerEvent: {}
+[10.623178] (-) TimerEvent: {}
+[10.723388] (-) TimerEvent: {}
+[10.823596] (-) TimerEvent: {}
+[10.923814] (-) TimerEvent: {}
+[11.024035] (-) TimerEvent: {}
+[11.124260] (-) TimerEvent: {}
+[11.224471] (-) TimerEvent: {}
+[11.324687] (-) TimerEvent: {}
+[11.424904] (-) TimerEvent: {}
+[11.525133] (-) TimerEvent: {}
+[11.625343] (-) TimerEvent: {}
+[11.725548] (-) TimerEvent: {}
+[11.825753] (-) TimerEvent: {}
+[11.925974] (-) TimerEvent: {}
+[12.026184] (-) TimerEvent: {}
+[12.126393] (-) TimerEvent: {}
+[12.226598] (-) TimerEvent: {}
+[12.326801] (-) TimerEvent: {}
+[12.427009] (-) TimerEvent: {}
+[12.527239] (-) TimerEvent: {}
+[12.627447] (-) TimerEvent: {}
+[12.727653] (-) TimerEvent: {}
+[12.827856] (-) TimerEvent: {}
+[12.928071] (-) TimerEvent: {}
+[13.028299] (-) TimerEvent: {}
+[13.128505] (-) TimerEvent: {}
+[13.228717] (-) TimerEvent: {}
+[13.328920] (-) TimerEvent: {}
+[13.429133] (-) TimerEvent: {}
+[13.529333] (-) TimerEvent: {}
+[13.629533] (-) TimerEvent: {}
+[13.729738] (-) TimerEvent: {}
+[13.829950] (-) TimerEvent: {}
+[13.930200] (-) TimerEvent: {}
+[14.030409] (-) TimerEvent: {}
+[14.130614] (-) TimerEvent: {}
+[14.230820] (-) TimerEvent: {}
+[14.331033] (-) TimerEvent: {}
+[14.431258] (-) TimerEvent: {}
+[14.531466] (-) TimerEvent: {}
+[14.553329] (holo_lidar_converter) StdoutLine: {'line': b'[100%] Linking CXX shared library libholo_lidar_converter.so\n'}
+[14.631593] (-) TimerEvent: {}
+[14.731804] (-) TimerEvent: {}
+[14.832017] (-) TimerEvent: {}
+[14.932236] (-) TimerEvent: {}
+[15.032444] (-) TimerEvent: {}
+[15.132653] (-) TimerEvent: {}
+[15.232858] (-) TimerEvent: {}
+[15.306797] (holo_lidar_converter) StdoutLine: {'line': b'[100%] Built target holo_lidar_converter\n'}
+[15.320294] (holo_lidar_converter) CommandEnded: {'returncode': 0}
+[15.320976] (holo_lidar_converter) JobProgress: {'identifier': 'holo_lidar_converter', 'progress': 'install'}
+[15.331342] (holo_lidar_converter) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[15.332955] (-) TimerEvent: {}
+[15.340613] (holo_lidar_converter) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[15.341120] (holo_lidar_converter) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[15.341505] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/holo_lidar_converter/laserscan_to_pointcloud2\n'}
+[15.352168] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/holo_lidar_converter/pointcloud2_to_laserscan\n'}
+[15.363860] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/include/holo_lidar_converter/holo_lidar_converter/laserscan_to_pointcloud2.hpp\n'}
+[15.375054] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/include/holo_lidar_converter/holo_lidar_converter/pointcloud2_to_laserscan.hpp\n'}
+[15.386446] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/library_path.sh\n'}
+[15.397677] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/library_path.dsv\n'}
+[15.408997] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/libholo_lidar_converter.so\n'}
+[15.420484] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/ament_index/resource_index/package_run_dependencies/holo_lidar_converter\n'}
+[15.430603] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/ament_index/resource_index/parent_prefix_path/holo_lidar_converter\n'}
+[15.433050] (-) TimerEvent: {}
+[15.440474] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/ament_prefix_path.sh\n'}
+[15.450784] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/ament_prefix_path.dsv\n'}
+[15.461789] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/path.sh\n'}
+[15.472574] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/environment/path.dsv\n'}
+[15.483416] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/local_setup.bash\n'}
+[15.494080] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/local_setup.sh\n'}
+[15.504977] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/local_setup.zsh\n'}
+[15.515536] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/local_setup.dsv\n'}
+[15.526098] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.dsv\n'}
+[15.533148] (-) TimerEvent: {}
+[15.536463] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/ament_index/resource_index/packages/holo_lidar_converter\n'}
+[15.547009] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/ament_index/resource_index/rclcpp_components/holo_lidar_converter\n'}
+[15.557810] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[15.568563] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[15.579281] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[15.590197] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/cmake/holo_lidar_converterConfig.cmake\n'}
+[15.601125] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/cmake/holo_lidar_converterConfig-version.cmake\n'}
+[15.612388] (holo_lidar_converter) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.xml\n'}
+[15.625469] (holo_lidar_converter) CommandEnded: {'returncode': 0}
+[15.633337] (-) TimerEvent: {}
+[15.640349] (holo_lidar_converter) JobEnded: {'identifier': 'holo_lidar_converter', 'rc': 0}
+[15.733463] (-) TimerEvent: {}
+[15.833657] (-) TimerEvent: {}
+[15.933849] (-) TimerEvent: {}
+[16.034040] (-) TimerEvent: {}
+[16.134401] (-) TimerEvent: {}
+[16.234815] (-) TimerEvent: {}
+[16.335226] (-) TimerEvent: {}
+[16.435419] (-) TimerEvent: {}
+[16.535613] (-) TimerEvent: {}
+[16.635805] (-) TimerEvent: {}
+[16.735997] (-) TimerEvent: {}
+[16.836189] (-) TimerEvent: {}
+[16.936380] (-) TimerEvent: {}
+[17.036572] (-) TimerEvent: {}
+[17.136760] (-) TimerEvent: {}
+[17.236947] (-) TimerEvent: {}
+[17.337151] (-) TimerEvent: {}
+[17.437337] (-) TimerEvent: {}
+[17.537786] (-) TimerEvent: {}
+[17.637977] (-) TimerEvent: {}
+[17.738180] (-) TimerEvent: {}
+[17.838378] (-) TimerEvent: {}
+[17.938564] (-) TimerEvent: {}
+[18.038757] (-) TimerEvent: {}
+[18.138949] (-) TimerEvent: {}
+[18.239150] (-) TimerEvent: {}
+[18.339352] (-) TimerEvent: {}
+[18.439546] (-) TimerEvent: {}
+[18.539744] (-) TimerEvent: {}
+[18.639937] (-) TimerEvent: {}
+[18.740140] (-) TimerEvent: {}
+[18.840336] (-) TimerEvent: {}
+[18.940537] (-) TimerEvent: {}
+[19.040732] (-) TimerEvent: {}
+[19.140930] (-) TimerEvent: {}
+[19.241354] (-) TimerEvent: {}
+[19.341549] (-) TimerEvent: {}
+[19.441745] (-) TimerEvent: {}
+[19.541943] (-) TimerEvent: {}
+[19.642386] (-) TimerEvent: {}
+[19.742606] (-) TimerEvent: {}
+[19.842804] (-) TimerEvent: {}
+[19.943009] (-) TimerEvent: {}
+[20.043216] (-) TimerEvent: {}
+[20.143406] (-) TimerEvent: {}
+[20.144124] (holo_mcl) StdoutLine: {'line': b'[100%] Linking CXX shared library libholo_mcl.so\n'}
+[20.243523] (-) TimerEvent: {}
+[20.343728] (-) TimerEvent: {}
+[20.443936] (-) TimerEvent: {}
+[20.544159] (-) TimerEvent: {}
+[20.644402] (-) TimerEvent: {}
+[20.744610] (-) TimerEvent: {}
+[20.844823] (-) TimerEvent: {}
+[20.945312] (-) TimerEvent: {}
+[21.045504] (-) TimerEvent: {}
+[21.060351] (holo_mcl) StdoutLine: {'line': b'[100%] Built target holo_mcl\n'}
+[21.071717] (holo_mcl) CommandEnded: {'returncode': 0}
+[21.072498] (holo_mcl) JobProgress: {'identifier': 'holo_mcl', 'progress': 'install'}
+[21.072826] (holo_mcl) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/haru/Documents/honrobo_2026/build/holo_mcl'], 'cwd': '/home/haru/Documents/honrobo_2026/build/holo_mcl', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/holo_mcl'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[21.080998] (holo_mcl) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[21.081452] (holo_mcl) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[21.081783] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/lib/holo_mcl/mcl\n'}
+[21.092002] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/include/holo_mcl/holo_mcl/mcl.hpp\n'}
+[21.101115] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/library_path.sh\n'}
+[21.110001] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/library_path.dsv\n'}
+[21.119311] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/lib/libholo_mcl.so\n'}
+[21.128375] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/ament_index/resource_index/package_run_dependencies/holo_mcl\n'}
+[21.137209] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/ament_index/resource_index/parent_prefix_path/holo_mcl\n'}
+[21.145606] (-) TimerEvent: {}
+[21.146158] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/ament_prefix_path.sh\n'}
+[21.155047] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/ament_prefix_path.dsv\n'}
+[21.164174] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/path.sh\n'}
+[21.173574] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/environment/path.dsv\n'}
+[21.182387] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/local_setup.bash\n'}
+[21.191601] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/local_setup.sh\n'}
+[21.200614] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/local_setup.zsh\n'}
+[21.209596] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/local_setup.dsv\n'}
+[21.218926] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.dsv\n'}
+[21.227869] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/ament_index/resource_index/packages/holo_mcl\n'}
+[21.237036] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/ament_index/resource_index/rclcpp_components/holo_mcl\n'}
+[21.245711] (-) TimerEvent: {}
+[21.245968] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/cmake/ament_cmake_export_dependencies-extras.cmake\n'}
+[21.255057] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/cmake/ament_cmake_export_include_directories-extras.cmake\n'}
+[21.264426] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/cmake/ament_cmake_export_libraries-extras.cmake\n'}
+[21.273687] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/cmake/holo_mclConfig.cmake\n'}
+[21.283293] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/cmake/holo_mclConfig-version.cmake\n'}
+[21.293189] (holo_mcl) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.xml\n'}
+[21.304813] (holo_mcl) CommandEnded: {'returncode': 0}
+[21.318668] (holo_mcl) JobEnded: {'identifier': 'holo_mcl', 'rc': 0}
+[21.345802] (-) TimerEvent: {}
+[21.445968] (-) TimerEvent: {}
+[21.546148] (-) TimerEvent: {}
+[21.646334] (-) TimerEvent: {}
+[21.746520] (-) TimerEvent: {}
+[21.846704] (-) TimerEvent: {}
+[21.946887] (-) TimerEvent: {}
+[22.047081] (-) TimerEvent: {}
+[22.147273] (-) TimerEvent: {}
+[22.247455] (-) TimerEvent: {}
+[22.347638] (-) TimerEvent: {}
+[22.447823] (-) TimerEvent: {}
+[22.548010] (-) TimerEvent: {}
+[22.648541] (-) TimerEvent: {}
+[22.748725] (-) TimerEvent: {}
+[22.848912] (-) TimerEvent: {}
+[22.949107] (-) TimerEvent: {}
+[23.049287] (-) TimerEvent: {}
+[23.149470] (-) TimerEvent: {}
+[23.249658] (-) TimerEvent: {}
+[23.349842] (-) TimerEvent: {}
+[23.450030] (-) TimerEvent: {}
+[23.550232] (-) TimerEvent: {}
+[23.650419] (-) TimerEvent: {}
+[23.750613] (-) TimerEvent: {}
+[23.850805] (-) TimerEvent: {}
+[23.950998] (-) TimerEvent: {}
+[24.051178] (-) TimerEvent: {}
+[24.151363] (-) TimerEvent: {}
+[24.251549] (-) TimerEvent: {}
+[24.351734] (-) TimerEvent: {}
+[24.451923] (-) TimerEvent: {}
+[24.552117] (-) TimerEvent: {}
+[24.652298] (-) TimerEvent: {}
+[24.752482] (-) TimerEvent: {}
+[24.852669] (-) TimerEvent: {}
+[24.952855] (-) TimerEvent: {}
+[25.053042] (-) TimerEvent: {}
+[25.153245] (-) TimerEvent: {}
+[25.253432] (-) TimerEvent: {}
+[25.353625] (-) TimerEvent: {}
+[25.453818] (-) TimerEvent: {}
+[25.554010] (-) TimerEvent: {}
+[25.654198] (-) TimerEvent: {}
+[25.754392] (-) TimerEvent: {}
+[25.854587] (-) TimerEvent: {}
+[25.954775] (-) TimerEvent: {}
+[26.054959] (-) TimerEvent: {}
+[26.155146] (-) TimerEvent: {}
+[26.255335] (-) TimerEvent: {}
+[26.355518] (-) TimerEvent: {}
+[26.455701] (-) TimerEvent: {}
+[26.555903] (-) TimerEvent: {}
+[26.637879] (fast_nav_cpp) StdoutLine: {'line': b'[100%] Linking CXX executable fast_nav_node\n'}
+[26.655993] (-) TimerEvent: {}
+[26.756169] (-) TimerEvent: {}
+[26.856359] (-) TimerEvent: {}
+[26.956555] (-) TimerEvent: {}
+[27.056744] (-) TimerEvent: {}
+[27.061247] (fast_nav_cpp) StdoutLine: {'line': b'[100%] Built target fast_nav_node\n'}
+[27.070673] (fast_nav_cpp) CommandEnded: {'returncode': 0}
+[27.071313] (fast_nav_cpp) JobProgress: {'identifier': 'fast_nav_cpp', 'progress': 'install'}
+[27.071577] (fast_nav_cpp) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp'], 'cwd': '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp', 'env': OrderedDict([('PYTHONWARNINGS', 'ignore'), ('GJS_DEBUG_TOPICS', 'JS ERROR;JS LOG'), ('LESSOPEN', '| /usr/bin/lesspipe %s'), ('LANGUAGE', 'ja:en'), ('USER', 'haru'), ('LC_TIME', 'ja_JP.UTF-8'), ('XDG_SESSION_TYPE', 'wayland'), ('SHLVL', '2'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib'), ('HOME', '/home/haru'), ('OLDPWD', '/home/haru/Documents/honrobo_2026'), ('TERM_PROGRAM_VERSION', '20240203-110809-5046fc22'), ('DESKTOP_SESSION', 'ubuntu'), ('GIO_LAUNCHED_DESKTOP_FILE', '/usr/share/applications/org.wezfurlong.wezterm.desktop'), ('ROS_PYTHON_VERSION', '3'), ('GNOME_SHELL_SESSION_MODE', 'ubuntu'), ('GTK_MODULES', 'gail:atk-bridge'), ('LC_MONETARY', 'ja_JP.UTF-8'), ('MANAGERPID', '1940'), ('SYSTEMD_EXEC_PID', '2129'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('COLORTERM', 'truecolor'), ('GIO_LAUNCHED_DESKTOP_FILE_PID', '3561'), ('WEZTERM_EXECUTABLE', '/usr/bin/wezterm-gui'), ('IM_CONFIG_PHASE', '1'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'haru'), ('JOURNAL_STREAM', '8:11722'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('XDG_SESSION_CLASS', 'user'), ('USERNAME', 'haru'), ('TERM', 'xterm-256color'), ('GNOME_DESKTOP_SESSION_ID', 'this-is-deprecated'), ('WEZTERM_CONFIG_FILE', '/home/haru/.wezterm.lua'), ('ROS_LOCALHOST_ONLY', '0'), ('WEZTERM_EXECUTABLE_DIR', '/usr/bin'), ('PATH', '/opt/ros/humble/bin:/home/haru/.local/bin:/home/haru/.local/bin:/home/haru/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/snap/bin'), ('SESSION_MANAGER', 'local/haru-Inspiron-15-3535:@/tmp/.ICE-unix/2095,unix/haru-Inspiron-15-3535:/tmp/.ICE-unix/2095'), ('INVOCATION_ID', '663c794a3e0a4e98a848ad00b11c7877'), ('PAPERSIZE', 'a4'), ('XDG_MENU_PREFIX', 'gnome-'), ('LC_ADDRESS', 'ja_JP.UTF-8'), ('GNOME_SETUP_DISPLAY', ':1'), ('XDG_RUNTIME_DIR', '/run/user/1000'), ('DISPLAY', ':0'), ('LANG', 'ja_JP.UTF-8'), ('XDG_CURRENT_DESKTOP', 'ubuntu:GNOME'), ('LC_TELEPHONE', 'ja_JP.UTF-8'), ('XMODIFIERS', '@im=ibus'), ('XDG_SESSION_DESKTOP', 'ubuntu'), ('XAUTHORITY', '/run/user/1000/.mutter-Xwaylandauth.IQ8RW3'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('TERM_PROGRAM', 'WezTerm'), ('SSH_AGENT_LAUNCHER', 'gnome-keyring'), ('SSH_AUTH_SOCK', '/run/user/1000/keyring/ssh'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LC_NAME', 'ja_JP.UTF-8'), ('QT_ACCESSIBILITY', '1'), ('GDMSESSION', 'ubuntu'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('LC_MEASUREMENT', 'ja_JP.UTF-8'), ('GJS_DEBUG_OUTPUT', 'stderr'), ('LC_IDENTIFICATION', 'ja_JP.UTF-8'), ('WEZTERM_CONFIG_DIR', '/home/haru'), ('QT_IM_MODULE', 'ibus'), ('PWD', '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp'), ('LC_ALL', 'en_US.UTF-8'), ('XDG_CONFIG_DIRS', '/etc/xdg/xdg-ubuntu:/etc/xdg'), ('XDG_DATA_DIRS', '/usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop'), ('WEZTERM_UNIX_SOCKET', '/run/user/1000/wezterm/gui-sock-3561'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('LC_NUMERIC', 'ja_JP.UTF-8'), ('LC_PAPER', 'ja_JP.UTF-8'), ('WEZTERM_PANE', '0'), ('COLCON', '1'), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[27.079259] (fast_nav_cpp) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[27.079623] (fast_nav_cpp) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[27.079897] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/fast_nav_cpp/fast_nav_node\n'}
+[27.088351] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/package_run_dependencies/fast_nav_cpp\n'}
+[27.095420] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/parent_prefix_path/fast_nav_cpp\n'}
+[27.102888] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/ament_prefix_path.sh\n'}
+[27.109950] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/ament_prefix_path.dsv\n'}
+[27.117781] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/path.sh\n'}
+[27.125655] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/environment/path.dsv\n'}
+[27.132404] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.bash\n'}
+[27.139526] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.sh\n'}
+[27.146554] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.zsh\n'}
+[27.153562] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/local_setup.dsv\n'}
+[27.156816] (-) TimerEvent: {}
+[27.160853] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.dsv\n'}
+[27.168079] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/ament_index/resource_index/packages/fast_nav_cpp\n'}
+[27.176312] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/cmake/fast_nav_cppConfig.cmake\n'}
+[27.183567] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/cmake/fast_nav_cppConfig-version.cmake\n'}
+[27.190631] (fast_nav_cpp) StdoutLine: {'line': b'-- Symlinking: /home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.xml\n'}
+[27.199958] (fast_nav_cpp) CommandEnded: {'returncode': 0}
+[27.208563] (fast_nav_cpp) JobEnded: {'identifier': 'fast_nav_cpp', 'rc': 0}
+[27.208964] (-) EventReactorShutdown: {}

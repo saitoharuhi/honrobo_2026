@@ -1,0 +1,19 @@
+[0.016s] Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/fast_nav_cpp -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp
+[0.244s] -- The C compiler identification is GNU 11.4.0
+[0.244s] -- The CXX compiler identification is GNU 11.4.0
+[0.244s] -- Detecting C compiler ABI info
+[0.244s] -- Detecting C compiler ABI info - done
+[0.244s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.244s] -- Detecting C compile features
+[0.244s] -- Detecting C compile features - done
+[0.246s] -- Detecting CXX compiler ABI info
+[0.323s] -- Detecting CXX compiler ABI info - done
+[0.328s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.328s] -- Detecting CXX compile features
+[0.329s] -- Detecting CXX compile features - done
+[0.334s] -- Found ament_cmake: 1.3.14 (/opt/ros/humble/share/ament_cmake/cmake)
+[0.667s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.727s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.760s] -- Found rclcpp: 16.0.19 (/opt/ros/humble/share/rclcpp/cmake)
+[0.807s] -- Found rosidl_generator_c: 3.1.8 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[0.817s] Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '-2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/fast_nav_cpp -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp

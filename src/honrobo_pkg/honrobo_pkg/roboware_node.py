@@ -39,8 +39,8 @@ MAX_ANGULAR = 90.0        # 最大回転速度 (deg/s) - 90 deg/s
 VEL_SCALE = 10.0          # CAN送信時のスケール倍率
 
 # 33kgオムニ4輪 (マブチ555 24V) 向け 台形加減速パラメータ
-ACCEL_XY = 400.0          # 並進加速度 (mm/s^2)
-DECEL_XY = 600.0          # 並進減速度 (mm/s^2)
+ACCEL_XY = 1200         # 並進加速度 (mm/s^2)
+DECEL_XY = 3000       # 並進減速度 (mm/s^2)
 ACCEL_ROT = 75.0          # 旋回加速度 (deg/s^2)
 DECEL_ROT = 112.5         # 旋回減速度 (deg/s^2)
 
@@ -272,7 +272,7 @@ class RobowareNode(Node):
 
                 v_x_field = -msg.axes[0] * MAX_SPEED * self.speed_scale
                 v_y_field = msg.axes[1] * MAX_SPEED * self.speed_scale
-                vz_target = -msg.axes[2] * MAX_ANGULAR * self.speed_scale
+                vz_target = msg.axes[2] * MAX_ANGULAR * self.speed_scale
 
                 is_field_oriented = self.field_oriented_mode
                 base_style = "FIELD" if is_field_oriented else "LOCAL"

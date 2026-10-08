@@ -1,0 +1,4 @@
+Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp
+Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp

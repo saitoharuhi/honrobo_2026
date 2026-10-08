@@ -1,0 +1,352 @@
+[0.077s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build', '--symlink-install']
+[0.077s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=True, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=12, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7c4e9f43a800>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7c4e9f439f30>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7c4e9f439f30>>)
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.106s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.106s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/haru/Documents/honrobo_2026'
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.106s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.121s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['ignore', 'ignore_ament_install']
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'ignore'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'ignore_ament_install'
+[0.122s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['colcon_pkg']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'colcon_pkg'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['colcon_meta']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'colcon_meta'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['ros']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'ros'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['cmake', 'python']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'cmake'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'python'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extensions ['python_setup_py']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(scripts) by extension 'python_setup_py'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ignore', 'ignore_ament_install']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ignore_ament_install'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_pkg']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_pkg'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['colcon_meta']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'colcon_meta'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['ros']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'ros'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['cmake', 'python']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'cmake'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extensions ['python_setup_py']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src) by extension 'python_setup_py'
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extensions ['ignore', 'ignore_ament_install']
+[0.123s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extension 'ignore'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extension 'ignore_ament_install'
+[0.124s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extensions ['colcon_pkg']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extension 'colcon_pkg'
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extensions ['colcon_meta']
+[0.125s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extension 'colcon_meta'
+[0.126s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extensions ['ros']
+[0.126s] Level 1:colcon.colcon_core.package_identification:_identify(src/fast_nav_cpp) by extension 'ros'
+[0.137s] DEBUG:colcon.colcon_core.package_identification:Package 'src/fast_nav_cpp' with type 'ros.ament_cmake' and name 'fast_nav_cpp'
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extensions ['ignore', 'ignore_ament_install']
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extension 'ignore'
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extension 'ignore_ament_install'
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extensions ['colcon_pkg']
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extension 'colcon_pkg'
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extensions ['colcon_meta']
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extension 'colcon_meta'
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extensions ['ros']
+[0.137s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_lidar_converter) by extension 'ros'
+[0.138s] DEBUG:colcon.colcon_core.package_identification:Package 'src/holo_lidar_converter' with type 'ros.ament_cmake' and name 'holo_lidar_converter'
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extensions ['ignore', 'ignore_ament_install']
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extension 'ignore'
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extension 'ignore_ament_install'
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extensions ['colcon_pkg']
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extension 'colcon_pkg'
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extensions ['colcon_meta']
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extension 'colcon_meta'
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extensions ['ros']
+[0.139s] Level 1:colcon.colcon_core.package_identification:_identify(src/holo_mcl) by extension 'ros'
+[0.140s] DEBUG:colcon.colcon_core.package_identification:Package 'src/holo_mcl' with type 'ros.ament_cmake' and name 'holo_mcl'
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extensions ['ignore', 'ignore_ament_install']
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extension 'ignore'
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extension 'ignore_ament_install'
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extensions ['colcon_pkg']
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extension 'colcon_pkg'
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extensions ['colcon_meta']
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extension 'colcon_meta'
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extensions ['ros']
+[0.140s] Level 1:colcon.colcon_core.package_identification:_identify(src/honrobo_pkg) by extension 'ros'
+[0.141s] DEBUG:colcon.colcon_core.package_identification:Package 'src/honrobo_pkg' with type 'ros.ament_python' and name 'honrobo_pkg'
+[0.141s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.141s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.141s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.141s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.142s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.162s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.163s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.165s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 430 installed packages in /opt/ros/humble
+[0.167s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_target' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_clean_cache' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_clean_first' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'cmake_force_configure' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'ament_cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'catkin_cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'fast_nav_cpp' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.210s] DEBUG:colcon.colcon_core.verb:Building package 'fast_nav_cpp' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp', 'merge_install': False, 'path': '/home/haru/Documents/honrobo_2026/src/fast_nav_cpp', 'symlink_install': True, 'test_result_base': None}
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_target' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_clean_cache' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_clean_first' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'cmake_force_configure' from command line to 'False'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'ament_cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'catkin_cmake_args' from command line to 'None'
+[0.210s] Level 5:colcon.colcon_core.verb:set package 'holo_lidar_converter' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.211s] DEBUG:colcon.colcon_core.verb:Building package 'holo_lidar_converter' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter', 'merge_install': False, 'path': '/home/haru/Documents/honrobo_2026/src/holo_lidar_converter', 'symlink_install': True, 'test_result_base': None}
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_target' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_clean_cache' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_clean_first' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'cmake_force_configure' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'ament_cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'catkin_cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'holo_mcl' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.211s] DEBUG:colcon.colcon_core.verb:Building package 'holo_mcl' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/haru/Documents/honrobo_2026/build/holo_mcl', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/haru/Documents/honrobo_2026/install/holo_mcl', 'merge_install': False, 'path': '/home/haru/Documents/honrobo_2026/src/holo_mcl', 'symlink_install': True, 'test_result_base': None}
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_target' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_clean_cache' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_clean_first' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'cmake_force_configure' from command line to 'False'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'ament_cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'catkin_cmake_args' from command line to 'None'
+[0.211s] Level 5:colcon.colcon_core.verb:set package 'honrobo_pkg' build argument 'catkin_skip_building_tests' from command line to 'False'
+[0.211s] DEBUG:colcon.colcon_core.verb:Building package 'honrobo_pkg' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/haru/Documents/honrobo_2026/build/honrobo_pkg', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/haru/Documents/honrobo_2026/install/honrobo_pkg', 'merge_install': False, 'path': '/home/haru/Documents/honrobo_2026/src/honrobo_pkg', 'symlink_install': True, 'test_result_base': None}
+[0.211s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[0.213s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[0.213s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/haru/Documents/honrobo_2026/src/fast_nav_cpp' with build type 'ament_cmake'
+[0.213s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/haru/Documents/honrobo_2026/src/fast_nav_cpp'
+[0.215s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[0.215s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.215s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.218s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/haru/Documents/honrobo_2026/src/holo_lidar_converter' with build type 'ament_cmake'
+[0.218s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/haru/Documents/honrobo_2026/src/holo_lidar_converter'
+[0.218s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.218s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.222s] INFO:colcon.colcon_ros.task.ament_cmake.build:Building ROS package in '/home/haru/Documents/honrobo_2026/src/holo_mcl' with build type 'ament_cmake'
+[0.222s] INFO:colcon.colcon_cmake.task.cmake.build:Building CMake package in '/home/haru/Documents/honrobo_2026/src/holo_mcl'
+[0.222s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.222s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.225s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/haru/Documents/honrobo_2026/src/honrobo_pkg' with build type 'ament_python'
+[0.225s] Level 1:colcon.colcon_core.shell:create_environment_hook('honrobo_pkg', 'ament_prefix_path')
+[0.225s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/ament_prefix_path.ps1'
+[0.226s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/ament_prefix_path.dsv'
+[0.226s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/ament_prefix_path.sh'
+[0.227s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.227s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.233s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+[0.235s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_lidar_converter -- -j12 -l12
+[0.237s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_mcl': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_mcl -- -j12 -l12
+[0.439s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/haru/Documents/honrobo_2026/src/honrobo_pkg'
+[0.439s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[0.439s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[0.444s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_lidar_converter -- -j12 -l12
+[0.455s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_lidar_converter
+[0.455s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/fast_nav_cpp -- -j12 -l12
+[0.456s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp
+[0.457s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_mcl' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/haru/Documents/honrobo_2026/build/holo_mcl -- -j12 -l12
+[0.458s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_mcl': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_mcl
+[0.497s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(fast_nav_cpp)
+[0.499s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/fast_nav_cpp
+[0.500s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp' for CMake module files
+[0.500s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp' for CMake config files
+[0.501s] Level 1:colcon.colcon_core.shell:create_environment_hook('fast_nav_cpp', 'cmake_prefix_path')
+[0.501s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.ps1'
+[0.502s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.dsv'
+[0.502s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.sh'
+[0.503s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib'
+[0.503s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/bin'
+[0.503s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/pkgconfig/fast_nav_cpp.pc'
+[0.503s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/python3.10/site-packages'
+[0.503s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/bin'
+[0.504s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.ps1'
+[0.505s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.dsv'
+[0.505s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.sh'
+[0.506s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.bash'
+[0.506s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.zsh'
+[0.507s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/colcon-core/packages/fast_nav_cpp)
+[0.507s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(fast_nav_cpp)
+[0.507s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp' for CMake module files
+[0.508s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp' for CMake config files
+[0.508s] Level 1:colcon.colcon_core.shell:create_environment_hook('fast_nav_cpp', 'cmake_prefix_path')
+[0.508s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.ps1'
+[0.508s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.dsv'
+[0.509s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/hook/cmake_prefix_path.sh'
+[0.509s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib'
+[0.509s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/bin'
+[0.509s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/pkgconfig/fast_nav_cpp.pc'
+[0.509s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/lib/python3.10/site-packages'
+[0.510s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/bin'
+[0.510s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.ps1'
+[0.510s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.dsv'
+[0.511s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.sh'
+[0.511s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.bash'
+[0.511s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/fast_nav_cpp/package.zsh'
+[0.512s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/fast_nav_cpp/share/colcon-core/packages/fast_nav_cpp)
+[0.513s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(holo_lidar_converter)
+[0.513s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter' for CMake module files
+[0.514s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_lidar_converter
+[0.514s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter' for CMake config files
+[0.514s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_lidar_converter', 'cmake_prefix_path')
+[0.514s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.ps1'
+[0.515s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.dsv'
+[0.515s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.sh'
+[0.515s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib'
+[0.516s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_lidar_converter', 'ld_library_path_lib')
+[0.516s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.ps1'
+[0.516s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.dsv'
+[0.516s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.sh'
+[0.517s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/bin'
+[0.517s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/pkgconfig/holo_lidar_converter.pc'
+[0.517s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/python3.10/site-packages'
+[0.517s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/bin'
+[0.517s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.ps1'
+[0.518s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.dsv'
+[0.518s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.sh'
+[0.518s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.bash'
+[0.519s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.zsh'
+[0.519s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/colcon-core/packages/holo_lidar_converter)
+[0.519s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(holo_lidar_converter)
+[0.520s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter' for CMake module files
+[0.520s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter' for CMake config files
+[0.520s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_lidar_converter', 'cmake_prefix_path')
+[0.520s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.ps1'
+[0.521s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.dsv'
+[0.521s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/cmake_prefix_path.sh'
+[0.522s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib'
+[0.522s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_lidar_converter', 'ld_library_path_lib')
+[0.522s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.ps1'
+[0.522s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.dsv'
+[0.522s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/hook/ld_library_path_lib.sh'
+[0.523s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/bin'
+[0.523s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/pkgconfig/holo_lidar_converter.pc'
+[0.523s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/lib/python3.10/site-packages'
+[0.523s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/bin'
+[0.523s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.ps1'
+[0.524s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.dsv'
+[0.524s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.sh'
+[0.525s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.bash'
+[0.525s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/holo_lidar_converter/package.zsh'
+[0.525s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/holo_lidar_converter/share/colcon-core/packages/holo_lidar_converter)
+[0.525s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(holo_mcl)
+[0.526s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl' for CMake module files
+[0.526s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_mcl' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/haru/Documents/honrobo_2026/build/holo_mcl
+[0.527s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl' for CMake config files
+[0.527s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_mcl', 'cmake_prefix_path')
+[0.527s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.ps1'
+[0.527s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.dsv'
+[0.528s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.sh'
+[0.528s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib'
+[0.528s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_mcl', 'ld_library_path_lib')
+[0.528s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.ps1'
+[0.528s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.dsv'
+[0.529s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.sh'
+[0.529s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/bin'
+[0.529s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib/pkgconfig/holo_mcl.pc'
+[0.529s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib/python3.10/site-packages'
+[0.530s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/bin'
+[0.530s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.ps1'
+[0.530s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.dsv'
+[0.531s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.sh'
+[0.531s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.bash'
+[0.531s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.zsh'
+[0.532s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/holo_mcl/share/colcon-core/packages/holo_mcl)
+[0.532s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(holo_mcl)
+[0.532s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl' for CMake module files
+[0.533s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl' for CMake config files
+[0.533s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_mcl', 'cmake_prefix_path')
+[0.533s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.ps1'
+[0.533s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.dsv'
+[0.534s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/cmake_prefix_path.sh'
+[0.534s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib'
+[0.534s] Level 1:colcon.colcon_core.shell:create_environment_hook('holo_mcl', 'ld_library_path_lib')
+[0.534s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.ps1'
+[0.535s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.dsv'
+[0.535s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/hook/ld_library_path_lib.sh'
+[0.535s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/bin'
+[0.535s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib/pkgconfig/holo_mcl.pc'
+[0.535s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/lib/python3.10/site-packages'
+[0.536s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/holo_mcl/bin'
+[0.536s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.ps1'
+[0.536s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.dsv'
+[0.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.sh'
+[0.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.bash'
+[0.537s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/holo_mcl/share/holo_mcl/package.zsh'
+[0.538s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/holo_mcl/share/colcon-core/packages/holo_mcl)
+[0.938s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data
+[1.435s] Level 1:colcon.colcon_core.shell:create_environment_hook('honrobo_pkg', 'pythonpath_develop')
+[1.435s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.ps1'
+[1.436s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/haru/Documents/honrobo_2026/build/honrobo_pkg' returned '0': PYTHONPATH=/home/haru/Documents/honrobo_2026/build/honrobo_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/haru/Documents/honrobo_2026/build/honrobo_pkg/build --no-deps symlink_data
+[1.436s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.dsv'
+[1.437s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/build/honrobo_pkg/share/honrobo_pkg/hook/pythonpath_develop.sh'
+[1.437s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg' for CMake module files
+[1.437s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg' for CMake config files
+[1.438s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib'
+[1.438s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/bin'
+[1.438s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/pkgconfig/honrobo_pkg.pc'
+[1.438s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/lib/python3.10/site-packages'
+[1.438s] Level 1:colcon.colcon_core.shell:create_environment_hook('honrobo_pkg', 'pythonpath')
+[1.439s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/pythonpath.ps1'
+[1.439s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/pythonpath.dsv'
+[1.439s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/hook/pythonpath.sh'
+[1.440s] Level 1:colcon.colcon_core.environment:checking '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/bin'
+[1.440s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(honrobo_pkg)
+[1.440s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/package.ps1'
+[1.441s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/package.dsv'
+[1.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/package.sh'
+[1.441s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/package.bash'
+[1.442s] INFO:colcon.colcon_core.shell:Creating package script '/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/honrobo_pkg/package.zsh'
+[1.442s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/haru/Documents/honrobo_2026/install/honrobo_pkg/share/colcon-core/packages/honrobo_pkg)
+[1.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[1.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[1.442s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[1.443s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[1.446s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[1.446s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[1.446s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[1.453s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[1.453s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/haru/Documents/honrobo_2026/install/local_setup.ps1'
+[1.454s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/haru/Documents/honrobo_2026/install/_local_setup_util_ps1.py'
+[1.455s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/haru/Documents/honrobo_2026/install/setup.ps1'
+[1.456s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/haru/Documents/honrobo_2026/install/local_setup.sh'
+[1.456s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/haru/Documents/honrobo_2026/install/_local_setup_util_sh.py'
+[1.457s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/haru/Documents/honrobo_2026/install/setup.sh'
+[1.457s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/haru/Documents/honrobo_2026/install/local_setup.bash'
+[1.458s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/haru/Documents/honrobo_2026/install/setup.bash'
+[1.458s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/haru/Documents/honrobo_2026/install/local_setup.zsh'
+[1.459s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/haru/Documents/honrobo_2026/install/setup.zsh'

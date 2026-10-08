@@ -1,1 +1,0 @@
-[0.025s] Invoking command in '/home/haru/Documents/honrobo_2026/build/fast_nav_cpp': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/fast_nav_cpp -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/fast_nav_cpp

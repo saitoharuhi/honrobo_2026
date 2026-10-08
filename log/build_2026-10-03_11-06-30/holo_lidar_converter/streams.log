@@ -1,0 +1,17 @@
+[0.013s] Invoking command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/holo_lidar_converter -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_lidar_converter
+[0.239s] -- The C compiler identification is GNU 11.4.0
+[0.239s] -- The CXX compiler identification is GNU 11.4.0
+[0.239s] -- Detecting C compiler ABI info
+[0.239s] -- Detecting C compiler ABI info - done
+[0.239s] -- Check for working C compiler: /usr/bin/cc - skipped
+[0.239s] -- Detecting C compile features
+[0.239s] -- Detecting C compile features - done
+[0.241s] -- Detecting CXX compiler ABI info
+[0.318s] -- Detecting CXX compiler ABI info - done
+[0.323s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[0.324s] -- Detecting CXX compile features
+[0.324s] -- Detecting CXX compile features - done
+[0.327s] -- Found ament_cmake_auto: 1.3.14 (/opt/ros/humble/share/ament_cmake_auto/cmake)
+[0.662s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[0.722s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[0.823s] Invoked command in '/home/haru/Documents/honrobo_2026/build/holo_lidar_converter' returned '-2': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/haru/Documents/honrobo_2026/src/holo_lidar_converter -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/haru/Documents/honrobo_2026/install/holo_lidar_converter
